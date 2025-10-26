@@ -33,11 +33,11 @@ export default function FormLogin() {
     <Container className="p-0 mt-5">
         <Form onSubmit={loguear}>
             <Form.Group className="mb-4" controlId="formBasicUsername">
-                <Form.Label style={{fontFamily:"Arial, Helvetica, sans-serif"}}>Nombre de usuario</Form.Label>
+                <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Nombre de usuario</Form.Label>
                 <Form.Control type="text" placeholder="Ingresa tu usuario" onChange={(e) => {setUsername(e.target.value)}} value={username} required/>
             </Form.Group>
             <Form.Group className="mb-4" controlId="formBasicPassword">
-                <Form.Label htmlFor="inputPassword5" style={{fontFamily:"Arial, Helvetica, sans-serif"}}>Contraseña</Form.Label>
+                <Form.Label htmlFor="inputPassword5" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Contraseña</Form.Label>
                 <Form.Control
                     type="password"
                     placeholder='Ingresa tu contraseña'
@@ -49,7 +49,7 @@ export default function FormLogin() {
                 {error && ( <Form.Text className='text-danger'>{error}</Form.Text>)}
             </Form.Group>
             <div className="d-grid gap-2">
-                <Button variant="primary" type="submit">Iniciar sesión</Button>
+                <Button variant="primary" type="submit" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Iniciar sesión</Button>
             </div>
         </Form>
     </Container>

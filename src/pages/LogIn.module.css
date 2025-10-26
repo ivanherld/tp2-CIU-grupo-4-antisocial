@@ -1,9 +1,9 @@
 main {
     background-color: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
+    padding-top: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .divForm {
@@ -13,12 +13,13 @@ main {
 }
 
 h2 {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
     font-weight: 600;
+    font-size: 30px;
 }
 
 p, .link {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
     font-size: 16px;
     text-decoration: none;
 }
@@ -33,3 +34,41 @@ p, .link {
     width: 90%;
 }
 
+.mobileLogo {
+    display: none;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.mobileLogo img {
+    width: 120px;
+    border-radius: 50%;
+}
+
+.titulo {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.titulo h1 {
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    font-size: 50px;
+    color: #5fa92c;
+}
+
+main > .container {
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .mobileLogo {
+        display: block;
+    }
+
+    .divForm {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
