@@ -1,34 +1,56 @@
-import { useContext, useState, type ChangeEvent } from 'react'
+import { useContext, useState, type FormEvent } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Container} from "react-bootstrap"
 
-import { AuthContext } from '../context/AuthProvider';
+import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-
+//falta jwt y ver como seria con el backend
 
 export default function FormLogin() {
-    const [nombre, setNombre] = useState("")
+    const [username, setUsername] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
+    const [error, setError] = useState<string>("")
     const {setUsuario} = useContext(AuthContext)
     const navigate = useNavigate()
 
-    const loguear = (e: ChangeEvent <HTMLFormElement>) => {
+    const loguear = (e: FormEvent <HTMLFormElement>) => {
         e.preventDefault() 
-        setUsuario({nombre})
+        if(password !== "123456") {
+            setError("Contraseña incorrecta")
+            return
+        }
+        setError("")
+        const user = {username}
+        setUsuario(user)
+        localStorage.setItem("usuario", JSON.stringify(user))
         navigate("/feed")
     }
 
+
   return (
-    <Container className="d-flex justify-content-center mt-5">
+    <Container className="p-0 mt-5">
         <Form onSubmit={loguear}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Nombre de usuario</Form.Label>
-                <Form.Control type="text" placeholder="Ingrese su nombre" onChange={(e) => {setNombre(e.target.value)}} value={nombre}/>
+            <Form.Group className="mb-4" controlId="formBasicUsername">
+                <Form.Label style={{fontFamily:"Arial, Helvetica, sans-serif"}}>Nombre de usuario</Form.Label>
+                <Form.Control type="text" placeholder="Ingresa tu usuario" onChange={(e) => {setUsername(e.target.value)}} value={username} required/>
             </Form.Group>
-            <Button variant="primary" type="submit">
-                    Login
-            </Button>
+            <Form.Group className="mb-4" controlId="formBasicPassword">
+                <Form.Label htmlFor="inputPassword5" style={{fontFamily:"Arial, Helvetica, sans-serif"}}>Contraseña</Form.Label>
+                <Form.Control
+                    type="password"
+                    placeholder='Ingresa tu contraseña'
+                    onChange={(e) => setPassword(e.target.value)}
+                    value = {password}
+                    isInvalid={!!error}
+                    required
+                />
+                {error && ( <Form.Text className='text-danger'>{error}</Form.Text>)}
+            </Form.Group>
+            <div className="d-grid gap-2">
+                <Button variant="primary" type="submit">Iniciar sesión</Button>
+            </div>
         </Form>
     </Container>
   )
