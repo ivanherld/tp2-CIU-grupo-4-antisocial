@@ -1,7 +1,7 @@
-main {
+.main {
     background-color: #f0f2f5;
     min-height: 100vh;
-    padding: 45px 5vw;
+    padding: 0 5vw;
     box-sizing: border-box;
 }
 
@@ -11,13 +11,13 @@ main {
     padding: 40px;
 }
 
-h2 {
+.divForm h2 {
     font-family: "Montserrat", Arial, Helvetica, sans-serif;
     font-weight: 600;
     font-size: 28px;
 }
 
-p, .link {
+.divForm p, .link {
     font-family: "Montserrat", Arial, Helvetica, sans-serif;
     font-size: 16px;
     text-decoration: none;
@@ -58,12 +58,12 @@ p, .link {
         padding: 5vw;
     }
 
-    h2 {
+    .divForm h2 {
         font-size: 1.3em;
         word-break: keep-all;
     }
 
-    p {
+    .divForm p {
         display: block;
         font-size: 15px;
         margin-bottom: 8px;
