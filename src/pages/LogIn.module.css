@@ -1,21 +1,20 @@
 main {
     background-color: #f0f2f5;
     min-height: 100vh;
-    padding-top: 60px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 45px 5vw;
+    box-sizing: border-box;
 }
 
 .divForm {
     width: 100%;
     max-width: 100%;
-    padding: 40px;
+    padding: 40px; /*??*/
 }
 
 h2 {
     font-family: "Montserrat", Arial, Helvetica, sans-serif;
     font-weight: 600;
-    font-size: 30px;
+    font-size: 28px;
 }
 
 p, .link {
@@ -38,30 +37,17 @@ p, .link {
     display: none;
     text-align: center;
     margin-bottom: 20px;
+    margin-top: 10px;
 }
 
 .mobileLogo img {
-    width: 120px;
-    border-radius: 50%;
+    width: 180px;
+    border-radius: 20%;
 }
 
-.titulo {
-    text-align: center;
-    margin-bottom: 80px;
-}
 
-.titulo h1 {
-    font-family: "Montserrat", Arial, Helvetica, sans-serif;
-    font-weight: 700;
-    font-size: 50px;
-    color: #5fa92c;
-}
 
-main > .container {
-    flex-direction: column;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .mobileLogo {
         display: block;
     }
@@ -70,5 +56,23 @@ main > .container {
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 5vw;
+    }
+
+    h2 {
+        font-size: 1.6em;
+        word-break: keep-all;
+    }
+
+    p {
+        display: block;
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+
+    .link {
+        display: inline-block;
+        margin-left: 0;
+        font-size: 15px;
     }
 }
