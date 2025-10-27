@@ -1,81 +1,163 @@
-import { useState } from 'react';
+import { useState, useContext, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
+import { AuthContext } from '../context/AuthContext';
 
 
 export default function FormRegister() {
-    const [validated, setValidated] = useState(false);
+  const [validated, setValidated] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (event: { currentTarget: any; preventDefault: () => void; stopPropagation: () => void; }) => {
+  const { setUsuario } = useContext(AuthContext); // opcional, si quieres autologear
+  const navigate = useNavigate();
+
+  const guardarUsuariosEnLocalStorage = (usuarios: any[]) => {
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+  };
+
+  const obtenerUsuariosDesdeLocalStorage = () => {
+    const raw = localStorage.getItem('usuarios');
+    try {
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const registrar = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const form = event.currentTarget;
+    setError('');
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
+      setValidated(true);
+      return;
     }
 
-    setValidated(true);
-  }
-   //* A REVISAR *// 
+    //* No se si dejarlas, porque esta el middleware en el backend, pero no se 
+
+    if (username.length < 3) {
+    setError('El nombre de usuario debe tener al menos 3 caracteres.');
+    return;
+    }
+
+    if (password.length < 3) {
+      setError('La contraseña debe tener al menos 3 caracteres.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
+    const usuarios = obtenerUsuariosDesdeLocalStorage();
+    const existeUsuario = usuarios.find((u: any) => u.username === username);
+    const existeEmail = usuarios.find((u: any) => u.email === email);
+    if (existeUsuario) {
+      setError('El nombre de usuario ya existe.');
+      return;
+    }
+    if (existeEmail) {
+      setError('El email ya está en uso.');
+      return;
+    }
+
+    //*Guarda nuevo usuario, pero después implementamos el backend
+    const nuevoUsuario = { username, email, password };
+    usuarios.push(nuevoUsuario);
+    guardarUsuariosEnLocalStorage(usuarios);
+
+    //* Con esto, no le pedimos que inicie sesión después de registrarse, pero podríamos
+    const currentUser = { username };
+    setUsuario && setUsuario(currentUser);
+    localStorage.setItem('usuario', JSON.stringify(currentUser));
+
+    
+    navigate('/feed');
+  };
+ 
     return(
 
         
-         <>
-       <Form noValidate validated={validated} onSubmit={handleSubmit}>
-      <Row className="mb-3">
-       
-        <Form.Group as={Col} md="4" controlId="validationCustomUsername">
-          <Form.Label>Username</Form.Label>
-          <InputGroup hasValidation>
-            <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+       <>
+      <Form noValidate validated={validated} onSubmit={registrar}>
+        <Row className="mb-3">
+          <Form.Group as={Col} md="6" controlId="registerUsername">
+            <Form.Label>Username</Form.Label>
+            <InputGroup hasValidation>
+              <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Username"
+                aria-describedby="inputGroupPrepend"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <Form.Control.Feedback type="invalid">
+                Elige un nombre de usuario.
+              </Form.Control.Feedback>
+            </InputGroup>
+          </Form.Group>
+
+          <Form.Group as={Col} md="6" controlId="registerEmail">
+            <Form.Label>Email</Form.Label>
             <Form.Control
-              type="text"
-              placeholder="Username"
-              aria-describedby="inputGroupPrepend"
+              type="email"
+              placeholder="ejemplo@correo.com"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Form.Control.Feedback type="invalid">
-              Please choose a username.
+              Por favor ingresa un email válido.
             </Form.Control.Feedback>
-          </InputGroup>
-        </Form.Group>
-      </Row>
-      <Row className="mb-3">
-        <Form.Group as={Col} md="6" controlId="validationCustom03">
-          <Form.Label>City</Form.Label>
-          <Form.Control type="text" placeholder="City" required />
-          <Form.Control.Feedback type="invalid">
-            Please provide a valid city.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group as={Col} md="3" controlId="validationCustom04">
-          <Form.Label>State</Form.Label>
-          <Form.Control type="text" placeholder="State" required />
-          <Form.Control.Feedback type="invalid">
-            Please provide a valid state.
-          </Form.Control.Feedback>
-        </Form.Group>
-        <Form.Group as={Col} md="3" controlId="validationCustom05">
-          <Form.Label>Zip</Form.Label>
-          <Form.Control type="text" placeholder="Zip" required />
-          <Form.Control.Feedback type="invalid">
-            Please provide a valid zip.
-          </Form.Control.Feedback>
-        </Form.Group>
-      </Row>
-      <Form.Group className="mb-3">
-        <Form.Check
-          required
-          label="Agree to terms and conditions"
-          feedback="You must agree before submitting."
-          feedbackType="invalid"
-        />
-      </Form.Group>
-      <Button type="submit">Submit form</Button>
-    </Form>
+          </Form.Group>
+        </Row>
+
+        <Row className="mb-3">
+          <Form.Group as={Col} md="6" controlId="registerPassword">
+            <Form.Label>Contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Contraseña"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Form.Control.Feedback type="invalid">
+              Por favor ingresa una contraseña.
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group as={Col} md="6" controlId="registerConfirmPassword">
+            <Form.Label>Confirmar contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Repite la contraseña"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              isInvalid={!!error && (error.includes('contraseña') || error.includes('coinciden'))}
+            />
+            <Form.Control.Feedback type="invalid">
+              Las contraseñas deben coincidir.
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Row>
+
+        {error && <div className="text-danger mb-3">{error}</div>}
+
+        <Button type="submit">Registrar</Button>
+      </Form>
     </>
-    );
+  );
 }
 
