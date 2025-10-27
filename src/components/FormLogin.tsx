@@ -48,7 +48,7 @@ export default function FormLogin() {
                 />
                 {error && ( <Form.Text className='text-danger'>{error}</Form.Text>)}
             </Form.Group>
-            <div className="d-grid gap-2">
+            <div className="d-grid gap-2 mb-2">
                 <Button variant="primary" type="submit" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Iniciar sesión</Button>
             </div>
         </Form>
