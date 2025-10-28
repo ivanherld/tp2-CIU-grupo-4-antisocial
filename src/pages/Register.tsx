@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import styles from "./LogIn.module.css"
-import unahurimg from "../assets/unahurimg.jpg";
+import antisocialnet from "../assets/antisocialnet.jpg";
+//import antisocialpng from "../assets/antisocialpng.png";
 import FormRegister from "../components/FormRegister";
 
 function Register() {
@@ -13,7 +14,7 @@ function Register() {
       <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
         <Row className={styles.loginCardContainer}>
           <Col md={5} className="d-none d-md-block p-0">
-            <img src={unahurimg} alt="Login" className="img-fluid h-100 w-100" style={{objectFit: "cover"}}/>
+            <img src={antisocialnet} alt="Login" className="img-fluid h-100 w-100" style={{objectFit: "cover"}}/>
           </Col>
 
           <Col md={7} className="d-flex justify-content-center align-items-start">
