@@ -1,4 +1,4 @@
-.inicioContainer {
+.inicioContenedor {
     text-align: center;
     padding: 4rem 2rem;
     background-color: linear-gradient(180deg, #ffffff 0%, #f0f2f5 100%);
@@ -17,12 +17,13 @@
 }
 
 .descripcion {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 2rem;
     text-align: left;
     color: #3aa4cc;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
 .botones {

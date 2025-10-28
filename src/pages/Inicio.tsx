@@ -13,7 +13,7 @@ export default function Inicio() {
     }, []);  
 
   return (
-    <Container className={styles.inicioContainer}>
+    <Container className={styles.inicioContenedor}>
         <Row className="align-items-center mb-5">
             <Col md={6}>
                 <img src={antisocialpng} alt="UnaHur Anti-Social Net" className={styles.portadaImg}/>

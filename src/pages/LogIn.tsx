@@ -14,9 +14,9 @@ function LogIn() {
 
 
   return (
-    <div className={styles.main}>
+    <div className={styles.contenedorLogin}>
       <Container fluid className="d-flex justify-content-center align-items-center" style={{minHeight: '100vh'}}>
-        <Row className={`mt-4 mb-4 ${styles.loginCardContainer}`}>
+        <Row className={`mt-4 mb-4 ${styles.loginCardContenedor}`}>
           <Col md={5} className="d-none d-md-block p-0" style={{backgroundColor: "#d7d6d6"}}>
             <img src={antisocialnet} alt="Login" className="img-fluid h-100 w-100" style={{objectFit: "contain"}}/>
           </Col>
