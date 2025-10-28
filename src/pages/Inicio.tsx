@@ -1,21 +1,27 @@
-import { Button } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./Inicio.module.css"
 import { useNavigate } from "react-router-dom";
+import antisocialpng from "../assets/antisocialpng.png"
 
 export default function Inicio() {
 
     const navigate = useNavigate()
 
   return (
-    <div className={styles.inicioContainer}>
-        <section className={styles.portada}>
-            <h1>Bienvenido a <span>UnaHur Anti-Social Net</span></h1>
-            <p>Conectá con personas, compartí tus ideas y descubrí nuevos contenidos.</p>
-            <div className={styles.botones}>
-                <Button className={styles.loginBtn} onClick={() => navigate("/login")}>Iniciar sesión</Button>
-                <Button className={styles.registerBtn} onClick={() => navigate("/register")}>Registrarme</Button>
-            </div>
-        </section>
+    <Container className={styles.inicioContainer}>
+        <Row className="align-items-center mb-5">
+            <Col md={6}>
+                <img src={antisocialpng} alt="UnaHur Anti-Social Net" className={styles.portadaImg}/>
+            </Col>
+            <Col md={6}>
+                <p className={styles.descripcion}>Conectá con personas, compartí tus ideas y descubrí nuevos contenidos</p>
+                <div className={styles.botones}>
+                    <Button className={styles.loginBtn} onClick={() => navigate("/login")}>Iniciar sesión</Button>
+                    <Button className={styles.registerBtn} onClick={() => navigate("/register")}>Registrarme</Button>
+                </div>
+            
+            </Col>
+        </Row>
         <section className={styles.info}>
             <h2>¿Qué podés hacer acá?</h2>
             <ul>
@@ -24,6 +30,6 @@ export default function Inicio() {
                 <li>Ver lo que otros comparten.</li>
             </ul>
         </section>
-    </div>
+    </Container>
   )
 }

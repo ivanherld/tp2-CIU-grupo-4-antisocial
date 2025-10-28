@@ -1,25 +1,33 @@
 .inicioContainer {
     text-align: center;
     padding: 4rem 2rem;
+    background-color: linear-gradient(180deg, #ffffff 0%, #f0f2f5 100%);
 }
 
-.portada {
-    margin-bottom: 3rem;
-    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+
+.portadaImg {
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    transition: transform 0.3s ease;
 }
 
-.portada h1 {
-    font-size: 2.5rem;
+.portadaImg:hover {
+    transform: scale(1.03);
 }
 
-span {
-    color: #5fa92c;
+.descripcion {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    text-align: left;
+    color: #3aa4cc;
 }
 
 .botones {
     margin-top: 2rem;
     display: flex;
-    justify-content: center;
     gap: 1rem;
 }
 
@@ -52,7 +60,8 @@ span {
 
 .info {
     margin-top: 4rem;
-    background-color: #f0f2f5;
+    background-color: white;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     border-radius: 12px;
     display: inline-block;
@@ -65,6 +74,7 @@ span {
     color: #5fa92c;
     margin-bottom: 1.5rem;
     text-align: center;
+    font-weight: bold;
 }
 
 .info ul {
@@ -79,4 +89,19 @@ span {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+@media (max-width: 767px) {
+    .descripcion {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .portadaImg {
+        margin-bottom: 10px;
+    }
+
+    .botones {
+        justify-content: center;
+    }
 }

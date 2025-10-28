@@ -5,7 +5,7 @@ export default function PublicLayout() {
   return (
     <>
         <Navbar/>
-        <main>
+        <main style={{backgroundColor: "#f0f2f5"}}>
             <Outlet/>
         </main>
     </>
