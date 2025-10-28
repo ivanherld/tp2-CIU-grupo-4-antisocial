@@ -2,10 +2,15 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import styles from "./Inicio.module.css"
 import { useNavigate } from "react-router-dom";
 import antisocialpng from "../assets/antisocialpng.png"
+import { useEffect } from "react";
 
 export default function Inicio() {
 
     const navigate = useNavigate()
+
+    useEffect(()=>{
+        document.title = 'Inicio - Unahur Anti-Social Net'
+    }, []);  
 
   return (
     <Container className={styles.inicioContainer}>

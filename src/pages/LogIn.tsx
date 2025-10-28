@@ -9,7 +9,7 @@ import {Link} from "react-router-dom"
 function LogIn() {
 
   useEffect(()=>{
-    document.title = 'LogIn - Unahur Anti-Social Net'
+    document.title = 'Login - Unahur Anti-Social Net'
   }, []);  
 
 

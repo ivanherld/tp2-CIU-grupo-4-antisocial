@@ -1,8 +1,14 @@
 import styles from "./Nosotros.module.css"
 import comunidad from "../assets/comunidad.svg"
+import { useEffect } from "react";
 
 
 export default function Nosotros() {
+
+  useEffect(()=>{
+      document.title = 'Nosotros - Unahur Anti-Social Net'
+  }, []);  
+
   return (
     <section className={styles.contenedor}>
         <h2>Sobre nosotros</h2>
