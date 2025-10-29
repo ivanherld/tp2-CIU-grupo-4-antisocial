@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import Footer from "../components/Footer";
+import UserProfile from "./UserProfile";
 
 function LogIn() {
   useEffect(()=>{
@@ -6,7 +8,8 @@ function LogIn() {
   }, []);  
   return (
     <main>
-      <h1>Log in</h1>
+      <UserProfile />
+      <Footer />
     </main>
   )
 }

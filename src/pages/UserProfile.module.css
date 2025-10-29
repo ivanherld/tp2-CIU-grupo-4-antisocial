@@ -1,0 +1,139 @@
+.profile {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* header */
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6eef6;
+  padding-bottom: 16px;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.meta {
+  flex: 1;
+}
+
+.displayName {
+  margin: 0;
+  font-size: 20px;
+}
+
+.username {
+  color: #64748b;
+  margin: 4px 0;
+}
+
+.bio {
+  margin: 6px 0;
+  color: #475569;
+}
+
+.counts {
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  color: #0f1724;
+}
+
+.actions {
+  margin-left: 12px;
+}
+
+.followBtn {
+  background: #0369a1;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.followBtn:hover {
+  opacity: 0.95;
+}
+
+/* feed */
+.feed {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post {
+  border: 1px solid #e6eef6;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+}
+
+.postHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.postContent {
+  margin: 8px 0;
+  color: #0f1724;
+}
+
+.tags {
+  margin-bottom: 8px;
+}
+.tag {
+  display: inline-block;
+  margin-right: 6px;
+  color: #065f46;
+  background: #ecfdf5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.comments {
+  margin-top: 8px;
+  border-top: 1px dashed #e6eef6;
+  padding-top: 8px;
+}
+
+.comment {
+  margin-bottom: 6px;
+  color: #334155;
+  font-size: 14px;
+}
+
+/* comment form */
+.commentForm {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.commentInput {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.empty {
+  color: #475569;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+}
