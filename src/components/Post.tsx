@@ -1,7 +1,19 @@
-
 import Comment, { type CommentProps } from './Comment';
+import Accordion from 'react-bootstrap/Accordion';
+import { useAccordionButton } from 'react-bootstrap/AccordionButton';
+import Card from 'react-bootstrap/Card';
 
 export interface PostComment extends CommentProps {}
+
+function CustomToggle({ children, eventKey }: { children: React.ReactNode; eventKey: string }) {
+  const decoratedOnClick = useAccordionButton(eventKey);
+
+  return (
+    <button type="button" className="btn btn-link p-0" onClick={decoratedOnClick}>
+      {children}
+    </button>
+  );
+}
 
 export interface PostProps {
   id?: number | string;
@@ -51,14 +63,23 @@ export default function Post({
         <p className="card-text">{content}</p>
       </div>
 
-      {/* Comentarios */}
-      {comments.length > 0 && (
-        <div className="card-footer">
-          {comments.map((c, idx) => (
-            <Comment key={idx} author={c.author} date={c.date} text={c.text} />
-          ))}
-        </div>
-      )}
+      {/* Comentarios en acordeón dentro del footer de la card */}
+      <div className="card-footer p-0">
+        <Accordion>
+          <Card className="border-0">
+            <Card.Header className="bg-transparent p-2">
+              <CustomToggle eventKey="0">Comentarios ({comments.length})</CustomToggle>
+            </Card.Header>
+            <Accordion.Collapse eventKey="0">
+              <Card.Body className="p-2">
+                {comments.map((c, idx) => (
+                  <Comment key={idx} author={c.author} date={c.date} text={c.text} />
+                ))}
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
+      </div>
     </div>
   );
 }
