@@ -9,18 +9,6 @@
     transform: scale(1.03);
 }
 
-.descripcion {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 2rem;
-    text-align: left;
-    color: #3aa4cc;
-    font-family: "Montserrat", Arial, Helvetica, sans-serif;
-}
-
-
-
 .aparicion {
     opacity: 0;
     transform: translateY(20px);
@@ -38,8 +26,15 @@
     }
 }
 
-
-
+.descripcion {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    text-align: left;
+    color: #3aa4cc;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
 
 .botones {
     margin-top: 2rem;
