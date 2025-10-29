@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import AuthCard from "../components/AuthCard";
+import AuthCard from "../components/AuthCard/AuthCard";
 import FormRegister from "../components/FormRegister";
 
 function Register() {

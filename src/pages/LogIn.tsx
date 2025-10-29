@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import FormLogin from "../components/FormLogin";
-import AuthCard from "../components/AuthCard";
+import AuthCard from "../components/AuthCard/AuthCard";
 
 function LogIn() {
 

@@ -1,6 +1,6 @@
 import { Col, Container, Row } from "react-bootstrap";
-import antisocialnet from "../assets/antisocialnet.jpg";
-import antisocialpng from "../assets/antisocialpng.png";
+import antisocialnet from "../../assets/antisocialnet.jpg";
+import antisocialpng from "../../assets/antisocialpng.png"
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styles from "./AuthCard.module.css"
