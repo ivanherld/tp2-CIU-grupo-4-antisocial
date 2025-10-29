@@ -1,10 +1,6 @@
 import { useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
 import FormLogin from "../components/FormLogin";
-import styles from "./LogIn.module.css"
-import antisocialnet from "../assets/antisocialnet.jpg";
-import antisocialpng from "../assets/antisocialpng.png";
-import {Link} from "react-router-dom"
+import AuthCard from "../components/AuthCard";
 
 function LogIn() {
 
@@ -14,27 +10,15 @@ function LogIn() {
 
 
   return (
-    <div className={styles.contenedorLogin}>
-      <Container fluid className="d-flex justify-content-center align-items-center" style={{minHeight: '100vh'}}>
-        <Row className={`mt-4 mb-4 ${styles.loginCardContenedor}`}>
-          <Col md={5} className="d-none d-md-block p-0" style={{backgroundColor: "#d7d6d6"}}>
-            <img src={antisocialnet} alt="Login" className="img-fluid h-100 w-100" style={{objectFit: "contain"}}/>
-          </Col>
-
-          <Col md={7} className="d-flex justify-content-center align-items-start">
-            <div className={styles.divForm}>
-              <div className={styles.mobileLogo}>
-                <img src={antisocialpng} alt="Logo"/>
-              </div>
-              <h2>Iniciar sesión</h2>
-              <p className="mb-o d-inline">¿No tenés una cuenta?</p> 
-              <Link to= "/register" className={`${styles.link} ms-1`}>Registrarse</Link>
-              <FormLogin/>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+    <AuthCard
+      titulo="Iniciar sesión"
+      mostrarLink={true}
+      textoLink="¿No tenés una cuenta?"
+      rutaLink="/register"
+    >
+      <FormLogin/>
+    </AuthCard>
+        
   )
 }
 
