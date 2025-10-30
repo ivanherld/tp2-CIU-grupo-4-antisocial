@@ -1,0 +1,87 @@
+.portadaImg {
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.portadaImg:hover {
+    transform: scale(1.03);
+}
+
+.aparicion {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: aparecer 1s ease-out forwards;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.descripcion {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    text-align: left;
+    color: #3aa4cc;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+.botones {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.loginBtn, .registerBtn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.loginBtn {
+    background-color: #3aa4cc;
+    color: white;
+}
+
+.loginBtn:hover {
+    background-color: #2563eb;
+}
+
+.registerBtn {
+    background-color: transparent;
+    border: 2px solid #3aa4cc;
+    color: #3aa4cc;
+}
+
+
+.registerBtn:hover {
+    background-color: #3aa4cc;
+    color: white;
+}
+
+
+@media (max-width: 767px) {
+
+    .descripcion {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .portadaImg {
+        margin-bottom: 10px;
+    }
+
+    .botones {
+        justify-content: center;
+    }
+}

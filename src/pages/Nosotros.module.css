@@ -1,0 +1,32 @@
+.contenedor {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    color: #333;
+}
+
+.contenedor h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #3b82f6;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+    font-weight: 700;
+}
+
+.contenedor p {
+    font-size: 1.1rem;
+    margin: 1rem 0;
+    line-height: 1.6;
+    color: #555;
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+.imgContenedor {
+    margin-top: 2.5rem;
+}
+
+.imgContenedor img {
+    width: 100%;
+    max-width: 400px;
+}

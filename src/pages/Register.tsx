@@ -1,7 +1,11 @@
 import { useEffect } from "react";
+<<<<<<< HEAD
 import { Container, Row, Col } from "react-bootstrap";
 import styles from "./LogIn.module.css"
 import unahurimg from "../assets/unahurimg.jpg";
+=======
+import AuthCard from "../components/AuthCard/AuthCard";
+>>>>>>> e29f76d524d1969002f77916086114408d72e733
 import FormRegister from "../components/FormRegister";
 
 function Register() {
@@ -9,6 +13,7 @@ function Register() {
     document.title = 'Register - Unahur Anti-Social Net'
   }, []);  
   return (
+<<<<<<< HEAD
      <main>
       <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
         <Row className={styles.loginCardContainer}>
@@ -25,6 +30,13 @@ function Register() {
         </Row>
       </Container>
     </main>
+=======
+    <AuthCard
+      titulo="Registro"
+    >
+      <FormRegister/>
+    </AuthCard>
+>>>>>>> e29f76d524d1969002f77916086114408d72e733
   )
 }
 export default Register
