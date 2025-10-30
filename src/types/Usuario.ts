@@ -1,3 +1,9 @@
 export interface Usuario {
-    username: string
+    //
+    username: string,
+    //email: string
 } //token
+
+export interface LoginResponse {
+  token: string;
+}

@@ -16,7 +16,7 @@ function LogIn() {
       textoLink="¿No tenés una cuenta?"
       rutaLink="/register"
     >
-      <FormLogin/>
+      <FormLogin onLoginSuccess={() => { /* no-op: login flow handled inside FormLogin */ }} />
     </AuthCard>
         
   )

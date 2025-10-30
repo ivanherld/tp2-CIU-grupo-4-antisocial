@@ -2,30 +2,54 @@ import { useContext, useState, type FormEvent } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Container} from "react-bootstrap"
-
+import api from '../api';
+import type { LoginResponse } from '../types/Usuario';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-//falta jwt y ver como seria con el backend
 
-export default function FormLogin() {
+//falta jwt y ver como seria con el backend
+interface LoginProps {
+  onLoginSuccess: () => void;
+}
+
+
+export default function FormLogin({ onLoginSuccess }: LoginProps) {
     const [username, setUsername] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [error, setError] = useState<string>("")
     const {setUsuario} = useContext(AuthContext)
     const navigate = useNavigate()
 
-    const loguear = (e: FormEvent <HTMLFormElement>) => {
+    const loguear = async (e: FormEvent <HTMLFormElement>) => {
         e.preventDefault() 
-        if(password !== "123456") {
-            setError("Contraseña incorrecta")
-            return
+        setError("");
+        console.log("antes del try");
+
+        try {
+            const res = await api.post<LoginResponse>("/auth/login", {
+                username,
+                password
+            });
+            localStorage.setItem("token", res.data.token);
+            onLoginSuccess();
+            const user = {username};
+            setUsuario(user);
+            navigate("/feed");
+            console.log("Login exitoso");
+        } catch (err: any) {
+            console.error('Login error (full object):', err);
+  // Axios when server responded has err.response
+  if (err.response) {
+    console.error('Response status:', err.response.status);
+    console.error('Response data:', err.response.data);
+  } else if (err.request) {
+    console.error('No response received, request was:', err.request);
+  } else {
+    console.error('Error message:', err.message);
+  }
+            setError("Error al iniciar sesión. Verifica tus credenciales.");
         }
-        setError("")
-        const user = {username}
-        setUsuario(user)
-        localStorage.setItem("usuario", JSON.stringify(user))
-        navigate("/feed")
     }
 
 
@@ -37,7 +61,7 @@ export default function FormLogin() {
                 <Form.Control type="text" placeholder="Ingresa tu usuario" onChange={(e) => {setUsername(e.target.value)}} value={username} required/>
             </Form.Group>
             <Form.Group className="mb-4" controlId="formBasicPassword">
-                <Form.Label htmlFor="inputPassword5" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Contraseña</Form.Label>
+                <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Contraseña</Form.Label>
                 <Form.Control
                     type="password"
                     placeholder='Ingresa tu contraseña'
