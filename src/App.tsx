@@ -23,10 +23,13 @@ function App() {
           </Route>
 
 
-          <Route element={<PrivateLayout/>}>
+          
             <Route path='/feed' element={<Feed/>}/>
-            <Route path='/profile' element={<UserProfile/>}/>
-          </Route>
+            <Route path='/profile' element={
+              <PrivateLayout>
+                <UserProfile/>
+              </PrivateLayout>}/>
+          
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
