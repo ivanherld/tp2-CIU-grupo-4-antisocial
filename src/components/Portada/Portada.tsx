@@ -10,9 +10,9 @@ export default function Portada() {
   return (
     <>
         <Col md={6}>
-        <figure className={styles.aparicion}>
-            <img src={antisocialpng} alt="UnaHur Anti-Social Net" className={styles.portadaImg}/>
-        </figure>
+            <figure className={styles.aparicion}>
+                <img src={antisocialpng} alt="UnaHur Anti-Social Net" className={styles.portadaImg}/>
+            </figure>
         </Col>
         <Col md={6}>
             <p className={styles.descripcion}>Conectá con personas, compartí tus ideas y descubrí nuevos contenidos</p>

@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import { AuthContext } from '../context/AuthContext';
+import { Container } from 'react-bootstrap';
 
 
 export default function FormRegister() {
@@ -83,14 +84,17 @@ export default function FormRegister() {
     navigate('/feed');
   };
  
+  const estilo = {fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}
+
+
     return(
 
         
-       <>
+    <Container className="p-0 mt-4">
       <Form noValidate validated={validated} onSubmit={registrar}>
         <Row className="mb-3">
-          <Form.Group as={Col} md="6" controlId="registerUsername">
-            <Form.Label>Username</Form.Label>
+          <Form.Group as={Col} md="6" className="mb-4" controlId="registerUsername">
+            <Form.Label style={estilo}>Username</Form.Label>
             <InputGroup hasValidation>
               <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
               <Form.Control
@@ -101,14 +105,14 @@ export default function FormRegister() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid" style={estilo}>
                 Elige un nombre de usuario.
               </Form.Control.Feedback>
             </InputGroup>
           </Form.Group>
 
-          <Form.Group as={Col} md="6" controlId="registerEmail">
-            <Form.Label>Email</Form.Label>
+          <Form.Group as={Col} md="6" className="mb-4" controlId="registerEmail">
+            <Form.Label style={estilo}>Email</Form.Label>
             <Form.Control
               type="email"
               placeholder="ejemplo@correo.com"
@@ -116,15 +120,15 @@ export default function FormRegister() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Form.Control.Feedback type="invalid">
+            <Form.Control.Feedback type="invalid" style={estilo}>
               Por favor ingresa un email válido.
             </Form.Control.Feedback>
           </Form.Group>
         </Row>
 
         <Row className="mb-3">
-          <Form.Group as={Col} md="6" controlId="registerPassword">
-            <Form.Label>Contraseña</Form.Label>
+          <Form.Group as={Col} md="6" className="mb-4" controlId="registerPassword">
+            <Form.Label style={estilo}>Contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Contraseña"
@@ -132,13 +136,13 @@ export default function FormRegister() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Form.Control.Feedback type="invalid">
+            <Form.Control.Feedback type="invalid" style={estilo}>
               Por favor ingresa una contraseña.
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Form.Group as={Col} md="6" controlId="registerConfirmPassword">
-            <Form.Label>Confirmar contraseña</Form.Label>
+          <Form.Group as={Col} md="6" className="mb-4" controlId="registerConfirmPassword">
+            <Form.Label style={estilo}>Confirmar contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Repite la contraseña"
@@ -147,7 +151,7 @@ export default function FormRegister() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               isInvalid={!!error && (error.includes('contraseña') || error.includes('coinciden'))}
             />
-            <Form.Control.Feedback type="invalid">
+            <Form.Control.Feedback type="invalid" style={estilo}>
               Las contraseñas deben coincidir.
             </Form.Control.Feedback>
           </Form.Group>
@@ -155,9 +159,11 @@ export default function FormRegister() {
 
         {error && <div className="text-danger mb-3">{error}</div>}
 
-        <Button type="submit">Registrar</Button>
+        <div className="d-grid gap-2 mb-2">
+          <Button variant="primary" type="submit" style={estilo}>Registrar</Button>
+        </div>
       </Form>
-    </>
+    </Container>
   );
 }
 
