@@ -1,99 +1,97 @@
-import { useState, useContext, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-import { AuthContext } from '../context/AuthContext';
-import { Container } from 'react-bootstrap';
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Row from "react-bootstrap/Row";
+import { AuthContext } from "../context/AuthContext";
+import { Container } from "react-bootstrap";
+import api from "../api";
+import type { LoginResponse } from "../types/Usuario";
+import { useAuth } from '../context/AuthProvider';
 
+interface NewUser {
+  username: string;
+  email: string;
+  password: string;
+}
 
 export default function FormRegister() {
   const [validated, setValidated] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const { setUsuario } = useContext(AuthContext); // opcional, si quieres autologear
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUsuario } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const guardarUsuariosEnLocalStorage = (usuarios: any[]) => {
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    setError("");
 
-  const obtenerUsuariosDesdeLocalStorage = () => {
-    const raw = localStorage.getItem('usuarios');
-    try {
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  };
-
-  const registrar = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    setError('');
+    //*validación nativa de lform (Bootstrap)
     if (form.checkValidity() === false) {
-      event.stopPropagation();
+      e.stopPropagation();
       setValidated(true);
       return;
     }
 
-    //* No se si dejarlas, porque esta el middleware en el backend, pero no se 
-
     if (username.length < 3) {
-    setError('El nombre de usuario debe tener al menos 3 caracteres.');
-    return;
+      setError("El nombre de usuario debe tener al menos 3 caracteres.");
+      return;
     }
-
     if (password.length < 3) {
-      setError('La contraseña debe tener al menos 3 caracteres.');
+      setError("La contraseña debe tener al menos 3 caracteres.");
       return;
     }
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden.');
-      return;
-    }
-    const usuarios = obtenerUsuariosDesdeLocalStorage();
-    const existeUsuario = usuarios.find((u: any) => u.username === username);
-    const existeEmail = usuarios.find((u: any) => u.email === email);
-    if (existeUsuario) {
-      setError('El nombre de usuario ya existe.');
-      return;
-    }
-    if (existeEmail) {
-      setError('El email ya está en uso.');
+      setError("Las contraseñas no coinciden.");
       return;
     }
 
-    //*Guarda nuevo usuario, pero después implementamos el backend
-    const nuevoUsuario = { username, email, password };
-    usuarios.push(nuevoUsuario);
-    guardarUsuariosEnLocalStorage(usuarios);
+    setIsSubmitting(true);
+    try {
+      //*Registramos en el backend
+      const newUser: NewUser = { username, email, password };
+      await api.post("/auth/register", newUser);
 
-    //* Con esto, no le pedimos que inicie sesión después de registrarse, pero podríamos
-    const currentUser = { username };
-    setUsuario && setUsuario(currentUser);
-    localStorage.setItem('usuario', JSON.stringify(currentUser));
+      //*Login inmediato
+      const loginRes = await api.post<LoginResponse>("/auth/login", {
+        username,
+        password,
+      });
 
-    
-    navigate('/feed');
+      if (loginRes?.data?.token) {
+        localStorage.setItem("token", loginRes.data.token);
+      }
+      login({username});
+      const user = { username };
+      setUsuario(user);
+      navigate("/feed");
+    } catch (err: any) {
+      setError(err.message || "Error al registrar el usuario");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
- 
-  const estilo = {fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}
 
+  const estilo = { fontFamily: "Montserrat, Arial, Helvetica, sans-serif" };
 
-    return(
-
-        
+  return (
     <Container className="p-0 mt-4">
-      <Form noValidate validated={validated} onSubmit={registrar}>
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row className="mb-3">
-          <Form.Group as={Col} md="6" className="mb-4" controlId="registerUsername">
+          <Form.Group
+            as={Col}
+            md="6"
+            className="mb-4"
+            controlId="registerUsername"
+          >
             <Form.Label style={estilo}>Username</Form.Label>
             <InputGroup hasValidation>
               <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
@@ -111,7 +109,12 @@ export default function FormRegister() {
             </InputGroup>
           </Form.Group>
 
-          <Form.Group as={Col} md="6" className="mb-4" controlId="registerEmail">
+          <Form.Group
+            as={Col}
+            md="6"
+            className="mb-4"
+            controlId="registerEmail"
+          >
             <Form.Label style={estilo}>Email</Form.Label>
             <Form.Control
               type="email"
@@ -127,7 +130,12 @@ export default function FormRegister() {
         </Row>
 
         <Row className="mb-3">
-          <Form.Group as={Col} md="6" className="mb-4" controlId="registerPassword">
+          <Form.Group
+            as={Col}
+            md="6"
+            className="mb-4"
+            controlId="registerPassword"
+          >
             <Form.Label style={estilo}>Contraseña</Form.Label>
             <Form.Control
               type="password"
@@ -141,7 +149,12 @@ export default function FormRegister() {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Form.Group as={Col} md="6" className="mb-4" controlId="registerConfirmPassword">
+          <Form.Group
+            as={Col}
+            md="6"
+            className="mb-4"
+            controlId="registerConfirmPassword"
+          >
             <Form.Label style={estilo}>Confirmar contraseña</Form.Label>
             <Form.Control
               type="password"
@@ -149,7 +162,10 @@ export default function FormRegister() {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              isInvalid={!!error && (error.includes('contraseña') || error.includes('coinciden'))}
+              isInvalid={
+                !!error &&
+                (error.includes("contraseña") || error.includes("coinciden"))
+              }
             />
             <Form.Control.Feedback type="invalid" style={estilo}>
               Las contraseñas deben coincidir.
@@ -160,10 +176,16 @@ export default function FormRegister() {
         {error && <div className="text-danger mb-3">{error}</div>}
 
         <div className="d-grid gap-2 mb-2">
-          <Button variant="primary" type="submit" style={estilo}>Registrar</Button>
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={isSubmitting}
+            style={estilo}
+          >
+            {isSubmitting ? "Registrando..." : "Registrar"}{" "}
+          </Button>
         </div>
       </Form>
     </Container>
   );
 }
-
