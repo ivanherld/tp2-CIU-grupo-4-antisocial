@@ -6,6 +6,7 @@ import api from '../api';
 import type { LoginResponse } from '../types/Usuario';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthProvider';
 
 
 //falta jwt y ver como seria con el backend
@@ -21,10 +22,12 @@ export default function FormLogin({ onLoginSuccess }: LoginProps) {
     const [error, setError] = useState<string>("")
     const {setUsuario} = useContext(AuthContext)
     const navigate = useNavigate()
+    const { login } = useAuth();
 
     const loguear = async (e: FormEvent <HTMLFormElement>) => {
         e.preventDefault()
         const form = e.currentTarget
+        login({username});
         if(form.checkValidity() === false) {
           e.stopPropagation()
           setValidated(true)
@@ -46,16 +49,6 @@ export default function FormLogin({ onLoginSuccess }: LoginProps) {
             navigate("/feed");
             console.log("Login exitoso");
         } catch (err: any) {
-            console.error('Login error (full object):', err);
-  // Axios when server responded has err.response
-  if (err.response) {
-    console.error('Response status:', err.response.status);
-    console.error('Response data:', err.response.data);
-  } else if (err.request) {
-    console.error('No response received, request was:', err.request);
-  } else {
-    console.error('Error message:', err.message);
-  }
             setError("Error al iniciar sesión. Verifica tus credenciales.");
         }
     }

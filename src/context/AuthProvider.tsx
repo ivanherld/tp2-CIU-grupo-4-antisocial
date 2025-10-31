@@ -15,7 +15,7 @@ export default function AuthProvider({children}: AuthProviderProps) {
     // })
 
     const [usuario, setUsuario] = useState<Usuario | null>(null);
-    const [cargando, setCCargando] = useState(true);
+    const [cargando, setCargando] = useState(true);
 
 
     //* Se supone que recupera el usuario guardado
@@ -24,7 +24,7 @@ export default function AuthProvider({children}: AuthProviderProps) {
         if (stored) {
             setUsuario(JSON.parse(stored));
         }
-        setCCargando(false); //* Se termina de verificar, esto es clave porque puede demorar nuestro servidor
+        setCargando(false); //* Se termina de verificar, esto es clave porque puede demorar nuestro servidor
     }, []);
 
     //* Guardamos en el LocalStorage el usuario
@@ -41,7 +41,7 @@ export default function AuthProvider({children}: AuthProviderProps) {
 
 
     return (
-        <AuthContext.Provider value={{usuario, login, logout, cargando} as any}>
+        <AuthContext.Provider value={{usuario, setUsuario, cargando, setCargando, login, logout}}>
             {children}
         </AuthContext.Provider> 
     )
