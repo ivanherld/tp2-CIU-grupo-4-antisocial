@@ -137,3 +137,31 @@
   background: #f8fafc;
   border-radius: 6px;
 }
+
+/* contenedor general con sidebar + content */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  max-width: 1140px;
+  margin: 24px auto;
+  padding: 0 16px; /* padding-bottom para que el footer fixed no tape contenido */
+  box-sizing: border-box;
+}
+
+/* contenido principal (mantiene el .profile interno que ya definiste) */
+.content {
+  min-height: 60vh;
+}
+
+/* responsive: en pantallas pequeñas, stack vertical */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* si querés ocultar la sidebar en móviles, podés hacerlo */
+  .sidebar {
+    display: none;
+  }
+}

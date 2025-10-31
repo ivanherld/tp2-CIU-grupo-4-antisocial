@@ -3,6 +3,12 @@
   color: #cbd5e1;
   padding: 16px 0;
   font-size: 14px;
+
+  /* NO fixed - queda al final del contenido */
+  position: relative; /* o simplemente borrá la línea position */
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 32px; /* espacio arriba del footer */;
 }
 
 .container {
@@ -31,4 +37,9 @@
 
 .copy {
   opacity: 0.8;
+}
+
+.logo {
+    height: 50px; 
+    width: auto;
 }

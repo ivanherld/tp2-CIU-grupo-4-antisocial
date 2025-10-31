@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import Perfil from "../components/Perfil";
+import Sidebar from "../components/Sidebar";
+import Footer from "../components/Footer";
+import styles from "./UserProfile.module.css";
+
 
 type User = {
   id: string;
@@ -96,16 +100,29 @@ export default function UserProfile() {
   }
 
   return (
-    <>
-      <Perfil
-        user={user}
-        counts={counts}
-        posts={posts}
-        currentUser={{ username: "tucorreo" }}
-        onFollowToggle={handleFollowToggle}
-        onAddComment={handleAddComment}
+  <>
+    <div className={styles.layout}>
+      <Sidebar
+        currentUser={{
+          username: "tucorreo",
+          displayName: "Tú",
+          avatarUrl: "https://i.pravatar.cc/80?img=5",
+        }}
       />
-      
-    </>
-  );
+
+      <div className={styles.content}>
+        <Perfil
+          user={user}
+          counts={counts}
+          posts={posts}
+          currentUser={{ username: "tucorreo" }}
+          onFollowToggle={handleFollowToggle}
+          onAddComment={handleAddComment}
+        />
+      </div>
+    </div>
+
+    <Footer />
+  </>
+);
 }
