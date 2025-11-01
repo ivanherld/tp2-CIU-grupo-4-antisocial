@@ -72,7 +72,6 @@ export default function UserProfile() {
   const [user] = useState<User>(mockUser);
   const [counts, setCounts] = useState<FollowCounts>({ followers: 42, following: 10 });
   const [posts, setPosts] = useState<Post[]>(mockPosts);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isFollowing, setIsFollowing] = useState(false);
 
   function handleFollowToggle() {
@@ -102,13 +101,15 @@ export default function UserProfile() {
   return (
   <>
     <div className={styles.layout}>
-      <Sidebar
-        currentUser={{
-          username: "tucorreo",
-          displayName: "Tú",
-          avatarUrl: "https://i.pravatar.cc/80?img=5",
-        }}
-      />
+      <div className={styles.sidebar}>
+        <Sidebar
+          currentUser={{
+            username: "tucorreo",
+            displayName: "Tú",
+            avatarUrl: "https://i.pravatar.cc/80?img=5",
+          }}
+        />
+      </div>
 
       <div className={styles.content}>
         <Perfil
@@ -116,6 +117,7 @@ export default function UserProfile() {
           counts={counts}
           posts={posts}
           currentUser={{ username: "tucorreo" }}
+          isFollowing={isFollowing}
           onFollowToggle={handleFollowToggle}
           onAddComment={handleAddComment}
         />

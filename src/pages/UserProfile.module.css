@@ -147,11 +147,20 @@
   margin: 24px auto;
   padding: 0 16px; /* padding-bottom para que el footer fixed no tape contenido */
   box-sizing: border-box;
+  align-items: start; /* asegura que el sticky funcione correctamente */
 }
 
 /* contenido principal (mantiene el .profile interno que ya definiste) */
 .content {
   min-height: 60vh;
+}
+
+/* sidebar pegada mientras scrolleás */
+.sidebar {
+  position: sticky;
+  top: 16px;
+  align-self: start;
+  height: fit-content;
 }
 
 /* responsive: en pantallas pequeñas, stack vertical */
@@ -160,8 +169,8 @@
     grid-template-columns: 1fr;
   }
 
-  /* si querés ocultar la sidebar en móviles, podés hacerlo */
+  /* en móviles, la sidebar pasa arriba y no es sticky */
   .sidebar {
-    display: none;
+    position: static;
   }
 }

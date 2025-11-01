@@ -1,5 +1,6 @@
 import styles from '../pages/Footer.module.css';
 import logo from '../assets/antisocialpng.png';
+import { Link } from 'react-router-dom';
 
 function Footer() {
     return (
@@ -8,9 +9,9 @@ function Footer() {
                 <span className={styles.brand}><img src={logo} alt="logo" className={styles.logo} /></span>
                 <small className={styles.copy}>© {new Date().getFullYear()} Grupo 4 CIU</small>
                 <nav className={styles.nav}>
-                    <a href="/about">Acerca</a>
-                    <a href="/terms">Términos</a>
-                    <a href="/help">Ayuda</a>
+                    <Link to="/about">Acerca</Link>
+                    <Link to="/terms">Términos</Link>
+                    <Link to="/help">Ayuda</Link>
                 </nav>
                 
             </div>

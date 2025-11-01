@@ -26,6 +26,7 @@ type PerfilProps = {
   counts?: FollowCounts | null;
   posts: Post[];
   currentUser?: { username?: string } | null;
+  isFollowing?: boolean;
   onFollowToggle?: () => void;
   onAddComment?: (postId: string, content: string) => void;
 };
@@ -35,6 +36,7 @@ export default function Perfil({
   counts,
   posts,
   currentUser,
+  isFollowing,
   onFollowToggle,
   onAddComment,
 }: PerfilProps) {
@@ -61,7 +63,7 @@ export default function Perfil({
         {currentUser?.username !== user.username && onFollowToggle && (
           <div className={styles.actions}>
             <button className={styles.followBtn} onClick={onFollowToggle}>
-              Seguir / Dejar de seguir
+              {isFollowing ? "Dejar de seguir" : "Seguir"}
             </button>
           </div>
         )}
