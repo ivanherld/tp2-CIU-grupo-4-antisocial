@@ -1,0 +1,89 @@
+@media only screen and (max-width: 1040px) {
+  .contenedorPrincipal {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background-color: rgba(241, 241, 241, 0.761);
+    align-items: center;
+  }
+
+  /* .feedContainers {
+    width: 95vw;
+  } */
+
+  .contenidoAdicional {
+    display: none;
+  }
+
+  .feedControl Button{
+    display: none;
+  }
+}
+
+.contenedorPrincipal{
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  padding: 2rem;
+  background-color:rgba(241, 241, 241, 0.761);
+}
+
+.contenedorSecundario{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Nuevo post */
+
+.postContanierContenido{
+  display: flexbox;
+  flex-direction: row;
+  align-items: center;
+}
+
+.nuevoPostUserImage{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-color: solid black 2px;
+  margin-right: 1rem;
+  border-color: #ccc;
+  background-color: green;
+}
+
+/* Feed */
+.feedContainers {
+  border: 1px solid #ccccccd1;
+  background-color: white;
+  border-radius: 8px;
+  width: 60vw;
+  padding: 1rem;
+  margin: 1rem;
+}
+
+@media only screen and (max-width: 1040px) {
+  .feedContainers {
+    width: 95vw;
+    margin: 0.5rem;
+  }
+}
+
+.feedControl {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* background-color: yellow; */
+}
+
+
+/* Contenido adicional */
+
+.contenidoAdicional {
+  /* background-color: wheat; */
+  width: 30vw;
+}
+
+.contenidoAdicional div {
+  width: 85%
+}
