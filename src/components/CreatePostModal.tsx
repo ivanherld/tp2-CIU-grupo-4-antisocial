@@ -122,7 +122,7 @@ export default function CreatePostModal({ tagsApiUrl = '/api/tags' }: CreatePost
     <>
       {/* Botón que abre el modal */}
       <Container className="d-flex justify-content-center my-3">
-      <Button variant="primary" onClick={handleShow}>
+      <Button variant="outline-success" onClick={handleShow}>
         + Crear Post
       </Button>
       </Container>

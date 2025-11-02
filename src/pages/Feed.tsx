@@ -6,10 +6,11 @@ import PostCard, { type PostProps } from "../components/Post";
 // import CreatePostModal from "../components/CreatePostModal";
 import styles from "./Feed.module.css"
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import { TrendingCard } from "../components/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard";
+import {CreatePost2} from "../components/CreatePost2";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
+import FeedNav from "../components/FeedNav";
 
 export default function Feed() {
   const [lgSlides, setSlides] = useState(3);
@@ -58,24 +59,11 @@ export default function Feed() {
 
   return (
     <main>
+      <FeedNav />
       <div className={styles.contenedorPrincipal} id="filas">
         {/* <CreatePostModal /> */}
         <div className={styles.contenedorSecundario} id="columna1">
-          <div className={styles.feedContainers}>
-            <div className={styles.postContainerContenido}>
-              <div className={styles.nuevoPostUserImage}>
-                U
-              </div>
-              <Form>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Control type="search" placeholder="En que estas pensando ?" />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Form>
-            </div>
-          </div>
+          <CreatePost2/>
           <div className={styles.feedContainers}>
             <Container className="py-4">
               <div className={styles.feedControl}>
