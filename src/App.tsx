@@ -22,7 +22,6 @@ function App() {
             <Route path='/register' element={<Register/>}/>
           </Route>
 
-
           
             <Route path='/feed' element={<Feed/>}/>
             <Route path='/profile' element={

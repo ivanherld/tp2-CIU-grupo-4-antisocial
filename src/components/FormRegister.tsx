@@ -70,6 +70,7 @@ export default function FormRegister() {
         localStorage.setItem("token", loginRes.data.token);
       }
       login({username});
+      
       const user = { username };
       setUsuario(user);
       navigate("/feed");
