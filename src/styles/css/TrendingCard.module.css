@@ -1,0 +1,47 @@
+.trendingCard {
+  width: 100%;
+  text-align: left;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background: transparent;
+  border: none;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: background-color 0.2s ease;
+  border-radius: 0.5rem;
+}
+
+.trendingCard:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.content {
+  flex: 1;
+}
+
+.label {
+  color: #666;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+}
+
+.topic {
+  color: #333;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.trendingCard:hover .topic {
+  color: #7ED321;
+}
+
+.posts {
+  color: #666;
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  margin-top: 0.25rem;
+}
