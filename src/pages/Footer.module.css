@@ -1,0 +1,72 @@
+.footer {
+  background: #0f1724;
+  color: #cbd5e1;
+  padding: 16px 0;
+  font-size: 14px;
+
+  /* NO fixed - queda al final del contenido */
+  position: relative; /* o simplemente borrá la línea position */
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 32px; /* espacio arriba del footer */;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  font-weight: 600;
+}
+
+.nav a {
+  margin-left: 12px;
+  color: #cbd5e1;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.copy {
+  opacity: 0.8;
+}
+
+.logo {
+    height: 50px; 
+    width: auto;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .footer {
+    padding-bottom: 84px; /* espacio para que la bottom nav no tape el footer */
+  }
+  .container {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row; /* Links horizontales */
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .nav a {
+    margin-left: 0;
+  }
+
+  .logo {
+    height: 40px;
+  }
+}

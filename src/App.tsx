@@ -8,6 +8,9 @@ import PublicLayout from './components/PublicLayout';
 import PrivateLayout from './components/PrivateLayout';
 import Inicio from './pages/Inicio';
 import Nosotros from './pages/Nosotros';
+import About from './pages/About';
+import Terms from './pages/Terms';
+import Help from './pages/Help';
 
 function App() {
   //no se a quienes deberia envolver AuthProvider
@@ -20,6 +23,9 @@ function App() {
             <Route path='/nosotros' element={<Nosotros/>}/>
             <Route path='/login' element={<LogIn/>}/>
             <Route path='/register' element={<Register/>}/>
+            <Route path='/about' element={<About/>}/>
+            <Route path='/terms' element={<Terms/>}/>
+            <Route path='/help' element={<Help/>}/>
           </Route>
 
           
