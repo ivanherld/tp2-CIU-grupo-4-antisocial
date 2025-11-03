@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { Home, Search, Moon, Sun, LogOut, X } from "lucide-react";
+import styles from "./Sidebar.module.css";
+import SearchModal from "./SearchModal";
 
 function Sidebar({
   currentUser,
@@ -27,12 +29,30 @@ function Sidebar({
   // Buscar por tag
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  
+  // Detectar si estamos en mobile
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 900);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   function doSearch() {
     const q = query.trim();
     if (!q) return;
     navigate(`/feed?tag=${encodeURIComponent(q)}`);
     setSearchOpen(false);
     setQuery("");
+  }
+
+  function handleSearchClick() {
+    setSearchOpen(true);
   }
 
   // Logout
@@ -43,99 +63,113 @@ function Sidebar({
   }
 
   return (
-    <div style={{ width: 260 }}>
-      <Card className="mb-3">
-        <Card.Body className="d-flex align-items-center gap-2">
-          <Image
-            src={currentUser?.avatarUrl ?? "https://i.pravatar.cc/80?img=5"}
-            roundedCircle
-            width={56}
-            height={56}
-            alt="avatar"
-          />
-          <div>
-            <div className="fw-semibold">{currentUser?.displayName ?? "Tú"}</div>
-            <div className="text-muted">@{currentUser?.username ?? "usuario"}</div>
-          </div>
-        </Card.Body>
-      </Card>
+    <>
+      <div className={styles.sidebar}>
+        <Card className={`mb-3 ${styles.profileCard}`}>
+          <Card.Body className="d-flex align-items-center gap-2">
+            <Image
+              src={currentUser?.avatarUrl ?? "https://i.pravatar.cc/80?img=5"}
+              roundedCircle
+              width={56}
+              height={56}
+              alt="avatar"
+            />
+            <div>
+              <div className="fw-semibold">{currentUser?.displayName ?? "Tú"}</div>
+              <div className="text-muted">@{currentUser?.username ?? "usuario"}</div>
+            </div>
+          </Card.Body>
+        </Card>
 
-      <Card className="mb-3">
-        <Card.Body className="p-0">
-          <ListGroup variant="flush">
-            <ListGroup.Item>
-              <Button
-                variant="outline-secondary"
-                className="w-100 d-flex align-items-center justify-content-start gap-2"
-                onClick={() => navigate("/feed")}
-              >
-                <Home size={18} />
-                Inicio
-              </Button>
-            </ListGroup.Item>
-
-            <ListGroup.Item>
-              {!searchOpen ? (
+        <Card className={`mb-3 ${styles.menuCard}`}>
+          <Card.Body className="p-0">
+            <ListGroup variant="flush">
+              <ListGroup.Item>
                 <Button
                   variant="outline-secondary"
                   className="w-100 d-flex align-items-center justify-content-start gap-2"
-                  onClick={() => setSearchOpen(true)}
+                  onClick={() => navigate("/feed")}
                 >
-                  <Search size={18} />
-                  Buscar por tag
+                  <Home size={18} />
+                  <span>Inicio</span>
                 </Button>
-              ) : (
-                <InputGroup>
-                  <Form.Control
-                    placeholder="#tag"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && doSearch()}
-                    autoFocus
-                  />
-                  <Button variant="primary" onClick={doSearch}>
-                    <Search size={16} />
-                  </Button>
+              </ListGroup.Item>
+
+              <ListGroup.Item>
+                {!isMobile && !searchOpen ? (
                   <Button
                     variant="outline-secondary"
-                    onClick={() => {
-                      setSearchOpen(false);
-                      setQuery("");
-                    }}
+                    className="w-100 d-flex align-items-center justify-content-start gap-2"
+                    onClick={handleSearchClick}
                   >
-                    <X size={16} />
+                    <Search size={18} />
+                    <span>Buscar por tag</span>
                   </Button>
-                </InputGroup>
-              )}
-            </ListGroup.Item>
+                ) : !isMobile && searchOpen ? (
+                  <InputGroup>
+                    <Form.Control
+                      placeholder="#tag"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && doSearch()}
+                      autoFocus
+                    />
+                    <Button variant="primary" onClick={doSearch}>
+                      <Search size={16} />
+                    </Button>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() => {
+                        setSearchOpen(false);
+                        setQuery("");
+                      }}
+                    >
+                      <X size={16} />
+                    </Button>
+                  </InputGroup>
+                ) : (
+                  <Button
+                    variant="outline-secondary"
+                    className="w-100 d-flex align-items-center justify-content-start gap-2"
+                    onClick={handleSearchClick}
+                  >
+                    <Search size={18} />
+                    <span>Buscar por tag</span>
+                  </Button>
+                )}
+              </ListGroup.Item>
 
-            <ListGroup.Item>
-              <Button
-                variant="outline-secondary"
-                className="w-100 d-flex align-items-center justify-content-start gap-2"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              >
-                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-                {theme === "dark" ? "Modo claro" : "Modo oscuro"}
-              </Button>
-            </ListGroup.Item>
+              <ListGroup.Item>
+                <Button
+                  variant="outline-secondary"
+                  className="w-100 d-flex align-items-center justify-content-start gap-2"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                >
+                  {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                  <span>{theme === "dark" ? "Modo claro" : "Modo oscuro"}</span>
+                </Button>
+              </ListGroup.Item>
 
-            <ListGroup.Item>
-              <Button 
-                variant="outline-danger" 
-                className="w-100 d-flex align-items-center justify-content-start gap-2" 
-                onClick={handleLogout}
-              >
-                <LogOut size={18} />
-                Cerrar sesión
-              </Button>
-            </ListGroup.Item>
-          </ListGroup>
-        </Card.Body>
-      </Card>
+              <ListGroup.Item>
+                <Button 
+                  variant="outline-danger" 
+                  className="w-100 d-flex align-items-center justify-content-start gap-2" 
+                  onClick={handleLogout}
+                >
+                  <LogOut size={18} />
+                  <span>Cerrar sesión</span>
+                </Button>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card.Body>
+        </Card>
 
-      <small className="text-muted d-block mt-3">Unahur Anti-Social • Demo</small>
-    </div>
+        <small className={`text-muted d-block mt-3 ${styles.demoText}`}>Unahur Anti-Social • Demo</small>
+      </div>
+
+      {/* Modal de búsqueda para mobile */}
+      <SearchModal show={isMobile && searchOpen} onHide={() => setSearchOpen(false)} />
+    </>
   );
 }
 

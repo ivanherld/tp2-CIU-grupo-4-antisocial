@@ -23,7 +23,6 @@ type Post = {
   comments?: Comment[];
 };
 type FollowCounts = { followers: number; following: number };
-
 // Datos mock
 const mockUser: User = {
   id: "u1",
@@ -73,6 +72,8 @@ export default function UserProfile() {
   const [counts, setCounts] = useState<FollowCounts>({ followers: 42, following: 10 });
   const [posts, setPosts] = useState<Post[]>(mockPosts);
   const [isFollowing, setIsFollowing] = useState(false);
+  const currentUsername = "tucorreo";
+  const isOwn = user.username === currentUsername;
 
   function handleFollowToggle() {
     setIsFollowing((s) => {
@@ -104,7 +105,7 @@ export default function UserProfile() {
       <div className={styles.sidebar}>
         <Sidebar
           currentUser={{
-            username: "tucorreo",
+            username: currentUsername,
             displayName: "Tú",
             avatarUrl: "https://i.pravatar.cc/80?img=5",
           }}
@@ -116,8 +117,8 @@ export default function UserProfile() {
           user={user}
           counts={counts}
           posts={posts}
-          currentUser={{ username: "tucorreo" }}
           isFollowing={isFollowing}
+          isOwn={isOwn}
           onFollowToggle={handleFollowToggle}
           onAddComment={handleAddComment}
         />

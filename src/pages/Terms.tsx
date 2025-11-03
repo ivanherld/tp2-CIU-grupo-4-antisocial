@@ -4,8 +4,8 @@ import Footer from "../components/Footer";
 export default function Terms() {
   return (
     <>
-      <Container style={{ maxWidth: 900, paddingTop: 24, paddingBottom: 48 }}>
-        <h1>Términos y condiciones</h1>
+      <Container style={{ maxWidth: 900, paddingTop: 24, paddingBottom: 48, paddingLeft: 16, paddingRight: 16 }}>
+        <h1 style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)" }}>Términos y condiciones</h1>
         <p>
           Esta es una aplicación de ejemplo con fines educativos. No almacena datos reales
           ni ofrece garantías. El uso es bajo tu propia responsabilidad.

@@ -43,3 +43,30 @@
     height: 50px; 
     width: auto;
 }
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .footer {
+    padding-bottom: 84px; /* espacio para que la bottom nav no tape el footer */
+  }
+  .container {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row; /* Links horizontales */
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .nav a {
+    margin-left: 0;
+  }
+
+  .logo {
+    height: 40px;
+  }
+}

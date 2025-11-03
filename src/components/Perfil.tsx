@@ -27,6 +27,7 @@ type PerfilProps = {
   posts: Post[];
   currentUser?: { username?: string } | null;
   isFollowing?: boolean;
+  isOwn?: boolean;
   onFollowToggle?: () => void;
   onAddComment?: (postId: string, content: string) => void;
 };
@@ -35,39 +36,66 @@ export default function Perfil({
   user,
   counts,
   posts,
-  currentUser,
   isFollowing,
+  isOwn,
   onFollowToggle,
   onAddComment,
 }: PerfilProps) {
+  const postsCount = posts?.length ?? 0;
   return (
     <main className={styles.profile}>
       <header className={styles.header}>
-        <img
-          className={styles.avatar}
-          src={user.avatarUrl ?? "/default-avatar.png"}
-          alt={`${user.username} avatar`}
-        />
-        <div className={styles.meta}>
-          <h1 className={styles.displayName}>
-            {user.displayName ?? user.username}
-          </h1>
-          <p className={styles.username}>@{user.username}</p>
-          {user.bio && <p className={styles.bio}>{user.bio}</p>}
-          <div className={styles.counts}>
-            <span>{counts?.followers ?? 0} seguidores</span>
-            <span>{counts?.following ?? 0} siguiendo</span>
+        <div className={styles.avatarCol}>
+          <img
+            className={styles.avatar}
+            src={user.avatarUrl ?? "/default-avatar.png"}
+            alt={`${user.username} avatar`}
+          />
+          <div className={styles.nameBlock}>
+            <h1 className={styles.displayName}>
+              {user.displayName ?? user.username}
+            </h1>
+            <p className={styles.username}>@{user.username}</p>
           </div>
         </div>
+        <div className={styles.meta}>
+          <div className={styles.counts}>
+            <div className={styles.countItem}>
+              <div className={styles.countNumber}>{postsCount}</div>
+              <div className={styles.countLabel}>publicaciones</div>
+            </div>
+            <div className={styles.countItem}>
+              <div className={styles.countNumber}>{counts?.followers ?? 0}</div>
+              <div className={styles.countLabel}>seguidores</div>
+            </div>
+            <div className={styles.countItem}>
+              <div className={styles.countNumber}>{counts?.following ?? 0}</div>
+              <div className={styles.countLabel}>siguiendo</div>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        {currentUser?.username !== user.username && onFollowToggle && (
-          <div className={styles.actions}>
+      {user.bio && <p className={styles.bio}>{user.bio}</p>}
+
+      <div className={styles.actions}>
+        {isOwn ? (
+          <>
+            <button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)" }}>
+              Editar perfil
+            </button>
+            <button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)", marginLeft: 8 }}>
+              Compartir
+            </button>
+          </>
+        ) : (
+          onFollowToggle && (
             <button className={styles.followBtn} onClick={onFollowToggle}>
               {isFollowing ? "Dejar de seguir" : "Seguir"}
             </button>
-          </div>
+          )
         )}
-      </header>
+      </div>
 
       <section className={styles.feed}>
         {posts.length === 0 ? (
