@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import styles from "./LogIn.module.css"
+// import styles from "./LogIn.module.css"
 import antisocialnet from "../assets/antisocialnet.jpg";
 //import antisocialpng from "../assets/antisocialpng.png";
 import FormRegister from "../components/FormRegister";

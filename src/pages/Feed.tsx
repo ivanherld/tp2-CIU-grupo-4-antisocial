@@ -9,10 +9,10 @@ import { SuggestCard } from "../components/SuggestCard";
 import { CreatePost } from "../components/CreatePost";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import FeedNav from "../components/FeedNav";
-import { useAuth } from "../context/AuthProvider";
+// import { useAuth } from "../context/AuthProvider";
 
 export default function Feed() {
-  const { usuario, logout } = useAuth();
+  // const { usuario, logout } = useAuth();
   const [lgSlides, setSlides] = useState(3);
   useEffect(() => {
     document.title = "Feed - Unahur Anti-Social Net";
@@ -61,7 +61,7 @@ export default function Feed() {
     <main>
       <FeedNav />
       <div className={styles.contenedorPrincipal} id="filas">
-        <h1>Feed</h1>
+        {/* <h1>Feed</h1>
         {usuario && (
           <Container>
             <h2>Bienvenido, {usuario.username}!</h2>
@@ -69,7 +69,7 @@ export default function Feed() {
               Cerrar sesión
             </Button>
           </Container>
-        )}
+        )} */}
         <div className={styles.contenedorSecundario} id={styles.columna1}>
           <CreatePost />
           <div className={styles.feedContainers}>
