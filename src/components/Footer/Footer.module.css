@@ -8,7 +8,6 @@
   position: relative; /* o simplemente borrá la línea position */
   width: 100%;
   box-sizing: border-box;
-  margin-top: 32px; /* espacio arriba del footer */;
 }
 
 .container {
@@ -19,6 +18,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }
 
 .brand {
@@ -45,9 +45,10 @@
 }
 
 /* Responsive para móviles */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .footer {
-    padding-bottom: 84px; /* espacio para que la bottom nav no tape el footer */
+    padding-top: 60px;
+    padding-bottom: 60px; /* espacio para que la bottom nav no tape el footer */
   }
   .container {
     flex-direction: column;
@@ -67,6 +68,6 @@
   }
 
   .logo {
-    height: 40px;
+    height: 50px;
   }
 }

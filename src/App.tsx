@@ -11,6 +11,7 @@ import Nosotros from './pages/Nosotros';
 import About from './pages/About';
 import Terms from './pages/Terms';
 import Help from './pages/Help';
+import Footer from './components/Footer/Footer';
 
 function App() {
   //no se a quienes deberia envolver AuthProvider
@@ -38,6 +39,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
+      <Footer/>
     </>
   )
 }

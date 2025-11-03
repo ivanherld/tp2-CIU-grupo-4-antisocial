@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Perfil from "../components/Perfil";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import styles from "./UserProfile.module.css";
 
 
@@ -124,8 +123,6 @@ export default function UserProfile() {
         />
       </div>
     </div>
-
-    <Footer />
   </>
 );
 }
