@@ -5,11 +5,17 @@
   border-bottom: 1px solid #ffffff;
   /* background-color: red; */
 }
-.navTitle{
+
+#navTitle{
   color: #333;
   text-decoration: none;
   font-size: 1.5rem;
   padding-left: 10px;
+}
+
+#navTitle:hover {
+  color: #7ED321;
+  opacity: 0.95;
 }
 
 .navLinks{
@@ -36,11 +42,28 @@
 }
 
 
-.user{
+.userContainer{
   display: flex;
   align-items: center;
-  width: 20%;
+  justify-content: flex-end;
+  width: 25%;
   gap: 15px;
   padding-right: 10px;
   /* background-color: turquoise; */
 }
+
+.userIcon{
+  height: 40px;
+  width: 40px;
+}
+
+.iconContainer :hover {
+  color: #7ED321 !important;
+  opacity: 0.95 !important;
+  cursor: pointer;
+}
+
+.Navbar .Navbar.Brand :hover {
+  color: #7ED321;
+  opacity: 0.95;
+} 

@@ -3,12 +3,11 @@ import { Container, Row, Col, Spinner } from "react-bootstrap";
 import { useInfinitePosts } from "../hooks/useInfinitePosts";
 import type { Post as APIDataPost } from "../hooks/useInfinitePosts";
 import PostCard, { type PostProps } from "../components/Post";
-// import CreatePostModal from "../components/CreatePostModal";
 import styles from "./Feed.module.css"
 import Button from 'react-bootstrap/Button';
 import { TrendingCard } from "../components/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard";
-import {CreatePost2} from "../components/CreatePost2";
+import {CreatePost} from "../components/CreatePost";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import FeedNav from "../components/FeedNav";
 
@@ -61,9 +60,8 @@ export default function Feed() {
     <main>
       <FeedNav />
       <div className={styles.contenedorPrincipal} id="filas">
-        {/* <CreatePostModal /> */}
-        <div className={styles.contenedorSecundario} id="columna1">
-          <CreatePost2/>
+        <div className={styles.contenedorSecundario} id={styles.columna1}>
+          <CreatePost/>
           <div className={styles.feedContainers}>
             <Container className="py-4">
               <div className={styles.feedControl}>
@@ -119,7 +117,7 @@ export default function Feed() {
             </Container>
           </div>
         </div>
-        <div className={styles.contenedorSecundario} id="columna2">
+        <div className={styles.contenedorSecundario} id={styles.columna2}>
           <aside className={styles.contenidoAdicional}>
             <div className={styles.feedContainers} id="tendencias">
               <div className="titulo">

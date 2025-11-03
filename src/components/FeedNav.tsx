@@ -8,11 +8,14 @@ import CreatePostModal from './CreatePostModal';
 
 
 function FeedNav() {
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   return (
     <>
       <Navbar collapseOnSelect expand='lg' className="bg-body-tertiary mb-3" sticky='top'>
         <Container fluid>
-          <Navbar.Brand as={NavLink} to='/feed'>Anti-Social-Net</Navbar.Brand>
+          <Navbar.Brand id={styles.navTitle} as={NavLink} to='/feed'>Anti-Social-Net</Navbar.Brand>
           <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-lg`} />
           <Navbar.Offcanvas
             id={`offcanvasNavbar-expand-lg`}
@@ -21,12 +24,12 @@ function FeedNav() {
           >
             <Offcanvas.Header closeButton>
               <Offcanvas.Title id={`offcanvasNavbarLabel-expand-lg`}>
-                Anti-Social-Net
+                User Name and pic
               </Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className={styles.navLinks}>
-                <Nav.Link className={styles.navButton} as={NavLink} to='/feed'>
+                <Nav.Link onClick={()=>scrollToTop()} className={styles.navButton} as={NavLink} to='/feed'>
                   <House />
                   Home
                 </Nav.Link>
@@ -42,9 +45,11 @@ function FeedNav() {
                   Mensajes
                 </Nav.Link>
               </Nav>
-              <Container fluid className={styles.user}>
+              <Container fluid className={styles.userContainer}>
                 <CreatePostModal />
-                <User />
+                <div className={styles.iconContainer}>
+                  <User className={styles.userIcon}/>
+                </div>
               </Container>
             </Offcanvas.Body>
           </Navbar.Offcanvas>
