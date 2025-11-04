@@ -4,6 +4,14 @@
   max-width: 260px;
 }
 
+.menuCard {
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+.demoText {
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
 /* Mobile: convertir a bottom navbar */
 @media (max-width: 900px) {
   .sidebar {

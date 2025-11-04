@@ -21,9 +21,9 @@ function SearchModal({ show, onHide }: SearchModalProps) {
   }
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={onHide} centered style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>
       <Modal.Header closeButton>
-        <Modal.Title>Buscar por tag</Modal.Title>
+        <Modal.Title style={{fontWeight:"700"}}>Buscar por tag</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <InputGroup>

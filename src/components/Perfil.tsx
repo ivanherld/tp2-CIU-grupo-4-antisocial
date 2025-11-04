@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "../pages/UserProfile.module.css";
+import { Button } from "react-bootstrap";
 
 type User = {
   id: string;
@@ -43,7 +44,7 @@ export default function Perfil({
 }: PerfilProps) {
   const postsCount = posts?.length ?? 0;
   return (
-    <main className={styles.profile}>
+    <main className={`px-4 px-md-5 ${styles.profile}`}>
       <header className={styles.header}>
         <div className={styles.avatarCol}>
           <img
@@ -58,6 +59,7 @@ export default function Perfil({
             <p className={styles.username}>@{user.username}</p>
           </div>
         </div>
+
         <div className={styles.meta}>
           <div className={styles.counts}>
             <div className={styles.countItem}>
@@ -74,27 +76,32 @@ export default function Perfil({
             </div>
           </div>
         </div>
+
       </header>
 
-      {user.bio && <p className={styles.bio}>{user.bio}</p>}
+      <div className={styles.line}>
+        {user.bio && <p className={styles.bio}>{user.bio}</p>}
 
-      <div className={styles.actions}>
-        {isOwn ? (
-          <>
-            <button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)" }}>
-              Editar perfil
-            </button>
-            <button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)", marginLeft: 8 }}>
-              Compartir
-            </button>
-          </>
-        ) : (
-          onFollowToggle && (
-            <button className={styles.followBtn} onClick={onFollowToggle}>
-              {isFollowing ? "Dejar de seguir" : "Seguir"}
-            </button>
-          )
-        )}
+        <div>
+            {isOwn ? (
+              <>
+                <Button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)" }}>
+                  Editar perfil
+                </Button>
+                <Button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)", marginLeft: 8 }}>
+                  Compartir
+                </Button>
+              </>
+            ) : (
+              onFollowToggle && (
+                <div className="d-grid gap-2 mb-2">
+                  <Button className={styles.followBtn} onClick={onFollowToggle}>
+                    {isFollowing ? "Dejar de seguir" : "Seguir"}
+                  </Button>
+                </div>
+              )
+            )}
+        </div>
       </div>
 
       <section className={styles.feed}>
@@ -173,9 +180,9 @@ function CommentForm({
         className={styles.commentInput}
         disabled={sending}
       />
-      <button type="submit" disabled={sending || !value.trim()}>
+      <Button type="submit" disabled={sending || !value.trim()} variant="secondary">
         {sending ? "Enviando..." : "Comentar"}
-      </button>
+      </Button>
     </form>
   );
 }

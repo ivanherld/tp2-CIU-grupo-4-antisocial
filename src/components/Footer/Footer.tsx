@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 function Footer() {
     return (
         <footer className={styles.footer}>
-            <div className={styles.container}>
+            <div className={styles.containerFooter}>
                 <span className={styles.brand}><img src={logo} alt="logo" className={styles.logo} /></span>
                 <small className={styles.copy}>© {new Date().getFullYear()} Grupo 4 CIU</small>
                 <nav className={styles.nav}>

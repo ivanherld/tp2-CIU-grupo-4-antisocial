@@ -62,6 +62,8 @@ function Sidebar({
     navigate("/");
   }
 
+  const fuente = {fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}
+
   return (
     <>
       <div className={styles.sidebar}>
@@ -75,8 +77,8 @@ function Sidebar({
               alt="avatar"
             />
             <div>
-              <div className="fw-semibold">{currentUser?.displayName ?? "Tú"}</div>
-              <div className="text-muted">@{currentUser?.username ?? "usuario"}</div>
+              <div className="fw-semibold" style={fuente}>{currentUser?.displayName ?? "Tú"}</div>
+              <div className="text-muted" style={fuente}>@{currentUser?.username ?? "usuario"}</div>
             </div>
           </Card.Body>
         </Card>
