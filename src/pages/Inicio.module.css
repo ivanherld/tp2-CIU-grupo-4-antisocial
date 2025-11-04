@@ -1,0 +1,84 @@
+.inicioContainer {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.portada {
+    margin-bottom: 3rem;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+.portada h1 {
+    font-size: 2.5rem;
+}
+
+/* Scopings: avoid styling every <span> globally (affects other components).
+   Target only spans inside the portada area (the homepage hero). */
+.portada span {
+    color: #5fa92c;
+}
+
+.botones {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.loginBtn, .registerBtn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.loginBtn {
+    background-color: #3aa4cc;
+    color: white;
+}
+
+.loginBtn:hover {
+    background-color: #2563eb;
+}
+
+.registerBtn {
+    background-color: transparent;
+    border: 2px solid #3aa4cc;
+    color: #3aa4cc;
+}
+
+
+.registerBtn:hover {
+    background-color: #3aa4cc;
+    color: white;
+}
+
+.info {
+    margin-top: 4rem;
+    background-color: #f0f2f5;
+    padding: 2rem;
+    border-radius: 12px;
+    display: inline-block;
+    text-align: left;
+    font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+.info h2 {
+    font-size: 1.8rem;
+    color: #5fa92c;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info li {
+    font-size: 1.1rem;
+    margin: 0.8rem 0;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
