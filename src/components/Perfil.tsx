@@ -29,6 +29,7 @@ type PerfilProps = {
   isFollowing?: boolean;
   isOwn?: boolean;
   onFollowToggle?: () => void;
+  isProcessing?: boolean;
   onAddComment?: (postId: string, content: string) => void;
 };
 
@@ -39,6 +40,7 @@ export default function Perfil({
   isFollowing,
   isOwn,
   onFollowToggle,
+  isProcessing,
   onAddComment,
 }: PerfilProps) {
   const postsCount = posts?.length ?? 0;
@@ -90,8 +92,8 @@ export default function Perfil({
           </>
         ) : (
           onFollowToggle && (
-            <button className={styles.followBtn} onClick={onFollowToggle}>
-              {isFollowing ? "Dejar de seguir" : "Seguir"}
+            <button className={styles.followBtn} onClick={onFollowToggle} disabled={!!(isProcessing)}>
+              {isProcessing ? "Procesando..." : (isFollowing ? "Dejar de seguir" : "Seguir")}
             </button>
           )
         )}

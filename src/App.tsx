@@ -30,7 +30,11 @@ function App() {
 
           
             <Route path='/feed' element={<Feed/>}/>
-            <Route path='/profile' element={
+            <Route path="/users/:username" element={
+              <PrivateLayout>
+                <UserProfile/>
+              </PrivateLayout>} />
+            <Route path='profile/me' element={
               <PrivateLayout>
                 <UserProfile/>
               </PrivateLayout>}/>

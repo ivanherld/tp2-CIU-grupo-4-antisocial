@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, type ReactNode } from "react";
 import { AuthContext } from "./AuthContext";
-import type { Usuario } from "../types/Usuario.ts";
+import api from '../api';
+import type { Usuario, LoginResponse } from "../types/Usuario";
 
 
 
@@ -36,14 +37,55 @@ export default function AuthProvider({children}: AuthProviderProps) {
     //* Borramos el usuario del LocalStorage
     const logout = () => {
         setUsuario(null);
+        // remove persisted user and token, and clear axios auth header
         localStorage.removeItem("usuario");
+        localStorage.removeItem('token');
+        if (api.defaults.headers.common['Authorization']) {
+            delete api.defaults.headers.common['Authorization'];
+        }
     }
+
+    // Centralized helpers -------------------------------------------------
+    const loginWithToken = async (token: string) : Promise<Usuario | null> => {
+        try {
+            localStorage.setItem('token', token);
+            // set axios header for immediate subsequent requests
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            // obtain profile from server
+            const profileRes = await api.get<Usuario>('/auth/me');
+            const usuarioObj = profileRes.data;
+            setUsuario(usuarioObj);
+            localStorage.setItem('usuario', JSON.stringify(usuarioObj));
+            return usuarioObj;
+        } catch (err) {
+            // if profile fetch fails, clear token
+            localStorage.removeItem('token');
+            return null;
+        }
+    };
+
+    const loginWithCredentials = async (username: string, password: string): Promise<Usuario | null> => {
+        const res = await api.post<LoginResponse>('/auth/login', { username, password });
+        const token = res.data.token;
+        // if server returns user in body use it directly
+        if (res.data.user) {
+            const user = res.data.user;
+            localStorage.setItem('token', token);
+            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            setUsuario(user);
+            localStorage.setItem('usuario', JSON.stringify(user));
+            return user;
+        }
+        // otherwise use token to fetch profile
+        return loginWithToken(token);
+    };
 
 
     return (
-        <AuthContext.Provider value={{usuario, setUsuario, cargando, setCargando, login, logout}}>
+        <AuthContext.Provider value={{usuario, setUsuario, cargando, setCargando, login, logout, loginWithCredentials, loginWithToken}}>
             {children}
-        </AuthContext.Provider> 
+        </AuthContext.Provider>
     )
 }
 

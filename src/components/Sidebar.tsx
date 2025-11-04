@@ -1,7 +1,7 @@
 import { Card, Image, Button, ListGroup, InputGroup, Form } from "react-bootstrap";
-import { useEffect, useMemo, useState, useContext } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthProvider";
 import { Home, Search, Moon, Sun, LogOut, X } from "lucide-react";
 import styles from "./Sidebar.module.css";
 import SearchModal from "./SearchModal";
@@ -12,7 +12,8 @@ function Sidebar({
   currentUser?: { username?: string; displayName?: string; avatarUrl?: string } | null;
 }) {
   const navigate = useNavigate();
-  const { setUsuario } = useContext(AuthContext);
+  // use the centralized logout helper from the provider
+  const { logout } = useAuth();
 
   // Dark mode simple con Bootstrap 5.3
   const initialTheme = useMemo<"light" | "dark">(() => {
@@ -57,8 +58,8 @@ function Sidebar({
 
   // Logout
   function handleLogout() {
-    localStorage.removeItem("token");
-    setUsuario(null);
+    // call provider logout which clears usuario, token and axios header
+    logout();
     navigate("/");
   }
 

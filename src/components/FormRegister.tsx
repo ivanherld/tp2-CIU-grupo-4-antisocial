@@ -1,14 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
-import { AuthContext } from "../context/AuthContext";
+// auth context not required here; using useAuth helper instead
 import { Container } from "react-bootstrap";
 import api from "../api";
-import type { LoginResponse } from "../types/Usuario";
 import { useAuth } from '../context/AuthProvider';
 
 interface NewUser {
@@ -25,9 +24,8 @@ export default function FormRegister() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { setUsuario } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { loginWithCredentials } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,19 +58,8 @@ export default function FormRegister() {
       const newUser: NewUser = { username, email, password };
       await api.post("/auth/register", newUser);
 
-      //*Login inmediato
-      const loginRes = await api.post<LoginResponse>("/auth/login", {
-        username,
-        password,
-      });
-
-      if (loginRes?.data?.token) {
-        localStorage.setItem("token", loginRes.data.token);
-      }
-      login({username});
-      
-      const user = { username };
-      setUsuario(user);
+      //*Login inmediato usando el helper centralizado
+      await loginWithCredentials(username, password);
       navigate("/feed");
     } catch (err: any) {
       setError(err.message || "Error al registrar el usuario");

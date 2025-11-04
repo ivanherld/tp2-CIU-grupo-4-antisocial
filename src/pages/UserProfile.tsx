@@ -3,7 +3,10 @@ import Perfil from "../components/Perfil";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
 import styles from "./UserProfile.module.css";
-
+import { useAuth } from "../context/AuthProvider";
+import { useNavigate, useParams, useLocation } from "react-router";
+import api from "../api";
+import axios from "axios";
 
 type User = {
   id: string;
@@ -23,64 +26,253 @@ type Post = {
   comments?: Comment[];
 };
 type FollowCounts = { followers: number; following: number };
-// Datos mock
-const mockUser: User = {
-  id: "u1",
-  username: "juanperez",
-  displayName: "Juan Pérez",
-  avatarUrl: "https://i.pravatar.cc/150?img=12",
-  bio: "Estudiante de la UNAHUR. Me gusta programar y tomar mate.",
-};
-
-const mockPosts: Post[] = [
-  {
-    id: "p1",
-    content: "Hoy programé mi primer proyecto con React + TypeScript 🎉",
-    createdAt: new Date().toISOString(),
-    author: mockUser,
-    tags: [{ id: "t1", name: "react" }, { id: "t2", name: "typescript" }],
-    comments: [
-      {
-        id: "c1",
-        content: "¡Buenísimo! Felicitaciones :)",
-        createdAt: new Date().toISOString(),
-        author: {
-          id: "u2",
-          username: "ana",
-          displayName: "Ana",
-          avatarUrl: "https://i.pravatar.cc/150?img=32",
-        },
-      },
-    ],
-  },
-  {
-    id: "p2",
-    content: "Les dejo un tip para debuggear componentes: usar React DevTools.",
-    createdAt: new Date().toISOString(),
-    author: mockUser,
-    tags: [{ id: "t3", name: "tips" }],
-    comments: [],
-  },
-];
 
 export default function UserProfile() {
   useEffect(() => {
-    document.title = `${mockUser.username} - Unahur Anti-Social Net`;
+    document.title = `Perfil - Unahur Anti-Social Net`;
   }, []);
 
-  const [user] = useState<User>(mockUser);
-  const [counts, setCounts] = useState<FollowCounts>({ followers: 42, following: 10 });
-  const [posts, setPosts] = useState<Post[]>(mockPosts);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const currentUsername = "tucorreo";
-  const isOwn = user.username === currentUsername;
+  const { usuario: authUser, setUsuario } = useAuth();
+  const { username: paramUsername } = useParams<{ username?: string }>();
+  const location = useLocation() as unknown as {
+    state?: { initialProfile?: User };
+  };
+  const navigate = useNavigate();
 
-  function handleFollowToggle() {
-    setIsFollowing((s) => {
-      const next = !s;
-      setCounts((c) => ({ ...c, followers: c.followers + (next ? 1 : -1) }));
-      return next;
-    });
+  const initialFromLocation = location.state?.initialProfile;
+
+  // inicial: si no hay parámetro, usar el usuario autenticado; si hay parámetro, el initial viene del location o queda indefinido
+  const initialProfile: User | undefined =
+    initialFromLocation ??
+    (paramUsername ? undefined : (authUser as unknown as User) ?? undefined);
+
+  const [profile, setProfile] = useState<User | null>(initialProfile ?? null);
+  const [counts, setCounts] = useState<FollowCounts>({
+    followers: 0,
+    following: 0,
+  });
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followProcessing, setFollowProcessing] = useState(false);
+  
+  const [loading, setLoading] = useState<boolean>(!initialProfile);
+  const [error, setError] = useState<string | null>(null);
+  const [followError, setFollowError] = useState<string | null>(null);
+
+  // Simplificado: usar directamente las rutas confirmadas `/user/:id/...`.
+
+  const currentUsername = authUser?.username;
+  const isOwn = !!(
+    profile &&
+    currentUsername &&
+    profile.username.toLowerCase() === currentUsername.toLowerCase()
+  );
+
+  useEffect(() => {
+    let canceled = false;
+
+  // Si no hay nombre de usuario en la ruta -> mostrar el usuario autenticado (o redirigir si no está logueado)
+    if (!paramUsername) {
+      if (!authUser) {
+        navigate("/login");
+        return;
+      }
+      setProfile(authUser as unknown as User);
+      // también cargar contadores para el propio perfil
+      (async () => {
+        try {
+          const uid = String((authUser as any).id);
+          const [fCountRes, sCountRes] = await Promise.all([
+            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidores/count`),
+            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidos/count`),
+          ]);
+          setCounts({ followers: fCountRes.data.count, following: sCountRes.data.count });
+        } catch (e) {
+          console.warn('No se pudo cargar contadores del perfil propio', e);
+        }
+      })();
+      setLoading(false);
+      return;
+    }
+
+  // Si el parámetro coincide con el usuario autenticado, reutilizar el contexto
+    if (
+      authUser &&
+      authUser.username.toLowerCase() === paramUsername.toLowerCase()
+    ) {
+      setProfile(authUser as unknown as User);
+      // cargar contadores del propio perfil cuando se accede via username
+      (async () => {
+        try {
+          const uid = String((authUser as any).id);
+          const [fCountRes, sCountRes] = await Promise.all([
+            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidores/count`),
+            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidos/count`),
+          ]);
+          setCounts({ followers: fCountRes.data.count, following: sCountRes.data.count });
+        } catch (e) {
+          console.warn('No se pudo cargar contadores del perfil propio', e);
+        }
+      })();
+      setLoading(false);
+      return;
+    }
+
+  // Si tenemos un perfil inicial en location y coincide con el parámetro, usarlo
+    if (
+      initialFromLocation &&
+      initialFromLocation.username.toLowerCase() === paramUsername.toLowerCase()
+    ) {
+      setProfile(initialFromLocation);
+      setLoading(false);
+      return;
+    }
+
+  // De lo contrario, solicitar el perfil al servidor
+    const controller = new AbortController();
+    setLoading(true);
+    api
+      .get<User>(`/user?username=${encodeURIComponent(paramUsername)}`, {
+        signal: controller.signal,
+      })
+      .then((res) => {
+        if (canceled) return;
+        setProfile(res.data);
+        setError(null);
+        const userId = String(res.data.id);
+  // usar las rutas de la API que devuelven contadores por id
+        (async () => {
+          try {
+            const fRes = await api.get<{ count: number }>(
+              `/user/${encodeURIComponent(userId)}/seguidores/count`,
+              { signal: controller.signal }
+            );
+            const foRes = await api.get<{ count: number }>(
+              `/user/${encodeURIComponent(userId)}/seguidos/count`,
+              { signal: controller.signal }
+            );
+            if (canceled) return;
+            setCounts({
+              followers: fRes.data.count,
+              following: foRes.data.count,
+            });
+
+            // determinar si authUser sigue a este perfil obteniendo la lista de seguidores
+            if (authUser && authUser.id != null) {
+              try {
+                const listRes = await api.get<User[]>(
+                  `/user/${encodeURIComponent(userId)}/seguidores`,
+                  { signal: controller.signal }
+                );
+                if (canceled) return;
+                const authIdStr = String((authUser as any).id);
+                const isFollow = (listRes.data || []).some(
+                  (u) => String((u as any).id) === authIdStr
+                );
+                setIsFollowing(isFollow);
+              } catch (err) {
+                if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+                console.warn("No se pudo determinar isFollowing", err);
+              }
+            }
+          } catch (err) {
+            if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+            console.warn("No se pudo cargar contadores", err);
+          }
+        })();
+        setPosts([]);
+      })
+      .catch((err: unknown) => {
+        if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+        if (canceled) return;
+        setProfile(null);
+        setError("No se encontró el perfil o hubo un error");
+      })
+      .finally(() => {
+        if (!canceled) setLoading(false);
+      });
+
+    return () => {
+      canceled = true;
+      controller.abort();
+    };
+  }, [paramUsername, authUser, initialFromLocation, navigate]);
+
+ 
+  async function handleFollowToggle() {
+    if (followProcessing) return;
+    if (!authUser || !profile) {
+      navigate("/login");
+      return;
+    }
+
+  // evitar seguirse a uno mismo
+    if (String((authUser as any).id) === String((profile as any).id)) return;
+
+    setFollowProcessing(true);
+    const actorId = encodeURIComponent(String((authUser as any).id));
+    const targetId = encodeURIComponent(String((profile as any).id));
+
+    console.debug("handleFollowToggle: actor", actorId, "target", targetId, "isFollowing", isFollowing);
+  // UI optimista: invertir el estado local inmediatamente para una experiencia más rápida
+    const prevFollowing = isFollowing;
+    setIsFollowing(!prevFollowing);
+    try {
+      if (!prevFollowing) {
+        console.debug("Sending follow request");
+        await api.post(`/user/${actorId}/follow/${targetId}`);
+      } else {
+        console.debug("Sending unfollow request");
+        await api.delete(`/user/${actorId}/unfollow/${targetId}`);
+      }
+
+  // refrescar contadores usando los endpoints del servidor (/user/:id/...)
+      const uid = String((profile as any).id);
+      const fCountRes = await api.get<{ count: number }>(
+        `/user/${encodeURIComponent(uid)}/seguidores/count`
+      );
+      const sCountRes = await api.get<{ count: number }>(
+        `/user/${encodeURIComponent(uid)}/seguidos/count`
+      );
+      setCounts({
+        followers: fCountRes.data.count,
+        following: sCountRes.data.count,
+      });
+
+  // actualizar isFollowing comprobando la lista de seguidores (/user/:id/seguidores)
+      if (authUser && authUser.id != null) {
+        const followersRes = await api.get<User[]>(
+          `/user/${encodeURIComponent(uid)}/seguidores`
+        );
+        const authIdStr = String((authUser as any).id);
+        const nowFollowing = (followersRes.data || []).some((u: User) => String((u as any).id) === authIdStr);
+        setIsFollowing(nowFollowing);
+
+        // actualizar el perfil del usuario logueado (para que sus contadores/seguidos se actualicen)
+        try {
+          const meRes = await api.get<User>(`/auth/me`);
+          setUsuario(meRes.data as any);
+          localStorage.setItem('usuario', JSON.stringify(meRes.data));
+        } catch (e) {
+          // no bloquear la experiencia si falla la recarga del perfil local
+          console.warn('No se pudo actualizar el perfil local después de follow/unfollow', e);
+        }
+      }
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        navigate("/login");
+        return;
+      }
+      console.warn("Follow/unfollow error", err);
+  // revertir la actualización optimista
+      setIsFollowing(prevFollowing);
+      setFollowError("No se pudo completar la acción. Intenta de nuevo.");
+  // borrar el mensaje de error de follow después de un breve retraso
+      setTimeout(() => setFollowError(null), 5000);
+    } finally {
+      setFollowProcessing(false);
+    }
   }
 
   function handleAddComment(postId: string, content: string) {
@@ -89,43 +281,53 @@ export default function UserProfile() {
       content,
       createdAt: new Date().toISOString(),
       author: {
-        id: "me",
-        username: "tucorreo",
-        displayName: "Tú",
+        id: authUser ? String((authUser as any).id ?? "me") : "me",
+        username: authUser?.username ?? "anon",
+        displayName: authUser?.username ?? "Tú",
       },
     };
     setPosts((prev) =>
-      prev.map((p) => (p.id === postId ? { ...p, comments: [...(p.comments || []), newComment] } : p))
+      prev.map((p) =>
+        p.id === postId
+          ? { ...p, comments: [...(p.comments || []), newComment] }
+          : p
+      )
     );
   }
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-danger">{error}</div>;
+  if (!profile) return <div>No hay perfil para mostrar</div>;
+
   return (
-  <>
-    <div className={styles.layout}>
-      <div className={styles.sidebar}>
-        <Sidebar
-          currentUser={{
-            username: currentUsername,
-            displayName: "Tú",
-            avatarUrl: "https://i.pravatar.cc/80?img=5",
-          }}
-        />
+    <>
+      <div className={styles.layout}>
+        <div className={styles.sidebar}>
+          <Sidebar
+            currentUser={{
+              username: currentUsername ?? profile.username,
+              displayName: authUser?.username ?? profile.displayName ?? "Tú",
+              avatarUrl: authUser?.username ? undefined : profile.avatarUrl,
+            }}
+          />
+        </div>
+
+        <div className={styles.content}>
+          <Perfil
+            user={profile}
+            counts={counts}
+            posts={posts}
+            isFollowing={isFollowing}
+            isOwn={isOwn}
+            isProcessing={followProcessing}
+            onFollowToggle={handleFollowToggle}
+            onAddComment={handleAddComment}
+          />
+          {followError && <div className="text-danger" style={{ marginTop: 8 }}>{followError}</div>}
+        </div>
       </div>
 
-      <div className={styles.content}>
-        <Perfil
-          user={user}
-          counts={counts}
-          posts={posts}
-          isFollowing={isFollowing}
-          isOwn={isOwn}
-          onFollowToggle={handleFollowToggle}
-          onAddComment={handleAddComment}
-        />
-      </div>
-    </div>
-
-    <Footer />
-  </>
-);
+      <Footer />
+    </>
+  );
 }
