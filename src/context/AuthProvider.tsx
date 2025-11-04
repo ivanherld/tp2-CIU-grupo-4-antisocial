@@ -16,6 +16,7 @@ export default function AuthProvider({children}: AuthProviderProps) {
 
     const [usuario, setUsuario] = useState<Usuario | null>(null);
     const [cargando, setCargando] = useState(true);
+    const [following, setFollowing] = useState<Record<string, boolean>>({})
 
 
     //* Se supone que recupera el usuario guardado
@@ -37,11 +38,15 @@ export default function AuthProvider({children}: AuthProviderProps) {
     const logout = () => {
         setUsuario(null);
         localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
     }
 
+    const toggleFollow = (username: string) => {
+        setFollowing(prev => ({...prev, [username]: !prev[username]}))
+    }
 
     return (
-        <AuthContext.Provider value={{usuario, setUsuario, cargando, setCargando, login, logout}}>
+        <AuthContext.Provider value={{usuario, setUsuario, cargando, setCargando, login, logout, following, toggleFollow}}>
             {children}
         </AuthContext.Provider> 
     )

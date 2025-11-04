@@ -27,6 +27,7 @@
 .label {
   color: #666;
   font-size: clamp(0.75rem, 2vw, 0.875rem);
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }
 
 .topic {
@@ -34,14 +35,16 @@
   font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 600;
   transition: color 0.2s ease;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
 .trendingCard:hover .topic {
-  color: #7ED321;
+  color: #5fa92c;
 }
 
 .posts {
   color: #666;
   font-size: clamp(0.75rem, 2vw, 0.875rem);
   margin-top: 0.25rem;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }

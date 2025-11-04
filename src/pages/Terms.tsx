@@ -12,13 +12,13 @@ export default function Terms() {
 
   return (
     <>
-      <Container className="py-5" style={{ maxWidth: 900, margin:"0 auto"}}>
+      <Container className="py-5 py-md-4 py-lg-3 px-4 mt-4" style={{ maxWidth: 900, margin:"0 auto"}}>
         <h1 className="mb-3" style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)", fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#3b82f6" }}>Términos y condiciones</h1>
-        <p style={estilos}>
+        <p className="mb-3" style={estilos}>
           Esta es una aplicación de ejemplo con fines educativos. No almacena datos reales
           ni ofrece garantías. El uso es bajo tu propia responsabilidad.
         </p>
-        <ul style={estilos}>
+        <ul className="ps-3"style={estilos}>
           <li>No se comparten datos con terceros.</li>
           <li>Puede contener errores o comportamientos incompletos.</li>
           <li>El diseño y funcionalidades pueden cambiar sin previo aviso.</li>

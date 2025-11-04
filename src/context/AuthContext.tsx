@@ -9,6 +9,8 @@ export interface AuthContextType {
     // helpers provided by the provider
     login: (nuevoUsuario: Usuario) => void,
     logout: () => void,
+    following: Record<string, boolean>
+    toggleFollow: (username: string) => void
 } //para poder hacer el setUsuario ^ (recibe un usuario / null)
 
 export const AuthContext = createContext<AuthContextType>({
@@ -17,6 +19,7 @@ export const AuthContext = createContext<AuthContextType>({
     cargando: true,
     setCargando: () => {},
     login: () => {},
-    logout: () => {}
-    
+    logout: () => {},
+    following: {},
+    toggleFollow: () => {} 
 }) 

@@ -1,0 +1,134 @@
+.profile {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* header */
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.line {
+  border-bottom: 1px solid var(--bs-border-color);
+  padding-bottom: 20px;
+}
+
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.avatarCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.nameBlock {
+  margin-top: 8px;
+  width: 100%;
+}
+
+
+.displayName {
+  margin: 0;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+.username {
+  color: var(--bs-secondary-color);
+  margin: 4px 0;
+  font-size: 14px;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+.bio {
+  margin: 6px 0;
+  color: var(--bs-body-color);
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+
+.countItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px; 
+  text-align: center;
+  flex: 1 1 80px;
+  min-width: 80;
+}
+.countNumber {
+  font-weight: 700;
+  font-size: clamp(14px, 4vw, 22px);
+  color: var(--bs-emphasis-color);
+  margin-bottom: 4px;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+.countLabel {
+  font-size: clamp(10px, 3vw, 14px);
+  color: var(--bs-secondary-color);
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+
+.followBtn {
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+.followBtn:hover {
+  opacity: 0.95;
+}
+
+/* feed */
+.feed {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+
+.empty {
+  color: #475569;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 6px;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
+}
+
+
+/* responsive: en pantallas pequeñas, stack vertical */
+@media (max-width: 900px) {
+
+  .avatar {
+    width: auto;
+    height: 72px;
+  }
+
+  .avatarCol {
+    min-width: 72px;
+    align-items: flex-start !important;
+  }
+
+  .countItem {
+    padding: 0 2px;
+  }
+
+}

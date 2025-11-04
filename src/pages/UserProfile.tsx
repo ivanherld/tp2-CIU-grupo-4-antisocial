@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Perfil from "../components/Perfil";
-import Sidebar from "../components/Sidebar";
+import Perfil from "../components/Perfil/Perfil";
 import styles from "./UserProfile.module.css";
+
 
 
 type User = {
@@ -70,59 +70,18 @@ export default function UserProfile() {
   const [user] = useState<User>(mockUser);
   const [counts, setCounts] = useState<FollowCounts>({ followers: 42, following: 10 });
   const [posts, setPosts] = useState<Post[]>(mockPosts);
-  const [isFollowing, setIsFollowing] = useState(false);
   const currentUsername = "tucorreo";
   const isOwn = user.username === currentUsername;
 
-  function handleFollowToggle() {
-    setIsFollowing((s) => {
-      const next = !s;
-      setCounts((c) => ({ ...c, followers: c.followers + (next ? 1 : -1) }));
-      return next;
-    });
-  }
-
-  function handleAddComment(postId: string, content: string) {
-    const newComment: Comment = {
-      id: Math.random().toString(36).slice(2, 9),
-      content,
-      createdAt: new Date().toISOString(),
-      author: {
-        id: "me",
-        username: "tucorreo",
-        displayName: "Tú",
-      },
-    };
-    setPosts((prev) =>
-      prev.map((p) => (p.id === postId ? { ...p, comments: [...(p.comments || []), newComment] } : p))
-    );
-  }
 
   return (
-  <>
-    <div className={styles.layout}>
-      <div className={styles.sidebar}>
-        <Sidebar
-          currentUser={{
-            username: currentUsername,
-            displayName: "Tú",
-            avatarUrl: "https://i.pravatar.cc/80?img=5",
-          }}
-        />
-      </div>
-
-      <div className={styles.content}>
-        <Perfil
-          user={user}
-          counts={counts}
-          posts={posts}
-          isFollowing={isFollowing}
-          isOwn={isOwn}
-          onFollowToggle={handleFollowToggle}
-          onAddComment={handleAddComment}
-        />
-      </div>
-    </div>
-  </>
+  <div className={styles.content}>
+    <Perfil
+      user={user}
+      counts={counts}
+      posts={posts}
+      isOwn={isOwn}
+    />
+  </div>
 );
 }

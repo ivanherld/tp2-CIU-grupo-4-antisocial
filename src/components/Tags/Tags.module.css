@@ -1,0 +1,13 @@
+.tags {
+  margin-bottom: 12px;
+}
+.tag {
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--bs-success-text-emphasis);
+  background: var(--bs-success-bg-subtle);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}

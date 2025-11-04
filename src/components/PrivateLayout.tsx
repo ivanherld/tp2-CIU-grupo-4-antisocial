@@ -1,13 +1,21 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
+import FeedNav from "./FeedNav/FeedNav";
 
 
 
-export default function PrivateLayout({ children }: { children: React.ReactNode }) {
+export default function PrivateLayout() {
   const { usuario, cargando } = useAuth();
 
-  if (cargando) return null; // Le voy a poner un spinner de carga
+  if (cargando) return <p>Cargando...</p>; // Le voy a poner un spinner de carga
 
-  return usuario ? <>{children}</> : <Navigate to="/login" replace />;
+  if(!usuario) return <Navigate to="/login" replace />
+
+  return (
+    <>
+      <FeedNav/>
+      <Outlet/>
+    </>
+  );
 }
 

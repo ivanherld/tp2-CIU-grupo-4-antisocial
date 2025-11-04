@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../styles/css/CreatePost.module.css'
+import styles from './CreatePost.module.css'
 import { Image } from 'lucide-react';
 
 export const CreatePost: React.FC = () => {

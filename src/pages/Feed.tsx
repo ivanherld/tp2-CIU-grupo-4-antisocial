@@ -4,11 +4,10 @@ import { useInfinitePosts } from "../hooks/useInfinitePosts";
 import type { Post as APIDataPost } from "../hooks/useInfinitePosts";
 import PostCard, { type PostProps } from "../components/Post";
 import styles from "./Feed.module.css"
-import { TrendingCard } from "../components/TrendingCard";
-import { SuggestCard } from "../components/SuggestCard";
-import { CreatePost } from "../components/CreatePost";
+import { TrendingCard } from "../components/TrendingCard/TrendingCard";
+import { SuggestCard } from "../components/SuggestCard/SuggestCard";
+import { CreatePost } from "../components/CreatePost/CreatePost";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
-import FeedNav from "../components/FeedNav";
 // import { useAuth } from "../context/AuthProvider";
 
 export default function Feed() {
@@ -59,7 +58,6 @@ export default function Feed() {
 
   return (
     <main>
-      <FeedNav />
       <div className={styles.contenedorPrincipal} id="filas">
         {/* <h1>Feed</h1>
         {usuario && (
@@ -76,7 +74,7 @@ export default function Feed() {
             <Container className="py-4">
               <div className={styles.feedControl}>
                 <div className="titulo">
-                  <h2 className="mb-3">Feed</h2>
+                  <h2 className="mb-3" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"700", color:"#5fa92c"}}>Últimos posteos</h2>
                 </div>
                 <div className="boton">
                   <Button variant="outline-success" onClick={() => handleLayOut()}>
@@ -92,11 +90,10 @@ export default function Feed() {
                   const postProps: PostProps = {
                     author,
                     avatarUrl: "/assets/antisocialpng.png",
-                    isFollowing: false,
-                    onFollow: () => { },
                     date: undefined,
                     content,
                     comments: [],
+                    id: ""
                   };
 
                   return (
@@ -107,7 +104,7 @@ export default function Feed() {
                 })}
               </Row>
 
-              <div className="text-center my-3" aria-live="polite">
+              <div className="text-center my-3" aria-live="polite" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#3b82f6"}}>
                 {loading && (
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Cargando...</span>
@@ -132,7 +129,7 @@ export default function Feed() {
             <div className={styles.feedContainers} id="tendencias">
               <div className="titulo">
                 <TrendingUp className="trendingIcon" />
-                <h2 className="text-gray-900">Tendencias</h2>
+                <h3 style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#3b82f6"}}>Tendencias</h3>
               </div>
               {trendingTopics.map((item, index) => (
                 <TrendingCard
@@ -145,7 +142,7 @@ export default function Feed() {
             <div className={styles.feedContainers} id="sugerencias">
               <div className="titulo">
                 <User className="trendingIcon" />
-                <h2 className="text-gray-900">Sugerencias</h2>
+                <h3 style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#3b82f6"}}>Sugerencias</h3>
               </div>
               {sugerenciasUsuarios.map((user, index) => (
                 <SuggestCard

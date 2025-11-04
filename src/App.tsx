@@ -11,7 +11,6 @@ import Nosotros from './pages/Nosotros';
 import About from './pages/About';
 import Terms from './pages/Terms';
 import Help from './pages/Help';
-import Footer from './components/Footer/Footer';
 
 function App() {
   //no se a quienes deberia envolver AuthProvider
@@ -29,17 +28,14 @@ function App() {
             <Route path='/help' element={<Help/>}/>
           </Route>
 
-          
+          <Route element={<PrivateLayout/>}>
             <Route path='/feed' element={<Feed/>}/>
-            <Route path='/profile' element={
-              <PrivateLayout>
-                <UserProfile/>
-              </PrivateLayout>}/>
+            <Route path='/profile' element={<UserProfile/>}/>
+          </Route>
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
-      <Footer/>
     </>
   )
 }

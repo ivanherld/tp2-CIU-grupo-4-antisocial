@@ -1,4 +1,4 @@
-import { Container, Form, Button } from "react-bootstrap";
+import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useState } from "react";
 
 export default function Help() {
@@ -14,9 +14,9 @@ export default function Help() {
 
   return (
     <>
-      <Container className="d-flex flex-column align-items-center py-5">
-        <h1 className="mb-3" style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)", fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#3b82f6", textAlign:"center" }}>Ayuda</h1>
-        <p style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif", textAlign:"center"}}>¿Tenés dudas o sugerencias? Escribinos y te respondemos a la brevedad.</p>
+      <Container className="d-flex flex-column align-items-center py-5 py-md-4 py-lg-3 px-4 mt-4" style={{maxWidth: 900, margin: "0 auto"}}>
+        <h1 className="mb-3 text-center" style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)", fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#3b82f6"}}>Ayuda</h1>
+        <p className="text-center mb-4" style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>¿Tenés dudas o sugerencias? Escribinos y te respondemos a la brevedad.</p>
 
         {!sent ? (
           <Form onSubmit={handleSubmit} className="w-100" style={{ maxWidth: 560, fontFamily:"Open Sans, Arial, Helvetica, sans-serif" }}>
@@ -46,9 +46,9 @@ export default function Help() {
             </div>
           </Form>
         ) : (
-          <div className="alert alert-success" role="alert" style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>
+          <Alert variant="success" className="text-center mt-3" style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>
             ¡Gracias! Tu mensaje fue enviado (demo). Te contactaremos por email.
-          </div>
+          </Alert>
         )}
       </Container>
     </>
