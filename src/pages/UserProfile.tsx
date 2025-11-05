@@ -72,6 +72,53 @@ export default function UserProfile() {
   useEffect(() => {
     let canceled = false;
 
+    // Helper: cargar posts del usuario por id usando la ruta /user/:id/posts y normalizar
+    const fetchPostsForUser = async (
+      uid: string,
+      signal?: AbortSignal
+    ): Promise<void> => {
+      setLoadingPosts(true);
+      try {
+        const postsRes = await api.get<any[]>(
+          `/user/${encodeURIComponent(uid)}/posts`,
+          { signal }
+        );
+        if (canceled) return;
+        const apiPosts = Array.isArray(postsRes.data) ? postsRes.data : [];
+        // Normalizar al shape usado por la UI
+        const normalized = apiPosts.map((p: any) => ({
+          id: String(p.id),
+          content: p.texto ?? "",
+          createdAt: p.createdAt ?? p.createdAt,
+          author: {
+            id: String(p.usuarioId ?? p.usuario?.id ?? ""),
+            username: p.usuario?.username ?? (p.usuarioUsername ?? ""),
+          },
+          tags: Array.isArray(p.tags)
+            ? p.tags.map((t: any) => ({ id: String(t.id), name: t.name }))
+            : [],
+          comments: Array.isArray(p.comentarios)
+            ? p.comentarios.map((c: any) => ({
+                id: String(c.id),
+                content: c.texto ?? c.content ?? "",
+                createdAt: c.createdAt,
+                author: {
+                  id: String(c.usuarioId ?? c.usuario?.id ?? ""),
+                  username: c.usuario?.username ?? "",
+                },
+              }))
+            : [],
+        }));
+        setPosts(normalized);
+      } catch (err) {
+        if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+        console.warn("Error cargando posts del perfil", err);
+        setPosts([]);
+      } finally {
+        if (!canceled) setLoadingPosts(false);
+      }
+    };
+
     // Si no hay nombre de usuario en la ruta -> mostrar el usuario autenticado (o redirigir si no está logueado)
     if (!paramUsername) {
       if (!authUser) {
@@ -79,7 +126,7 @@ export default function UserProfile() {
         return;
       }
       setProfile(authUser as unknown as User);
-      // también cargar contadores para el propio perfil
+      // también cargar contadores para el propio perfil y sus posts
       (async () => {
         try {
           const uid = String((authUser as any).id);
@@ -95,6 +142,8 @@ export default function UserProfile() {
             followers: fCountRes.data.count,
             following: sCountRes.data.count,
           });
+          // cargar posts del propio usuario
+          await fetchPostsForUser(uid);
         } catch (e) {
           console.warn("No se pudo cargar contadores del perfil propio", e);
         }
@@ -196,19 +245,12 @@ export default function UserProfile() {
             console.warn("No se pudo cargar contadores", err);
           }
         })();
-          // cargar posts del perfil mostrado
+            // cargar posts del perfil mostrado usando la ruta /user/:id/posts
           (async () => {
-            setLoadingPosts(true);
             try {
-              const postsRes = await api.get<Post[]>(`/post/${encodeURIComponent(userId)}`, { signal: controller.signal });
-              if (canceled) return;
-              setPosts(postsRes.data || []);
-            } catch (err) {
-              if (axios.isAxiosError(err) && err.code === 'ERR_CANCELED') return;
-              console.warn('Error cargando posts del perfil', err);
-              setPosts([]);
-            } finally {
-              if (!canceled) setLoadingPosts(false);
+              await fetchPostsForUser(userId, controller.signal);
+            } catch (e) {
+              console.warn('Error en fetchPostsForUser', e);
             }
           })();
       })
