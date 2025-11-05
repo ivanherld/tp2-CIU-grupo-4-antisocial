@@ -52,9 +52,10 @@ export default function UserProfile() {
     following: 0,
   });
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followProcessing, setFollowProcessing] = useState(false);
-  
+
   const [loading, setLoading] = useState<boolean>(!initialProfile);
   const [error, setError] = useState<string | null>(null);
   const [followError, setFollowError] = useState<string | null>(null);
@@ -71,7 +72,7 @@ export default function UserProfile() {
   useEffect(() => {
     let canceled = false;
 
-  // Si no hay nombre de usuario en la ruta -> mostrar el usuario autenticado (o redirigir si no está logueado)
+    // Si no hay nombre de usuario en la ruta -> mostrar el usuario autenticado (o redirigir si no está logueado)
     if (!paramUsername) {
       if (!authUser) {
         navigate("/login");
@@ -83,19 +84,26 @@ export default function UserProfile() {
         try {
           const uid = String((authUser as any).id);
           const [fCountRes, sCountRes] = await Promise.all([
-            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidores/count`),
-            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidos/count`),
+            api.get<{ count: number }>(
+              `/user/${encodeURIComponent(uid)}/seguidores/count`
+            ),
+            api.get<{ count: number }>(
+              `/user/${encodeURIComponent(uid)}/seguidos/count`
+            ),
           ]);
-          setCounts({ followers: fCountRes.data.count, following: sCountRes.data.count });
+          setCounts({
+            followers: fCountRes.data.count,
+            following: sCountRes.data.count,
+          });
         } catch (e) {
-          console.warn('No se pudo cargar contadores del perfil propio', e);
+          console.warn("No se pudo cargar contadores del perfil propio", e);
         }
       })();
       setLoading(false);
       return;
     }
 
-  // Si el parámetro coincide con el usuario autenticado, reutilizar el contexto
+    // Si el parámetro coincide con el usuario autenticado, reutilizar el contexto
     if (
       authUser &&
       authUser.username.toLowerCase() === paramUsername.toLowerCase()
@@ -106,19 +114,26 @@ export default function UserProfile() {
         try {
           const uid = String((authUser as any).id);
           const [fCountRes, sCountRes] = await Promise.all([
-            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidores/count`),
-            api.get<{ count: number }>(`/user/${encodeURIComponent(uid)}/seguidos/count`),
+            api.get<{ count: number }>(
+              `/user/${encodeURIComponent(uid)}/seguidores/count`
+            ),
+            api.get<{ count: number }>(
+              `/user/${encodeURIComponent(uid)}/seguidos/count`
+            ),
           ]);
-          setCounts({ followers: fCountRes.data.count, following: sCountRes.data.count });
+          setCounts({
+            followers: fCountRes.data.count,
+            following: sCountRes.data.count,
+          });
         } catch (e) {
-          console.warn('No se pudo cargar contadores del perfil propio', e);
+          console.warn("No se pudo cargar contadores del perfil propio", e);
         }
       })();
       setLoading(false);
       return;
     }
 
-  // Si tenemos un perfil inicial en location y coincide con el parámetro, usarlo
+    // Si tenemos un perfil inicial en location y coincide con el parámetro, usarlo
     if (
       initialFromLocation &&
       initialFromLocation.username.toLowerCase() === paramUsername.toLowerCase()
@@ -128,7 +143,7 @@ export default function UserProfile() {
       return;
     }
 
-  // De lo contrario, solicitar el perfil al servidor
+    // De lo contrario, solicitar el perfil al servidor
     const controller = new AbortController();
     setLoading(true);
     api
@@ -140,7 +155,7 @@ export default function UserProfile() {
         setProfile(res.data);
         setError(null);
         const userId = String(res.data.id);
-  // usar las rutas de la API que devuelven contadores por id
+        // usar las rutas de la API que devuelven contadores por id
         (async () => {
           try {
             const fRes = await api.get<{ count: number }>(
@@ -171,7 +186,8 @@ export default function UserProfile() {
                 );
                 setIsFollowing(isFollow);
               } catch (err) {
-                if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+                if (axios.isAxiosError(err) && err.code === "ERR_CANCELED")
+                  return;
                 console.warn("No se pudo determinar isFollowing", err);
               }
             }
@@ -180,7 +196,21 @@ export default function UserProfile() {
             console.warn("No se pudo cargar contadores", err);
           }
         })();
-        setPosts([]);
+          // cargar posts del perfil mostrado
+          (async () => {
+            setLoadingPosts(true);
+            try {
+              const postsRes = await api.get<Post[]>(`/post/${encodeURIComponent(userId)}`, { signal: controller.signal });
+              if (canceled) return;
+              setPosts(postsRes.data || []);
+            } catch (err) {
+              if (axios.isAxiosError(err) && err.code === 'ERR_CANCELED') return;
+              console.warn('Error cargando posts del perfil', err);
+              setPosts([]);
+            } finally {
+              if (!canceled) setLoadingPosts(false);
+            }
+          })();
       })
       .catch((err: unknown) => {
         if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
@@ -198,7 +228,6 @@ export default function UserProfile() {
     };
   }, [paramUsername, authUser, initialFromLocation, navigate]);
 
- 
   async function handleFollowToggle() {
     if (followProcessing) return;
     if (!authUser || !profile) {
@@ -206,15 +235,22 @@ export default function UserProfile() {
       return;
     }
 
-  // evitar seguirse a uno mismo
+    // evitar seguirse a uno mismo
     if (String((authUser as any).id) === String((profile as any).id)) return;
 
     setFollowProcessing(true);
     const actorId = encodeURIComponent(String((authUser as any).id));
     const targetId = encodeURIComponent(String((profile as any).id));
 
-    console.debug("handleFollowToggle: actor", actorId, "target", targetId, "isFollowing", isFollowing);
-  // UI optimista: invertir el estado local inmediatamente para una experiencia más rápida
+    console.debug(
+      "handleFollowToggle: actor",
+      actorId,
+      "target",
+      targetId,
+      "isFollowing",
+      isFollowing
+    );
+    // UI optimista: invertir el estado local inmediatamente para una experiencia más rápida
     const prevFollowing = isFollowing;
     setIsFollowing(!prevFollowing);
     try {
@@ -226,7 +262,7 @@ export default function UserProfile() {
         await api.delete(`/user/${actorId}/unfollow/${targetId}`);
       }
 
-  // refrescar contadores usando los endpoints del servidor (/user/:id/...)
+      // refrescar contadores usando los endpoints del servidor (/user/:id/...)
       const uid = String((profile as any).id);
       const fCountRes = await api.get<{ count: number }>(
         `/user/${encodeURIComponent(uid)}/seguidores/count`
@@ -239,23 +275,28 @@ export default function UserProfile() {
         following: sCountRes.data.count,
       });
 
-  // actualizar isFollowing comprobando la lista de seguidores (/user/:id/seguidores)
+      // actualizar isFollowing comprobando la lista de seguidores (/user/:id/seguidores)
       if (authUser && authUser.id != null) {
         const followersRes = await api.get<User[]>(
           `/user/${encodeURIComponent(uid)}/seguidores`
         );
         const authIdStr = String((authUser as any).id);
-        const nowFollowing = (followersRes.data || []).some((u: User) => String((u as any).id) === authIdStr);
+        const nowFollowing = (followersRes.data || []).some(
+          (u: User) => String((u as any).id) === authIdStr
+        );
         setIsFollowing(nowFollowing);
 
         // actualizar el perfil del usuario logueado (para que sus contadores/seguidos se actualicen)
         try {
           const meRes = await api.get<User>(`/auth/me`);
           setUsuario(meRes.data as any);
-          localStorage.setItem('usuario', JSON.stringify(meRes.data));
+          localStorage.setItem("usuario", JSON.stringify(meRes.data));
         } catch (e) {
           // no bloquear la experiencia si falla la recarga del perfil local
-          console.warn('No se pudo actualizar el perfil local después de follow/unfollow', e);
+          console.warn(
+            "No se pudo actualizar el perfil local después de follow/unfollow",
+            e
+          );
         }
       }
     } catch (err: unknown) {
@@ -265,10 +306,10 @@ export default function UserProfile() {
         return;
       }
       console.warn("Follow/unfollow error", err);
-  // revertir la actualización optimista
+      // revertir la actualización optimista
       setIsFollowing(prevFollowing);
       setFollowError("No se pudo completar la acción. Intenta de nuevo.");
-  // borrar el mensaje de error de follow después de un breve retraso
+      // borrar el mensaje de error de follow después de un breve retraso
       setTimeout(() => setFollowError(null), 5000);
     } finally {
       setFollowProcessing(false);
@@ -323,7 +364,12 @@ export default function UserProfile() {
             onFollowToggle={handleFollowToggle}
             onAddComment={handleAddComment}
           />
-          {followError && <div className="text-danger" style={{ marginTop: 8 }}>{followError}</div>}
+          {loadingPosts && <div style={{ marginTop: 8 }}>Cargando publicaciones...</div>}
+          {followError && (
+            <div className="text-danger" style={{ marginTop: 8 }}>
+              {followError}
+            </div>
+          )}
         </div>
       </div>
 
