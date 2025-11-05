@@ -135,11 +135,9 @@ export default function Feed() {
                 <div className="titulo">
                   <h2 className="mb-3" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"700", color:"#5fa92c"}}>Últimos posteos</h2>
                 </div>
-                <div className="boton">
-                  <Button variant="outline-success" onClick={() => handleLayOut()}>
-                    {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
-                  </Button>
-                </div>
+                <Button variant="outline-success" onClick={() => handleLayOut()}>
+                  {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
+                </Button>
               </div>
 
               <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">

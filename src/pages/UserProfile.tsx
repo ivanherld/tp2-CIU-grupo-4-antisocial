@@ -108,6 +108,9 @@ export default function UserProfile() {
                 },
               }))
             : [],
+            imagenes: Array.isArray(p.imagenes)
+              ? p.imagenes.map((img: any) => ({url: img.url}))
+              : [],
         }));
         setPosts(normalized);
       } catch (err) {

@@ -20,6 +20,7 @@ type Post = {
   author: User;
   tags?: Tag[];
   comments?: Comment[];
+  imagenes?: {url: string}[]
   
 };
 type FollowCounts = { followers: number; following: number };
@@ -126,6 +127,10 @@ export default function Perfil({
                 text: c.content,
                 date: new Date(c.createdAt).toLocaleString()
               }))}
+              imagenes={post.imagenes}
+              isFollowing={isFollowing}
+              isProcessing={isProcessing}
+              onFollow={onFollowToggle}
             />
           ))
         )}

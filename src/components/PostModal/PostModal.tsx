@@ -32,7 +32,7 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
     // follow click delegated to parent via onFollow
     const handleFollow = (e: React.MouseEvent) => {
         e.preventDefault()
-        if (onFollow) onFollow(e)
+        if (onFollow) onFollow()
     }
 
 
@@ -64,20 +64,20 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
                     />
                 </div>
                 <div className="d-flex flex-column">
-                    <Modal.Title className={styles.autor}>{author}</Modal.Title>
+                    <div className="d-flex align-items-center gap-2">
+                        <Modal.Title className={styles.autor}>{author}</Modal.Title>
+                        {!esPropio && (
+                            <Button variant={isFollowing ? "outline-secondary" : "light"} size="sm" onClick={handleFollow} disabled={!!isProcessing}>
+                                {isProcessing ? "Procesando..." : (isFollowing ? "Siguiendo" : "Seguir")}
+                            </Button>
+                        )}
+                    </div>
+
                     {date && <small className="text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
                 </div>
             </div>
 
-            {!esPropio && (
-                <div className="ms-3">
-                    <Button variant={isFollowing ? "outline-secondary" : "light"} size="sm" onClick={handleFollow} disabled={!!isProcessing}>
-                        {isProcessing ? "Procesando..." : (isFollowing ? "Siguiendo" : "Seguir")}
-                    </Button>
-                </div>
-            )}
-
-
+            
             </Modal.Header>
             <Modal.Body className="bg-light">
                 <div style={{paddingBottom: "5px", borderBottom: "1px solid #cbd5e1", marginBottom: "10px"}}>
