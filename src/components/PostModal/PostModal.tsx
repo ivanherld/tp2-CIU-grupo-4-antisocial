@@ -60,7 +60,7 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
                         src={avatarUrl || "/antisocialpng.png"}
                         alt={`${author} avatar`}
                         className="rounded-circle me-2"
-                        style={{ width: 48, height: 48 }}
+                        style={{ width: "auto", height: 48 }}
                     />
                 </div>
                 <div className="d-flex flex-column">
@@ -69,7 +69,7 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
                 </div>
             </div>
 
-            {!esPropio && onFollow && (
+            {!esPropio && (
                 <div className="ms-3">
                     <Button variant={isFollowing ? "outline-secondary" : "light"} size="sm" onClick={handleFollow} disabled={!!isProcessing}>
                         {isProcessing ? "Procesando..." : (isFollowing ? "Siguiendo" : "Seguir")}
@@ -85,9 +85,15 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
                     <Images imagenes={imagenes}/>
                     <Tags tags={tags}/>
                 </div>
-                {postComments.map((c, i) => (
-                    <Comment key={i} {...c} />
-                ))}
+
+                {postComments.length === 0 ? (
+                    <p className="text-muted text-center mb-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>No hay comentarios</p>
+                ) : (
+                    postComments.map((c, i) => (
+                        <Comment key={i} {...c} />
+                    ))
+                )}
+
                 <div className={styles.line}/>
                 <CommentForm postId={id.toString()} onAddComment={handleAddComment}/>
             </Modal.Body>

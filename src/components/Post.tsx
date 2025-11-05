@@ -48,14 +48,14 @@ export default function Post({
   return (
     <div className="card card-testimonial bg-light ">
       <div className="card-body d-flex flex-row align-items-center pb-3">
-        <img src={avatarUrl} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: 48, height: 48 }} />
+        <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 48 }} />
         <div className="d-flex flex-column ms-3 me-auto">
           <span className="person small ml-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}><strong>{author}</strong></span>
           {date && <span className="person-role small text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</span>}
         </div>
 
         {/* Botón Seguir controlado por props; el padre maneja la acción */}
-        {!esPropio && onFollow && (
+        {!esPropio  && (
           <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}> 
             <button 
               className={`btn btn-sm ${isFollowing ? `btn-outline-secondary`: `btn-light`}`}
