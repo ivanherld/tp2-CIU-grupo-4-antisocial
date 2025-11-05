@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 
 export interface CommentProps {
@@ -13,7 +14,9 @@ export default function Comment({ author, date, text, avatarUrl }: CommentProps)
             <div className="d-flex align-items-center mb-2">
                 <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar me-2 rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 40 }}/>
                 <div className="d-flex flex-column">
-                    <h6 className="comment-author mb-0" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{author}</h6>
+                    <Link to={`/users/${encodeURIComponent(author)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <h6 className="comment-author mb-0" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{author}</h6>
+                    </Link>
                     {date && <small className="comment-date text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
                 </div>
             </div>

@@ -7,6 +7,7 @@ import styles from "./PostModal.module.css"
 import Tags from "../Tags/Tags"
 import { useAuth } from "../../context/AuthProvider"
 import Images from "../Images/Images"
+import { Link } from "react-router-dom"
 
 export interface PostProps {
     id: number | string,
@@ -171,7 +172,9 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 </div>
                 <div className="d-flex flex-column">
                     <div className="d-flex align-items-center gap-2">
-                        <Modal.Title className={styles.autor}>{author}</Modal.Title>
+                        <Link to={`/users/${encodeURIComponent(author)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Modal.Title className={styles.autor}>{author}</Modal.Title>
+                        </Link>
                         {!esPropio && (
                             <div className="d-flex flex-column" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>
                                 <Button variant={localFollowing ? "outline-secondary" : "light"} size="sm" onClick={handleFollow} disabled={!!localProcessing}>
