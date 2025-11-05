@@ -154,7 +154,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
 
   return (
     <>
-        <Button variant="outline-secondary" onClick={() => setShow(true)} size="sm">
+        <Button variant="outline-secondary" onClick={() => setShow(true)} size="sm" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>
             + Ver más
         </Button>
         
@@ -173,7 +173,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                     <div className="d-flex align-items-center gap-2">
                         <Modal.Title className={styles.autor}>{author}</Modal.Title>
                         {!esPropio && (
-                            <div className="d-flex flex-column">
+                            <div className="d-flex flex-column" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>
                                 <Button variant={localFollowing ? "outline-secondary" : "light"} size="sm" onClick={handleFollow} disabled={!!localProcessing}>
                                     {localProcessing ? "Procesando..." : (localFollowing ? "Siguiendo" : "Seguir")}
                                 </Button>
@@ -207,7 +207,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 <CommentForm postId={id.toString()} onAddComment={handleAddComment}/>
             </Modal.Body>
             <Modal.Footer className="bg-light">
-                <Button variant="secondary" onClick={() => setShow(false)}>
+                <Button variant="secondary" onClick={() => setShow(false)} style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>
                     Cerrar
                 </Button>
             </Modal.Footer>

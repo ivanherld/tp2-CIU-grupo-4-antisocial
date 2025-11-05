@@ -243,7 +243,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
                       bg="secondary"
                       pill
                       className="me-2"
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer", fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}
                       onClick={() => removeTag(tag.nombre)}
                     >
                       {tag.nombre} ✕
@@ -267,7 +267,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
                         text={tags.some(tag => tag.nombre === t) ? undefined : 'dark'}
                         pill
                         className="me-2 mb-2"
-                        style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)' }}
+                        style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)', fontFamily:"Montserrat, Arial, Helvetica, sans-serif" }}
                         onClick={() => addSuggestedTag(t)}
                       >
                         {t}
