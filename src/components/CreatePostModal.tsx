@@ -43,7 +43,13 @@ export default function CreatePostModal(){
         const res = await api.get("/tag", {signal: ac.signal})
         const data = res.data;
         const parsed: string[] = Array.isArray(data)
-          ? data.map((it: any) => (typeof it === "string" ? it: it.name ?? String(it))).filter(Boolean)
+          ? data
+              .map((it: any) => {
+                if (typeof it === "string") return it;
+                // accept different shapes: { nombre }, { name }
+                return it.nombre ?? it.name ?? String(it);
+              })
+              .filter(Boolean)
           : []
         if(mounted) setAvailableTags(parsed)
       } catch (err: any) {

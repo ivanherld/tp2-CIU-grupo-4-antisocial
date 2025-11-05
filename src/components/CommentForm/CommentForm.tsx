@@ -8,7 +8,7 @@ export default function CommentForm({
   onAddComment,
 }: {
   postId: string;
-  onAddComment: (postId: string, content: string) => void;
+  onAddComment: (postId: string, content: string) => Promise<void> | void;
 }) {
   const [value, setValue] = useState("");
   const [sending, setSending] = useState(false);
@@ -17,13 +17,17 @@ export default function CommentForm({
     e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed) return;
-    setSending(true);
-    try {
-      onAddComment(postId, trimmed);
-      setValue("");
-    } finally {
-      setSending(false);
-    }
+    (async () => {
+      setSending(true);
+      try {
+        await Promise.resolve(onAddComment(postId, trimmed));
+        setValue("");
+      } catch (err) {
+        console.warn('Error en onAddComment', err);
+      } finally {
+        setSending(false);
+      }
+    })();
   }
 
   return (
