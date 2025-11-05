@@ -11,8 +11,11 @@ import {
 import { AuthContext } from "../context/AuthContext";
 import api from "../api";
 
+interface CreatePostModalProps {
+  onClose?: () => void; // prop opcional para cerrar Offcanvas
+}
 
-export default function CreatePostModal(){
+export default function CreatePostModal({onClose}: CreatePostModalProps){
   const { usuario } = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [description, setDescription] = useState<string>("");
@@ -29,7 +32,7 @@ export default function CreatePostModal(){
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {setShow(false); if(onClose) onClose()};
   const handleShow = () => setShow(true);
 
   useEffect(() => {

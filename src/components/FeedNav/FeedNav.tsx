@@ -15,6 +15,7 @@ function FeedNav() {
   const [query, setQuery] = useState("")
   const navigate = useNavigate()
   const {logout} = useAuth()
+  const [offcanvasOpen, setOffcanvasOpen] = useState(false)
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -26,31 +27,39 @@ function FeedNav() {
     navigate(`/feed?tag=${encodeURIComponent(q)}`)
     setSearchOpen(false)
     setQuery("")
+    setOffcanvasOpen(false)
   }
 
   function handleLogout() {
     logout()
     navigate("/")
+    setOffcanvasOpen(false)
   }
 
+  function handleNavClick(callback?: ()=>void) {
+    if(callback) callback()
+    setOffcanvasOpen(false)
+  }
 
   return (
-    <Navbar collapseOnSelect expand='lg' className="bg-body-tertiary" sticky='top'>
+    <Navbar expand='lg' className="bg-body-tertiary" sticky='top'>
       <Container fluid className={styles.mainContainer}>
         <Navbar.Brand id={styles.navImg} as={NavLink} to='/feed'>
           <img src={logo} alt='UnaHur Anti-Social Net' style={{height:"50px", width:"auto"}}/>
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-lg`} />
+        <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-lg`} onClick={() => setOffcanvasOpen(!offcanvasOpen)} />
         <Navbar.Offcanvas
           id={`offcanvasNavbar-expand-lg`}
           aria-labelledby={`offcanvasNavbarLabel-expand-lg`}
           placement="end"
+          show={offcanvasOpen}
+          onHide={() => setOffcanvasOpen(false)}
         >
           <Offcanvas.Header closeButton>
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav className={styles.navLinks}>
-              <Nav.Link onClick={()=>scrollToTop()} className={styles.navButton} as={NavLink} to='/feed'>
+              <Nav.Link className={styles.navButton} as={NavLink} to='/feed' onClick={() => handleNavClick(scrollToTop)}>
                 <House />
                 Home
               </Nav.Link>
@@ -88,9 +97,9 @@ function FeedNav() {
                 Cerrar sesión</Nav.Link>
             </Nav>
             <Container fluid className={styles.userContainer}>
-              <CreatePostModal />
+              <CreatePostModal onClose={() => setOffcanvasOpen(false)} />
               <div className={styles.iconContainer}>
-                <Nav.Link as={NavLink} to="/profile/me">
+                <Nav.Link as={NavLink} to="/profile/me" onClick={() => setOffcanvasOpen(false)}>
                   <User className={styles.userIcon}/>
                 </Nav.Link>
               </div>

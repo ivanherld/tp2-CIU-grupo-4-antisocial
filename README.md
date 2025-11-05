@@ -40,8 +40,8 @@ Luego, abrir el enlace que aparece en la consola.
 - Iván Herold
 
 ## Aclaraciones
-- La API de BackEnd está subida a este servidor: [API BackEnd](https://anti-social-relational-index.onrender.com)
-- Se hicieron algunos cambios en el repositorio del TP1 del BackEnd en la rama "deploy" para que el FrontEnd y el BackEnd estén mejor conectados.
+- La API de BackEnd está subida a este servidor: [Servidor API](https://anti-social-relational-index.onrender.com)
+- Se hicieron algunos cambios en el repositorio del TP1 del BackEnd en la rama "deploy" para que el FrontEnd y el BackEnd estén mejor conectados: [Repositorio API](https://github.com/EP-UnaHur-2025C2/anti-social-relational-index)
 
 ---
 
