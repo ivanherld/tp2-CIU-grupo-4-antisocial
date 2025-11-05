@@ -1,3 +1,4 @@
+import { ArrowUp } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 interface ScrollToTopButtonProps {
@@ -24,7 +25,7 @@ export const ScrollToTopButton: React.FC<ScrollToTopButtonProps> = ({ estilos })
   return (
     <button onClick={scrollToTop} style={
       estilos ? estilos : {color: 'red'}}>
-      ⬆ Ir arriba
+      <ArrowUp size={20} />
     </button>
   );
 };

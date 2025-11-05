@@ -52,7 +52,7 @@ export default function Perfil({
           <Col xs="auto" className={`d-flex flex-column align-items-center align-items-md-start ${styles.avatarCol}`}>
             <img
               className={styles.avatar}
-              src={user.avatarUrl ?? "/default-avatar.png"}
+              src={user.avatarUrl ?? "/antisocialpng.png"}
               alt={`${user.username} avatar`}
             />
             <div className={styles.nameBlock}>

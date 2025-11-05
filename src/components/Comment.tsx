@@ -4,21 +4,20 @@ export interface CommentProps {
     author: string;
     date?: string; // ISO or human string
     text: string;
+    avatarUrl?: string;
 }
 
-export default function Comment({ author, date, text }: CommentProps) {
+export default function Comment({ author, date, text, avatarUrl }: CommentProps) {
     return (
-        <div className="media comment mb-3">
-            <img src="/assets/antisocialpng.png" className="img-avatar mr-3" alt={`${author} avatar`} />
-            <div className="media-body">
-                <div className="media-body-header d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 className="comment-author mb-0" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{author}</h6>
-                        {date && <small className="comment-date text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
-                    </div>
+        <div className="comment mb-3 p-2 bg-white rounded shadow-sm">
+            <div className="d-flex align-items-center mb-2">
+                <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar me-2 rounded-circle" alt={`${author} avatar`} style={{ width: 40, height: 40 }}/>
+                <div className="d-flex flex-column">
+                    <h6 className="comment-author mb-0" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{author}</h6>
+                    {date && <small className="comment-date text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
                 </div>
-                <div className="mt-2" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{text}</div>
             </div>
+            <div className="mt-2" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{text}</div>
         </div>
     );
 }
