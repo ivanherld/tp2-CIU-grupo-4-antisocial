@@ -32,7 +32,7 @@ export default function UserProfile() {
     document.title = `Perfil - Unahur Anti-Social Net`;
   }, []);
 
-  const { usuario: authUser, setUsuario } = useAuth();
+  const { usuario: authUser, setUsuario, follow, unfollow, isFollowing: authIsFollowing } = useAuth();
   const { username: paramUsername } = useParams<{ username?: string }>();
   const location = useLocation() as unknown as {
     state?: { initialProfile?: User };
@@ -224,19 +224,17 @@ export default function UserProfile() {
               following: foRes.data.count,
             });
 
-            // determinar si authUser sigue a este perfil obteniendo la lista de seguidores
+            // determinar si authUser sigue a este perfil (usar helper del provider cuando esté disponible)
             if (authUser && authUser.id != null) {
               try {
-                const listRes = await api.get<User[]>(
-                  `/user/${encodeURIComponent(userId)}/seguidores`,
-                  { signal: controller.signal }
-                );
-                if (canceled) return;
-                const authIdStr = String((authUser as any).id);
-                const isFollow = (listRes.data || []).some(
-                  (u) => String((u as any).id) === authIdStr
-                );
-                setIsFollowing(isFollow);
+                if (typeof authIsFollowing !== 'function') {
+                  // El proveedor debería exponer isFollowing; si no, marcar como no-follow y avisar
+                  console.error('AuthProvider isMissing isFollowing helper');
+                  if (!canceled) setIsFollowing(false);
+                } else {
+                  const result = await authIsFollowing(userId);
+                  if (!canceled) setIsFollowing(!!result);
+                }
               } catch (err) {
                 if (axios.isAxiosError(err) && err.code === "ERR_CANCELED")
                   return;
@@ -284,27 +282,15 @@ export default function UserProfile() {
     if (String((authUser as any).id) === String((profile as any).id)) return;
 
     setFollowProcessing(true);
-    const actorId = encodeURIComponent(String((authUser as any).id));
-    const targetId = encodeURIComponent(String((profile as any).id));
-
-    console.debug(
-      "handleFollowToggle: actor",
-      actorId,
-      "target",
-      targetId,
-      "isFollowing",
-      isFollowing
-    );
-    // UI optimista: invertir el estado local inmediatamente para una experiencia más rápida
     const prevFollowing = isFollowing;
-    setIsFollowing(!prevFollowing);
+    setIsFollowing(!prevFollowing); // optimista
     try {
       if (!prevFollowing) {
-        console.debug("Sending follow request");
-        await api.post(`/user/${actorId}/follow/${targetId}`);
+        if (typeof follow !== 'function') throw new Error('AuthProvider.follow is not available');
+        await follow(String((profile as any).id));
       } else {
-        console.debug("Sending unfollow request");
-        await api.delete(`/user/${actorId}/unfollow/${targetId}`);
+        if (typeof unfollow !== 'function') throw new Error('AuthProvider.unfollow is not available');
+        await unfollow(String((profile as any).id));
       }
 
       // refrescar contadores usando los endpoints del servidor (/user/:id/...)
@@ -361,25 +347,6 @@ export default function UserProfile() {
     }
   }
 
-  // function handleAddComment(postId: string, content: string) {
-  //   const newComment: Comment = {
-  //     id: Math.random().toString(36).slice(2, 9),
-  //     content,
-  //     createdAt: new Date().toISOString(),
-  //     author: {
-  //       id: authUser ? String((authUser as any).id ?? "me") : "me",
-  //       username: authUser?.username ?? "anon",
-  //       displayName: authUser?.username ?? "Tú",
-  //     },
-  //   };
-  //   setPosts((prev) =>
-  //     prev.map((p) =>
-  //       p.id === postId
-  //         ? { ...p, comments: [...(p.comments || []), newComment] }
-  //         : p
-  //     )
-  //   );
-  // }
 
   if (loading) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6", textAlign: "center"}}>Loading...</div>;
   if (error) return <div className="text-danger" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", textAlign: "center"}}>{error}</div>;

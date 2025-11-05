@@ -1,5 +1,6 @@
 import { type CommentProps } from './Comment';
 import Card from 'react-bootstrap/Card';
+import { Link } from 'react-router-dom';
 import PostModal from './PostModal/PostModal';
 import Tags from './Tags/Tags';
 import Images from './Images/Images';
@@ -10,6 +11,7 @@ export interface PostComment extends CommentProps {}
 export interface PostProps {
   id: number | string;
   author: string;
+  authorId?: string;
   avatarUrl?: string;
   date?: string; // display string
   content: string;
@@ -25,6 +27,7 @@ export interface PostProps {
 export default function Post({
   id,
   author,
+  authorId,
   avatarUrl,
   date,
   content,
@@ -42,7 +45,11 @@ export default function Post({
       <div className="card-body d-flex flex-row align-items-center pb-3">
         <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 48 }} />
         <div className="d-flex flex-column ms-3 me-auto">
-          <span className="person small ml-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}><strong>{author}</strong></span>
+          <span className="person small ml-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>
+            <Link to={`/users/${encodeURIComponent(author)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <strong>{author}</strong>
+            </Link>
+          </span>
           {date && <span className="person-role small text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</span>}
         </div>
 
@@ -56,6 +63,7 @@ export default function Post({
         <PostModal 
           id={id} 
           author={author} 
+          authorId={authorId}
           avatarUrl={avatarUrl} 
           content={content} 
           comments={comments}

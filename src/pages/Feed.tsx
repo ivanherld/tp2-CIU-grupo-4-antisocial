@@ -52,6 +52,7 @@ export default function Feed() {
         const normalized: PostProps[] = apiPosts.map((p: any) => ({
           id: p.id,
           author: p.usuario?.username ?? String(p.usuarioId ?? p.usuarioUsername ?? 'unknown'),
+          authorId: String(p.usuario?.id ?? p.usuarioId ?? ''),
           avatarUrl: '/antisocialpng.png',
           date: p.createdAt ?? undefined,
           content: p.texto ?? p.content ?? (p.title ? `${p.title}\n\n${p.body}` : ''),
