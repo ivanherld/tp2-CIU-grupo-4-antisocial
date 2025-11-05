@@ -15,7 +15,7 @@ type User = {
   avatarUrl?: string;
   bio?: string;
 };
-type Tag = { id: string; name: string };
+type Tag = { id: string; nombre: string };
 type Comment = { id: string; content: string; createdAt: string; author: User };
 type Post = {
   id: string;
@@ -95,7 +95,7 @@ export default function UserProfile() {
             username: p.usuario?.username ?? (p.usuarioUsername ?? ""),
           },
           tags: Array.isArray(p.tags)
-            ? p.tags.map((t: any) => ({ id: String(t.id), name: t.name }))
+            ? p.tags.map((t: any) => ({ id: String(t.id), nombre: t.nombre }))
             : [],
           comments: Array.isArray(p.comentarios)
             ? p.comentarios.map((c: any) => ({
