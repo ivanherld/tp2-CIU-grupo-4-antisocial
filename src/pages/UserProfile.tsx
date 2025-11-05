@@ -5,8 +5,6 @@ import { useAuth } from "../context/AuthProvider";
 import { useNavigate, useParams, useLocation } from "react-router";
 import api from "../api";
 import axios from "axios";
-import Footer from "../components/Footer/Footer";
-import FeedNav from "../components/FeedNav/FeedNav";
 
 
 
@@ -318,59 +316,47 @@ export default function UserProfile() {
     }
   }
 
-  function handleAddComment(postId: string, content: string) {
-    const newComment: Comment = {
-      id: Math.random().toString(36).slice(2, 9),
-      content,
-      createdAt: new Date().toISOString(),
-      author: {
-        id: authUser ? String((authUser as any).id ?? "me") : "me",
-        username: authUser?.username ?? "anon",
-        displayName: authUser?.username ?? "Tú",
-      },
-    };
-    setPosts((prev) =>
-      prev.map((p) =>
-        p.id === postId
-          ? { ...p, comments: [...(p.comments || []), newComment] }
-          : p
-      )
-    );
-  }
+  // function handleAddComment(postId: string, content: string) {
+  //   const newComment: Comment = {
+  //     id: Math.random().toString(36).slice(2, 9),
+  //     content,
+  //     createdAt: new Date().toISOString(),
+  //     author: {
+  //       id: authUser ? String((authUser as any).id ?? "me") : "me",
+  //       username: authUser?.username ?? "anon",
+  //       displayName: authUser?.username ?? "Tú",
+  //     },
+  //   };
+  //   setPosts((prev) =>
+  //     prev.map((p) =>
+  //       p.id === postId
+  //         ? { ...p, comments: [...(p.comments || []), newComment] }
+  //         : p
+  //     )
+  //   );
+  // }
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-danger">{error}</div>;
-  if (!profile) return <div>No hay perfil para mostrar</div>;
+  if (loading) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6"}}>Loading...</div>;
+  if (error) return <div className="text-danger" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600"}}>{error}</div>;
+  if (!profile) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6"}}>No hay perfil para mostrar</div>;
 
   return (
-    <>
-
-      <div className={styles.layout}>
-        <div className={styles.sidebar}>
-          <FeedNav />
-        </div>
-
-        <div className={styles.content}>
-          <Perfil
-            user={profile}
-            counts={counts}
-            posts={posts}
-            isFollowing={isFollowing}
-            isOwn={isOwn}
-            isProcessing={followProcessing}
-            onFollowToggle={handleFollowToggle}
-            onAddComment={handleAddComment}
-          />
-          {loadingPosts && <div style={{ marginTop: 8 }}>Cargando publicaciones...</div>}
-          {followError && (
-            <div className="text-danger" style={{ marginTop: 8 }}>
-              {followError}
-            </div>
-          )}
-        </div>
+  <div className={styles.content}>
+    <Perfil
+      user={profile}
+      counts={counts}
+      posts={posts}
+      isFollowing={isFollowing}
+      isOwn={isOwn}
+      isProcessing={followProcessing}
+      onFollowToggle={handleFollowToggle}
+    />
+    {loadingPosts && <div style={{ marginTop: 8, fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6"}}>Cargando publicaciones...</div>}
+    {followError && (
+      <div className="text-danger" style={{ marginTop: 8, fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600"}}>
+        {followError}
       </div>
-
-      <Footer />
-    </>
+    )}
+  </div>
   );
 }

@@ -2,7 +2,6 @@ import { type CommentProps } from './Comment';
 import Card from 'react-bootstrap/Card';
 import PostModal from './PostModal/PostModal';
 import Tags from './Tags/Tags';
-import { useAuth } from '../context/AuthProvider';
 
 export interface PostComment extends CommentProps {}
 
@@ -51,7 +50,7 @@ export default function Post({
         {/* Botón Seguir controlado por props; el padre maneja la acción */}
         <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}> 
           <button 
-            className={`btn btn-sm ${isFollowing ? `btn-outline-secondary`: `btn-primary`}`}
+            className={`btn btn-sm ${isFollowing ? `btn-outline-secondary`: `btn-light`}`}
             onClick={handleFollow}
             disabled={!!isProcessing}
           >

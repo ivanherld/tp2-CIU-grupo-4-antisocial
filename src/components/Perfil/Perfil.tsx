@@ -1,7 +1,7 @@
-import React from "react";
+
 import Post from "../Post";
 import styles from "./Perfil.module.css";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 
 type User = {
   id: string;
@@ -32,7 +32,6 @@ type PerfilProps = {
   isOwn?: boolean;
   onFollowToggle?: () => void;
   isProcessing?: boolean;
-  onAddComment?: (postId: string, content: string) => void;
 };
 
 export default function Perfil({
@@ -43,11 +42,10 @@ export default function Perfil({
   isOwn,
   onFollowToggle,
   isProcessing,
-  onAddComment,
 }: PerfilProps) {
   const postsCount = posts?.length ?? 0;
   return (
-    <main className={styles.profile}>
+    <main className={`px-4 px-md-5 ${styles.profile}`}>
       <header className={`mb-3 ${styles.header}`}>
         <Row className="align-items-center">
 
@@ -57,7 +55,7 @@ export default function Perfil({
               src={user.avatarUrl ?? "/default-avatar.png"}
               alt={`${user.username} avatar`}
             />
-            <div className={`${styles.nameBlock}`}>
+            <div className={styles.nameBlock}>
               <h1 className={styles.displayName}>
                 {user.displayName ?? user.username}
               </h1>
@@ -68,15 +66,15 @@ export default function Perfil({
 
             <Row className="w-100 d-flex justify-content-between flex-nowrap text-center ">
 
-              <Col className={`${styles.countItem}`}>
+              <Col className={styles.countItem}>
                 <div className={styles.countNumber}>{postsCount}</div>
                 <div className={styles.countLabel}>publicaciones</div>
               </Col>
-              <Col className={`${styles.countItem}`}>
+              <Col className={styles.countItem}>
                 <div className={styles.countNumber}>{counts?.followers ?? 0}</div>
                 <div className={styles.countLabel}>seguidores</div>
               </Col>
-              <Col className={`${styles.countItem}`}>
+              <Col className={styles.countItem}>
                 <div className={styles.countNumber}>{counts?.following ?? 0}</div>
                 <div className={styles.countLabel}>siguiendo</div>
               </Col>
@@ -87,21 +85,23 @@ export default function Perfil({
       <div className={styles.line}>
       {user.bio && <p className={styles.bio}>{user.bio}</p>}
 
-      <div className={styles.actions}>
+      <div>
         {isOwn ? (
           <>
-            <button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)" }}>
+            <Button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)" }}>
               Editar perfil
-            </button>
-            <button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)", marginLeft: 8 }}>
+            </Button>
+            <Button className={styles.followBtn} style={{ background: "transparent", color: "var(--bs-body-color)", border: "1px solid var(--bs-border-color)", marginLeft: 8 }}>
               Compartir
-            </button>
+            </Button>
           </>
         ) : (
           onFollowToggle && (
-            <button className={styles.followBtn} onClick={onFollowToggle} disabled={!!(isProcessing)}>
-              {isProcessing ? "Procesando..." : (isFollowing ? "Dejar de seguir" : "Seguir")}
-            </button>
+            <div className="d-grid gap-2 mb-2">
+              <Button className={styles.followBtn} onClick={onFollowToggle} disabled={!!(isProcessing)}>
+                {isProcessing ? "Procesando..." : (isFollowing ? "Dejar de seguir" : "Seguir")}
+              </Button>
+            </div>
           )
         )}
       </div>
@@ -112,80 +112,23 @@ export default function Perfil({
           <p className={styles.empty}>Este usuario no tiene publicaciones aún.</p>
         ) : (
           posts.map((post) => (
-            <article key={post.id} className={styles.post}>
-              <div className={styles.postHeader}>
-                <strong>{post.author.displayName ?? post.author.username}</strong>
-                <time className={styles.time}>
-                  {new Date(post.createdAt).toLocaleString()}
-                </time>
-              </div>
-
-              <p className={styles.postContent}>{post.content}</p>
-
-              {post.tags && post.tags.length > 0 && (
-                <div className={styles.tags}>
-                  {post.tags.map((t) => (
-                    <span key={t.id} className={styles.tag}>
-                      #{t.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className={styles.comments}>
-                {post.comments?.map((c) => (
-                  <div key={c.id} className={styles.comment}>
-                    <strong>@{c.author.username}</strong> {c.content}
-                  </div>
-                ))}
-              </div>
-
-              {onAddComment && (
-                <CommentForm postId={post.id} onAddComment={onAddComment} />
-              )}
-            </article>
+            <Post
+              key={post.id}
+              id={post.id}
+              author={post.author.username}
+              avatarUrl={post.author.avatarUrl}
+              content={post.content}
+              date={new Date(post.createdAt).toLocaleString()}
+              tags={post.tags}
+              comments={post.comments?.map(c => ({
+                author: c.author.displayName ?? c.author.username,
+                text: c.content,
+                date: new Date(c.createdAt).toLocaleString()
+              }))}
+            />
           ))
         )}
       </section>
     </main>
-  );
-}
-
-function CommentForm({
-  postId,
-  onAddComment,
-}: {
-  postId: string;
-  onAddComment: (postId: string, content: string) => void;
-}) {
-  const [value, setValue] = React.useState("");
-  const [sending, setSending] = React.useState(false);
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    setSending(true);
-    try {
-      onAddComment(postId, trimmed);
-      setValue("");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  return (
-    <form onSubmit={submit} className={styles.commentForm}>
-      <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Agregar un comentario..."
-        className={styles.commentInput}
-        disabled={sending}
-      />
-      <button type="submit" disabled={sending || !value.trim()}>
-        {sending ? "Enviando..." : "Comentar"}
-      </button>
-    </form>
   );
 }

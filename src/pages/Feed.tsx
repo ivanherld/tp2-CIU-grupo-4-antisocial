@@ -6,9 +6,7 @@ import PostCard, { type PostProps } from "../components/Post";
 import styles from "./Feed.module.css"
 import { TrendingCard } from "../components/TrendingCard/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard/SuggestCard";
-import { CreatePost } from "../components/CreatePost/CreatePost";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
-import FeedNav from "../components/FeedNav/FeedNav";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
 
@@ -70,19 +68,8 @@ export default function Feed() {
 
   return (
     <main>
-      <FeedNav />
       <div className={styles.contenedorPrincipal} id="filas">
-        {/* <h1>Feed</h1>
-        {usuario && (
-          <Container>
-            <h2>Bienvenido, {usuario.username}!</h2>
-            <Button variant="danger" onClick={logout}>
-              Cerrar sesión
-            </Button>
-          </Container>
-        )} */}
         <div className={styles.contenedorSecundario} id={styles.columna1}>
-          {usuario ? <CreatePost /> : null}
           <div className={styles.feedContainers}>
             <Container className="py-4">
               <div className={styles.feedControl}>
@@ -96,7 +83,7 @@ export default function Feed() {
                 </div>
               </div>
 
-              <Row xs={1} md={2} lg={lgSlides} className="g-3">
+              <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">
                 {posts.map((p: APIDataPost) => {
                   const author = `user${p.userId ?? "unknown"}`;
                   const content = `${p.title}\n\n${p.body}`;
@@ -117,7 +104,7 @@ export default function Feed() {
                 })}
               </Row>
 
-              <div className="text-center my-3" aria-live="polite" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#3b82f6"}}>
+              <div className="text-center my-3" aria-live="polite" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600"}}>
                 {loading && (
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Cargando...</span>

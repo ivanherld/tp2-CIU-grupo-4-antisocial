@@ -72,7 +72,7 @@ export default function FormRegister() {
 
   return (
     <Container className="p-0 mt-4">
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form noValidate validated={validated} onSubmit={handleSubmit} style={estilo}>
         <Row className="mb-3">
           <Form.Group
             as={Col}
@@ -80,7 +80,7 @@ export default function FormRegister() {
             className="mb-4"
             controlId="registerUsername"
           >
-            <Form.Label style={estilo}>Username</Form.Label>
+            <Form.Label>Username</Form.Label>
             <InputGroup hasValidation>
               <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
               <Form.Control
@@ -90,8 +90,9 @@ export default function FormRegister() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
               />
-              <Form.Control.Feedback type="invalid" style={estilo}>
+              <Form.Control.Feedback type="invalid">
                 Elige un nombre de usuario.
               </Form.Control.Feedback>
             </InputGroup>
@@ -103,15 +104,16 @@ export default function FormRegister() {
             className="mb-4"
             controlId="registerEmail"
           >
-            <Form.Label style={estilo}>Email</Form.Label>
+            <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
               placeholder="ejemplo@correo.com"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
             />
-            <Form.Control.Feedback type="invalid" style={estilo}>
+            <Form.Control.Feedback type="invalid">
               Por favor ingresa un email válido.
             </Form.Control.Feedback>
           </Form.Group>
@@ -124,15 +126,16 @@ export default function FormRegister() {
             className="mb-4"
             controlId="registerPassword"
           >
-            <Form.Label style={estilo}>Contraseña</Form.Label>
+            <Form.Label>Contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Contraseña"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
             />
-            <Form.Control.Feedback type="invalid" style={estilo}>
+            <Form.Control.Feedback type="invalid">
               Por favor ingresa una contraseña.
             </Form.Control.Feedback>
           </Form.Group>
@@ -143,7 +146,7 @@ export default function FormRegister() {
             className="mb-4"
             controlId="registerConfirmPassword"
           >
-            <Form.Label style={estilo}>Confirmar contraseña</Form.Label>
+            <Form.Label>Confirmar contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Repite la contraseña"
@@ -154,8 +157,9 @@ export default function FormRegister() {
                 !!error &&
                 (error.includes("contraseña") || error.includes("coinciden"))
               }
+              style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
             />
-            <Form.Control.Feedback type="invalid" style={estilo}>
+            <Form.Control.Feedback type="invalid">
               Las contraseñas deben coincidir.
             </Form.Control.Feedback>
           </Form.Group>

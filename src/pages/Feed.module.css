@@ -1,92 +1,17 @@
-@media only screen and (max-width: 1040px) {
-  /* Make the main container and its children fully responsive on smaller screens */
-  .contenedorPrincipal {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    background-color: #f0f2f5;
-    align-items: stretch; /* let children fill available width */
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden; /* prevent horizontal overflow */
-  }
-
-  .contenedorSecundario {
-    width: 100%;
-    align-items: stretch;
-  }
-
-  .feedControl Button {
-    display: none;
-  }
-
-  .feedContainers {
-    border: 1px solid #ccccccd1;
-    background-color: white;
-    border-radius: 8px;
-    width: 95%;
-    max-width: 720px;
-    padding: 1rem;
-    margin: 0.5rem 0;
-    box-sizing: border-box;
-  }
-
-  .contenidoAdicional {
-    background-color: transparent;
-    width: 95%;
-    max-width: 720px;
-    box-sizing: border-box;
-    margin: 0.5rem 0;
-  }
-
-  .contenidoAdicional div {
-    width: 100%;
-  }
-}
-
 .contenedorPrincipal {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: top;
+  align-items: flex-start;
   padding: 2rem;
   background-color: rgba(241, 241, 241, 0.761);
+  gap: 1rem;
 }
 
 .contenedorSecundario {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* background-color: saddlebrown; */
-}
-
-/* Nuevo post */
-
-.postContainerContenido {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.nuevoPostUserImage {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  margin-right: 1rem;
-  background-color: #e0e0e0; /* subtle placeholder */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-/* Make any images inside feed containers responsive */
-.feedContainers img,
-.contenidoAdicional img {
-  max-width: 100%;
-  height: auto;
-  display: block;
 }
 
 /* Feed */
@@ -97,23 +22,49 @@
   width: 60vw;
   padding: 1rem;
   margin: 1rem;
+  box-sizing: border-box;
 }
 
 .feedControl {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  /* background-color: yellow; */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-
 /* Contenido adicional */
-
 .contenidoAdicional {
-  /* background-color: wheat; */
   width: 30vw;
 }
 
 .contenidoAdicional div {
-  width: 85%
+  width: 85%;
+}
+
+/* 🔹 MEDIA QUERIES */
+@media (max-width: 1040px) {
+  .contenedorPrincipal {
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .feedContainers,
+  .contenidoAdicional {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .feedControl Button {
+    width: auto;
+    justify-content: flex-end;
+  }
+}
+
+/* 🔹 OCULTAR BOTÓN EN CELULAR VERTICAL */
+@media (max-width: 600px) {
+  .feedControl Button {
+    display: none;
+  }
 }

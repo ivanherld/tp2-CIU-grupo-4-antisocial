@@ -45,9 +45,9 @@ export default function FormLogin({ onLoginSuccess }: LoginProps) {
 
   return (
     <Container className="p-0 mt-4">
-      <Form noValidate validated={validated} onSubmit={loguear}>
+      <Form noValidate validated={validated} onSubmit={loguear} style={estilo}>
         <Form.Group className="mb-4" controlId="formBasicUsername">
-          <Form.Label style={estilo}>Username</Form.Label>
+          <Form.Label>Username</Form.Label>
           <InputGroup hasValidation>
             <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
             <Form.Control
@@ -57,15 +57,16 @@ export default function FormLogin({ onLoginSuccess }: LoginProps) {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
             />
-            <Form.Control.Feedback type="invalid" style={estilo}>
+            <Form.Control.Feedback type="invalid">
               Ingresa tu usuario.
             </Form.Control.Feedback>
           </InputGroup>
         </Form.Group>
 
         <Form.Group className="mb-4" controlId="formBasicPassword">
-          <Form.Label style={estilo}>Contraseña</Form.Label>
+          <Form.Label>Contraseña</Form.Label>
           <Form.Control
             type="password"
             placeholder="Ingresa tu contraseña"
@@ -76,23 +77,24 @@ export default function FormLogin({ onLoginSuccess }: LoginProps) {
             value={password}
             isInvalid={!!error}
             required
+            style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
           />
 
           {!error && (
-            <Form.Control.Feedback type="invalid" style={estilo}>
+            <Form.Control.Feedback type="invalid">
               Ingresa tu contraseña.
             </Form.Control.Feedback>
           )}
 
           {error && (
-            <Form.Text className="text-danger" style={estilo}>
+            <Form.Text className="text-danger">
               {error}
             </Form.Text>
           )}
         </Form.Group>
 
         <div className="d-grid gap-2 mb-2">
-          <Button variant="primary" type="submit" style={estilo}>
+          <Button variant="primary" type="submit">
             Iniciar sesión
           </Button>
         </div>

@@ -52,7 +52,7 @@ export default function PostModal({id, author, content, date, tags = [], comment
                     {date && <small className="text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
                 </div>
                 <div className="ms-3">
-                    <Button variant={isFollowing ? "outline-secondary" : "primary"} size="sm" onClick={handleFollow} disabled={!!isProcessing}>
+                    <Button variant={isFollowing ? "outline-secondary" : "light"} size="sm" onClick={handleFollow} disabled={!!isProcessing}>
                         {isProcessing ? "Procesando..." : (isFollowing ? "Siguiendo" : "Seguir")}
                     </Button>
                 </div>

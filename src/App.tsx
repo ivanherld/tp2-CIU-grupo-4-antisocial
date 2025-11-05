@@ -28,16 +28,11 @@ function App() {
             <Route path='/help' element={<Help/>}/>
           </Route>
 
-          
+          <Route element={<PrivateLayout/>}>
             <Route path='/feed' element={<Feed/>}/>
-            <Route path="/users/:username" element={
-              <PrivateLayout>
-                <UserProfile/>
-              </PrivateLayout>} />
-            <Route path='profile/me' element={
-              <PrivateLayout>
-                <UserProfile/>
-              </PrivateLayout>}/>
+            <Route path="/users/:username" element={<UserProfile/>}/>
+            <Route path='profile/me' element={<UserProfile/>}/>
+          </Route>
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
