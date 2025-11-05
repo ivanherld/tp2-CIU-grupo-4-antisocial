@@ -1,6 +1,7 @@
 import { type CommentProps } from './Comment';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthProvider';
 import PostModal from './PostModal/PostModal';
 import Tags from './Tags/Tags';
 import Images from './Images/Images';
@@ -39,6 +40,11 @@ export default function Post({
   onFollow,
 }: PostProps) {
   // props-driven follow handlers (parent decides how to perform follow/unfollow)
+  const { usuario } = useAuth();
+  const currentUsername = usuario?.username;
+  const profileLink = currentUsername && currentUsername.toLowerCase() === author.toLowerCase()
+    ? '/profile/me'
+    : `/users/${encodeURIComponent(author)}`;
 
   return (
     <div className="card card-testimonial bg-light ">
@@ -46,7 +52,7 @@ export default function Post({
         <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 48 }} />
         <div className="d-flex flex-column ms-3 me-auto">
           <span className="person small ml-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>
-            <Link to={`/users/${encodeURIComponent(author)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to={profileLink} style={{ textDecoration: 'none', color: 'inherit' }}>
               <strong>{author}</strong>
             </Link>
           </span>
