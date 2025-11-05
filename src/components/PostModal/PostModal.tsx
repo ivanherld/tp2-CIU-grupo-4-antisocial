@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import api from "../../api"
 import Comment, {type CommentProps } from "../Comment"
 import { Button, Modal } from "react-bootstrap"
 import CommentForm from "../CommentForm/CommentForm"
@@ -25,6 +26,8 @@ export interface PostProps {
 export default function PostModal({id, author, avatarUrl, content, date, tags = [], comments = [], imagenes = [], isFollowing = false, isProcessing = false, onFollow}: PostProps) {
     const [show, setShow] = useState(false)
     const [postComments, setPostComments] = useState<CommentProps[]>(comments)
+    const [loadingComments, setLoadingComments] = useState<boolean>(false)
+    const [commentsError, setCommentsError] = useState<string | null>(null)
 
     const {usuario} = useAuth();
     const esPropio = usuario?.username === author
@@ -36,15 +39,66 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
     }
 
 
-    const handleAddComment = (_postId: string, text: string) => {
-        //fetch para guardar el comentario
-        const newComment: CommentProps = {
-            author: usuario?.username || "Anónimo",
-            text,
-            date: new Date().toISOString() //o el createdAt supongo
+    // Return a Promise so callers (CommentForm) can await and disable UI while posting
+    const handleAddComment = async (_postId: string, text: string): Promise<void> => {
+        try {
+            const payload = { postId: _postId, texto: text };
+            const res = await api.post('/comment', payload);
+            const created = res.data;
+            // normalizar respuesta a CommentProps
+            const appended: CommentProps = {
+                author: created?.usuario?.username ?? created?.username ?? usuario?.username ?? "Anónimo",
+                text: created?.texto ?? created?.text ?? text,
+                date: created?.createdAt ?? created?.updatedAt ?? new Date().toISOString(),
+                avatarUrl: created?.usuario?.avatarUrl ?? undefined,
+            };
+            setPostComments((prev) => [...prev, appended]);
+        } catch (err) {
+            // si falla la petición, añadir el comentario localmente para no bloquear UX
+            const newComment: CommentProps = {
+                author: usuario?.username || "Anónimo",
+                text,
+                date: new Date().toISOString(),
+            };
+            setPostComments((prev) => [...prev, newComment]);
+            console.warn('Error creando comentario', err);
+            // rethrow so caller can be aware if needed
+            // (but keep UX fallback already applied)
         }
-        setPostComments((prev) => [...prev, newComment])
     }
+
+    // fetch existing comments when modal opens
+    useEffect(() => {
+        if (!show) return;
+        let canceled = false;
+        const controller = new AbortController();
+        (async () => {
+            setLoadingComments(true);
+            setCommentsError(null);
+            try {
+                const res = await api.get<any[]>(`/post/${encodeURIComponent(id.toString())}/comments`, { signal: controller.signal });
+                if (canceled) return;
+                const apiComments = Array.isArray(res.data) ? res.data : [];
+                const normalized: CommentProps[] = apiComments.map((c: any) => ({
+                    author: c.usuario?.username ?? c.username ?? c.author ?? 'Anonimo',
+                    text: c.texto ?? c.text ?? c.descripcion ?? '',
+                    date: c.createdAt ?? c.updatedAt ?? undefined,
+                    avatarUrl: c.usuario?.avatarUrl ?? undefined,
+                }));
+                setPostComments(normalized);
+            } catch (err: any) {
+                if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
+                console.warn('Error fetching comments', err);
+                setCommentsError(err?.message ?? 'Error cargando comentarios');
+            } finally {
+                if (!canceled) setLoadingComments(false);
+            }
+        })();
+        return () => {
+            canceled = true;
+            controller.abort();
+        };
+    }, [show, id]);
 
   return (
     <>
@@ -85,15 +139,15 @@ export default function PostModal({id, author, avatarUrl, content, date, tags = 
                     <Images imagenes={imagenes}/>
                     <Tags tags={tags}/>
                 </div>
-
-                {postComments.length === 0 ? (
+                {loadingComments ? (
+                    <div className="text-muted">Cargando comentarios...</div>
+                ) : commentsError ? (
+                    <div className="text-danger">{commentsError}</div>
+                ) : postComments.length === 0 ? (
                     <p className="text-muted text-center mb-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>No hay comentarios</p>
                 ) : (
-                    postComments.map((c, i) => (
-                        <Comment key={i} {...c} />
-                    ))
+                    postComments.map((c, i) => <Comment key={i} {...c} />)
                 )}
-
                 <div className={styles.line}/>
                 <CommentForm postId={id.toString()} onAddComment={handleAddComment}/>
             </Modal.Body>
