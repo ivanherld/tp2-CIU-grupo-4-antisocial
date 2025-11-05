@@ -90,7 +90,9 @@ function FeedNav() {
             <Container fluid className={styles.userContainer}>
               <CreatePostModal />
               <div className={styles.iconContainer}>
-                <User className={styles.userIcon}/>
+                <Nav.Link as={NavLink} to="/profile/me">
+                  <User className={styles.userIcon}/>
+                </Nav.Link>
               </div>
             </Container>
           </Offcanvas.Body>

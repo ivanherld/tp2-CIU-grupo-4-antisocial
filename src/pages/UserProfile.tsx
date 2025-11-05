@@ -378,9 +378,9 @@ export default function UserProfile() {
   //   );
   // }
 
-  if (loading) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6"}}>Loading...</div>;
-  if (error) return <div className="text-danger" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600"}}>{error}</div>;
-  if (!profile) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6"}}>No hay perfil para mostrar</div>;
+  if (loading) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6", textAlign: "center"}}>Loading...</div>;
+  if (error) return <div className="text-danger" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", textAlign: "center"}}>{error}</div>;
+  if (!profile) return <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6", textAlign: "center"}}>No hay perfil para mostrar</div>;
 
   return (
   <div className={styles.content}>
@@ -393,7 +393,7 @@ export default function UserProfile() {
       isProcessing={followProcessing}
       onFollowToggle={handleFollowToggle}
     />
-    {loadingPosts && <div style={{ marginTop: 8, fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6"}}>Cargando publicaciones...</div>}
+    {loadingPosts && <div style={{ marginTop: 8, fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6", textAlign: "center"}}>Cargando publicaciones...</div>}
     {followError && (
       <div className="text-danger" style={{ marginTop: 8, fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600"}}>
         {followError}

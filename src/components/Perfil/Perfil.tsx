@@ -11,7 +11,7 @@ type User = {
   bio?: string;
 };
 
-type Tag = { id: string; name: string };
+type Tag = { id: string; nombre: string };
 type Comment = { id: string; content: string; createdAt: string; author: User };
 type Post = {
   id: string;
