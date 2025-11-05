@@ -202,57 +202,9 @@ export default function UserProfile() {
           (async () => {
             setLoadingPosts(true);
             try {
-              const postsRes = await api.get<any[]>(`/post/${encodeURIComponent(userId)}`, { signal: controller.signal });
+              const postsRes = await api.get<Post[]>(`/post/${encodeURIComponent(userId)}`, { signal: controller.signal });
               if (canceled) return;
-              console.debug('Raw posts response for user', userId, postsRes.data);
-
-              // Normalizar los posts recibidos para que coincidan con la forma que espera Perfil
-              const normalized = (postsRes.data || []).map((p: any) => {
-                const id = String(p.id ?? p._id ?? p.postId ?? Math.random().toString(36).slice(2,9));
-                const content = p.content ?? p.texto ?? p.description ?? p.body ?? '';
-                const createdAt = p.createdAt ?? p.created_at ?? p.created ?? p.date ?? new Date().toISOString();
-                // author puede venir como objeto o como userId/username
-                let author: any = { id: '', username: 'unknown' };
-                if (p.author) {
-                  author = {
-                    id: String(p.author.id ?? p.author._id ?? p.authorId ?? ''),
-                    username: p.author.username ?? p.author.username ?? p.author.name ?? String(p.author.id ?? p.author._id ?? '')
-                  };
-                } else if (p.user) {
-                  author = {
-                    id: String(p.user.id ?? p.user._id ?? p.userId ?? ''),
-                    username: p.user.username ?? p.user.name ?? String(p.user.id ?? p.user._id ?? '')
-                  };
-                } else if (p.userId || p.authorId) {
-                  author = { id: String(p.userId ?? p.authorId), username: `user${p.userId ?? p.authorId}` };
-                }
-
-                // tags pueden venir como array de strings o array de objetos
-                const tags: any[] | undefined = Array.isArray(p.tags)
-                  ? p.tags.map((t: any) => (typeof t === 'string' ? { id: t, name: t } : { id: t.id ?? t._id ?? t.name, name: t.name ?? t.label }))
-                  : undefined;
-
-                // comments: normalizar a { id, content, createdAt, author }
-                const comments: any[] | undefined = Array.isArray(p.comments)
-                  ? p.comments.map((c: any) => ({
-                      id: String(c.id ?? c._id ?? Math.random().toString(36).slice(2,9)),
-                      content: c.content ?? c.text ?? c.body ?? '',
-                      createdAt: c.createdAt ?? c.created_at ?? new Date().toISOString(),
-                      author: c.author ? ({ id: String(c.author.id ?? c.author._id ?? ''), username: c.author.username ?? c.author.name ?? '' }) : { id: String(c.userId ?? 'anon'), username: c.username ?? 'anon' }
-                    }))
-                  : undefined;
-
-                return {
-                  id,
-                  content,
-                  createdAt,
-                  author,
-                  tags,
-                  comments,
-                } as Post;
-              });
-
-              setPosts(normalized);
+              setPosts(postsRes.data || []);
             } catch (err) {
               if (axios.isAxiosError(err) && err.code === 'ERR_CANCELED') return;
               console.warn('Error cargando posts del perfil', err);
