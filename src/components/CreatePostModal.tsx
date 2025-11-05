@@ -1,10 +1,9 @@
-import { useContext, useState, type ChangeEvent, type KeyboardEvent, type FormEvent, useEffect } from "react";
+import { useContext, useState, type KeyboardEvent, type FormEvent, useEffect } from "react";
 import {
   Modal,
   Button,
   Form,
   Badge,
-  Image,
   Row,
   Col,
   Container,
@@ -24,22 +23,14 @@ export default function CreatePostModal(){
   const [tagsLoading, setTagsLoading] = useState(false);
   const [tagsError, setTagsError] = useState<string | null>(null);
 
-  const [image, setImage] = useState<string | null>(null);
   // For now backend expects image URLs; allow user to optionally provide an image URL.
   const [imageUrlInput, setImageUrlInput] = useState<string>("");
+  const [imageUrls, setImageUrls] = useState<string[]>([])
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
-    }
-  };
 
   useEffect(() => {
     const ac = new AbortController()
@@ -56,7 +47,7 @@ export default function CreatePostModal(){
           : []
         if(mounted) setAvailableTags(parsed)
       } catch (err: any) {
-        if(err.name == "CanceledError" || err.name === "AbortError") return;
+        if(err.name === "CanceledError" || err.name === "AbortError") return;
         if(mounted) setTagsError(err.message || "Error cargando tags")
       } finally {
         if(mounted) setTagsLoading(false)
@@ -81,6 +72,21 @@ export default function CreatePostModal(){
     }
   };
 
+  const handleImageUrlKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === "Enter" && imageUrlInput.trim() !== "") {
+      e.preventDefault()
+      const newUrl = imageUrlInput.trim()
+      if(!imageUrls.includes(newUrl)) {
+        setImageUrls([...imageUrls, newUrl])
+      }
+      setImageUrlInput("")
+    }
+  }
+
+  const removeImageUrl = (urlToRemove: string) => {
+    setImageUrls(imageUrls.filter((u) => u !== urlToRemove))
+  }
+
   const addSuggestedTag = (t: string) => {
     if(!tags.includes(t)) setTags((s) => [...s, t])
   }
@@ -95,17 +101,17 @@ export default function CreatePostModal(){
     setPosting(true);
     try {
       // Decide route based on presence of imageUrlInput and tags
-      const hasImageUrl = imageUrlInput.trim() !== '';
+      const hasImageUrl = imageUrls.length > 0;
       const hasTags = tags.length > 0;
 
       if (hasImageUrl && hasTags) {
         // create-completo expects imagenes array and tags; backend expects 'texto' instead of 'description'
-        const payload = { texto: description, tags, imagenes: [imageUrlInput.trim()] };
+        const payload = { texto: description, tags, imagenes: imageUrls.map((url) => ({url})) };
         console.log('POST /post/create-completo payload:', payload);
         const res = await api.post('/post/create-completo', payload);
         console.log('create-completo response', res.data);
       } else if (hasImageUrl) {
-        const payload = { texto: description, imagenes: [imageUrlInput.trim()] };
+        const payload = { texto: description, imagenes: imageUrls.map((url) => ({url})) };
         console.log('POST /post/create-imagenes payload:', payload);
         const res = await api.post('/post/create-imagenes', payload);
         console.log('create-imagenes response', res.data);
@@ -125,8 +131,8 @@ export default function CreatePostModal(){
       setDescription('');
       setTags([]);
       setTagInput('');
-      setImage(null);
       setImageUrlInput('');
+      setImageUrls([]);
       alert('Post creado correctamente');
       handleClose();
     } catch (err: any) {
@@ -145,7 +151,6 @@ export default function CreatePostModal(){
     fontFamily:"Montserrat, Arial, Helvetica, sans-serif",
     whiteSpace: "nowrap",
     fontSize: "0.9rem",
-    padding: "0.4rem 0.8rem"
   }
 
   return (
@@ -180,30 +185,31 @@ export default function CreatePostModal(){
 
             {/* Imagen URL (opcional) - backend espera URLs por ahora */}
             <Form.Group className="mb-3" controlId="formImageUrl">
-              <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>URL de la imagen (opcional)</Form.Label>
+              <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>URL de imágenes (opcional)</Form.Label>
               <Form.Control
                 type="url"
                 placeholder="https://ejemplo.com/imagen.jpg"
                 value={imageUrlInput}
                 onChange={(e) => setImageUrlInput(e.target.value)}
+                onKeyDown={handleImageUrlKeyDown}
                 style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
               />
-            </Form.Group>
-
-            {/* Imagen */}
-            <Form.Group className="mb-3" controlId="formImage">
-              <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Imagen</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
-              />
-              {image && (
-                <div className="mt-3 text-center">
-                  <Image src={image} thumbnail style={{ maxHeight: "200px" }} />
-                </div>
-              )}
+              <Row className="mt-2">
+                <Col>
+                  {imageUrls.map((url) => (
+                    <Badge
+                      key={url}
+                      bg="info"
+                      pill
+                      className="me-2 mb-2"
+                      style={{cursor: "pointer"}}
+                      onClick={() => removeImageUrl(url)}
+                    >
+                      {url.length > 25 ? url.slice(0, 25) + "..." : url} ✕
+                    </Badge>
+                  ))}
+                </Col>
+              </Row>
             </Form.Group>
 
             {/* Tags */}

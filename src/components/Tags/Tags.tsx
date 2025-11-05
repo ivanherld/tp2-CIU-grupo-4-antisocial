@@ -1,6 +1,6 @@
 import styles from "./Tags.module.css"
 
-export interface Tag {id: string; name: string}
+export interface Tag {id: string; nombre: string}
 
 export default function Tags({tags}: {tags:Tag[]}) {
 
@@ -9,7 +9,7 @@ export default function Tags({tags}: {tags:Tag[]}) {
   return (
     <div className={styles.tags}>
         {tags.map(t => (
-            <span key={t.id} className={styles.tag}>#{t.name}</span>
+            <span key={t.id} className={styles.tag}>#{t.nombre}</span>
         ))}
     </div>
   )

@@ -9,9 +9,10 @@ import { SuggestCard } from "../components/SuggestCard/SuggestCard";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
+import { ScrollToTopButton } from "../components/ScrollTopButton";
 
 export default function Feed() {
-  const { usuario, logout, cargando } = useAuth();
+  const { usuario, cargando } = useAuth();
   const navigate = useNavigate();
   const [lgSlides, setSlides] = useState(3);
   useEffect(() => {
@@ -87,13 +88,16 @@ export default function Feed() {
                 {posts.map((p: APIDataPost) => {
                   const author = `user${p.userId ?? "unknown"}`;
                   const content = `${p.title}\n\n${p.body}`;
+                  
                   const postProps: PostProps = {
+                    id: p.id,
                     author,
-                    avatarUrl: "/assets/antisocialpng.png",
+                    avatarUrl: "/antisocialpng.png",
                     date: undefined,
                     content,
-                    comments: [],
-                    id: ""
+                    imagenes: [],
+                    tags: [],
+                    comments: []
                   };
 
                   return (
@@ -154,6 +158,22 @@ export default function Feed() {
           </aside>
         </div>
       </div>
+      <ScrollToTopButton
+        estilos={{
+          position: "fixed",
+          bottom: "30px",
+          right:"30px",
+          backgroundColor:"#5fa92c",
+          color:"white",
+          border:"none",
+          borderRadius:"50%",
+          width:"45px",
+          height:"45px",
+          fontSize:"1.2rem",
+          boxShadow: "0 3px 6px rgba(0,0,0,0.2)",
+          cursor:"pointer"
+        }}
+      />
     </main>
   );
 }
