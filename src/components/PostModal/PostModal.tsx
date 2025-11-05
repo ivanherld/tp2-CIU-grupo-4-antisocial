@@ -33,6 +33,9 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
 
     const {usuario, follow, unfollow, isFollowing: authIsFollowing} = useAuth();
     const esPropio = usuario?.username === author
+    const profileLink = usuario?.username?.toLowerCase() === author.toLowerCase()
+    ? '/profile/me'
+    : `/users/${encodeURIComponent(author)}`;
 
     const [localFollowing, setLocalFollowing] = useState<boolean>(!!isFollowing);
     const [localProcessing, setLocalProcessing] = useState<boolean>(!!isProcessing);
@@ -172,7 +175,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 </div>
                 <div className="d-flex flex-column">
                     <div className="d-flex align-items-center gap-2">
-                        <Link to={`/users/${encodeURIComponent(author)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link to={profileLink} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <Modal.Title className={styles.autor}>{author}</Modal.Title>
                         </Link>
                         {!esPropio && (
