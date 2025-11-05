@@ -20,6 +20,7 @@ type Post = {
   author: User;
   tags?: Tag[];
   comments?: Comment[];
+  
 };
 type FollowCounts = { followers: number; following: number };
 

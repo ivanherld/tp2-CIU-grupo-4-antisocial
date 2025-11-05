@@ -17,7 +17,7 @@ export default function CreatePostModal(){
   const [show, setShow] = useState(false);
   const [description, setDescription] = useState<string>("");
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<{ nombre: string }[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [tagsLoading, setTagsLoading] = useState(false);
@@ -64,9 +64,10 @@ export default function CreatePostModal(){
   const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault();
-      const newTag = tagInput.trim();
-      if (!tags.includes(newTag)) {
-        setTags([...tags, newTag]);
+      const newTagName = tagInput.trim();
+      // avoid duplicates by nombre
+      if (!tags.some((t) => t.nombre === newTagName)) {
+        setTags([...tags, { nombre: newTagName }]);
       }
       setTagInput("");
     }
@@ -88,11 +89,13 @@ export default function CreatePostModal(){
   }
 
   const addSuggestedTag = (t: string) => {
-    if(!tags.includes(t)) setTags((s) => [...s, t])
+    if (!tags.some((tag) => tag.nombre === t)) {
+      setTags((s) => [...s, { nombre: t }]);
+    }
   }
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag.nombre !== tagToRemove));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -106,7 +109,7 @@ export default function CreatePostModal(){
 
       if (hasImageUrl && hasTags) {
         // create-completo expects imagenes array and tags; backend expects 'texto' instead of 'description'
-        const payload = { texto: description, tags, imagenes: imageUrls.map((url) => ({url})) };
+        const payload = { texto: description, tags: tags, imagenes: imageUrls.map((url) => ({url})) };
         console.log('POST /post/create-completo payload:', payload);
         const res = await api.post('/post/create-completo', payload);
         console.log('create-completo response', res.data);
@@ -116,7 +119,7 @@ export default function CreatePostModal(){
         const res = await api.post('/post/create-imagenes', payload);
         console.log('create-imagenes response', res.data);
       } else if (hasTags) {
-        const payload = { texto: description, tags };
+        const payload = { texto: description, tags: tags };
         console.log('POST /post/create-tags payload:', payload);
         const res = await api.post('/post/create-tags', payload);
         console.log('create-tags response', res.data);
@@ -227,14 +230,14 @@ export default function CreatePostModal(){
                 <Col>
                   {tags.map((tag) => (
                     <Badge
-                      key={tag}
+                      key={tag.nombre}
                       bg="secondary"
                       pill
                       className="me-2"
                       style={{ cursor: "pointer" }}
-                      onClick={() => removeTag(tag)}
+                      onClick={() => removeTag(tag.nombre)}
                     >
-                      {tag} ✕
+                      {tag.nombre} ✕
                     </Badge>
                   ))}
                 </Col>
@@ -251,8 +254,8 @@ export default function CreatePostModal(){
                     {!tagsLoading && !tagsError && availableTags.length > 0 && availableTags.slice(0, 12).map((t) => (
                       <Badge
                         key={t}
-                        bg={tags.includes(t) ? 'success' : 'light'}
-                        text={tags.includes(t) ? undefined : 'dark'}
+                        bg={tags.some(tag => tag.nombre === t) ? 'success' : 'light'}
+                        text={tags.some(tag => tag.nombre === t) ? undefined : 'dark'}
                         pill
                         className="me-2 mb-2"
                         style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)' }}

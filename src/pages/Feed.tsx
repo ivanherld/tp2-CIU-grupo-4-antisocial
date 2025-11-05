@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Spinner, Button } from "react-bootstrap";
-import { useInfinitePosts } from "../hooks/useInfinitePosts";
-import type { Post as APIDataPost } from "../hooks/useInfinitePosts";
 import PostCard, { type PostProps } from "../components/Post";
+import api from "../api";
 import styles from "./Feed.module.css"
 import { TrendingCard } from "../components/TrendingCard/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard/SuggestCard";
@@ -18,10 +17,6 @@ export default function Feed() {
     document.title = "Feed - Unahur Anti-Social Net";
   }, []);
 
-  const apiBase = "https://jsonplaceholder.typicode.com/posts";
-  const { posts, loading, error, hasMore, sentinelRef } = useInfinitePosts(apiBase, 10);
-
-  
   // Redirect to login if auth finished loading and there is no usuario
   useEffect(() => {
     if (!cargando && !usuario) {
@@ -37,6 +32,70 @@ export default function Feed() {
       setSlides(3)
     }
   }
+
+  // Feed state: fetch global posts from backend GET /post and normalize to PostProps
+  const [posts, setPosts] = useState<PostProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let canceled = false;
+    const controller = new AbortController();
+
+    const fetchPosts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await api.get<any[]>('/post', { signal: controller.signal });
+        if (canceled) return;
+        const apiPosts = Array.isArray(res.data) ? res.data : [];
+        const normalized: PostProps[] = apiPosts.map((p: any) => ({
+          id: p.id,
+          author: p.usuario?.username ?? String(p.usuarioId ?? p.usuarioUsername ?? 'unknown'),
+          avatarUrl: '/antisocialpng.png',
+          date: p.createdAt ?? undefined,
+          content: p.texto ?? p.content ?? (p.title ? `${p.title}\n\n${p.body}` : ''),
+          tags: Array.isArray(p.tags)
+            ? p.tags.map((t: any) => ({ id: String(t.id ?? t.nombre ?? t.name ?? ''), nombre: t.nombre ?? t.name ?? String(t) }))
+            : [],
+          comments: Array.isArray(p.comentarios)
+            ? p.comentarios.map((c: any) => ({
+                id: String(c.id),
+                content: c.texto ?? c.content ?? '',
+                createdAt: c.createdAt,
+                author: {
+                  id: String(c.usuarioId ?? c.usuario?.id ?? ''),
+                  username: c.usuario?.username ?? '',
+                },
+              }))
+            : [],
+          imagenes: Array.isArray(p.imagenes)
+            ? p.imagenes.map((img: any) => ({ url: img.url ?? img }))
+            : [],
+        }));
+        // ordenar por fecha descendente si está disponible
+        normalized.sort((a, b) => {
+          const da = a.date ?? '';
+          const db = b.date ?? '';
+          if (da === db) return 0;
+          return db > da ? 1 : -1;
+        });
+        setPosts(normalized);
+      } catch (err: any) {
+        if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
+        console.warn('Error fetching feed posts', err);
+        setError(err?.message || 'Error cargando publicaciones');
+      } finally {
+        if (!canceled) setLoading(false);
+      }
+    };
+
+    fetchPosts();
+    return () => {
+      canceled = true;
+      controller.abort();
+    };
+  }, []);
 
   const trendingTopics = [
     { topic: "NaturalezaUrbana", posts: "12.5K" },
@@ -84,27 +143,11 @@ export default function Feed() {
               </div>
 
               <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">
-                {posts.map((p: APIDataPost) => {
-                  const author = `user${p.userId ?? "unknown"}`;
-                  const content = `${p.title}\n\n${p.body}`;
-                  
-                  const postProps: PostProps = {
-                    id: p.id,
-                    author,
-                    avatarUrl: "/antisocialpng.png",
-                    date: undefined,
-                    content,
-                    imagenes: [],
-                    tags: [],
-                    comments: []
-                  };
-
-                  return (
-                    <Col key={p.id}>
-                      <PostCard {...postProps} />
-                    </Col>
-                  );
-                })}
+                {posts.map((p) => (
+                  <Col key={p.id}>
+                    <PostCard {...p} />
+                  </Col>
+                ))}
               </Row>
 
               <div className="text-center my-3" aria-live="polite" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600"}}>
@@ -113,17 +156,14 @@ export default function Feed() {
                     <span className="visually-hidden">Cargando...</span>
                   </Spinner>
                 )}
-                {!loading && !hasMore && posts.length > 0 && (
-                  <div className="text-muted mt-2">No hay más publicaciones.</div>
-                )}
                 {!loading && posts.length === 0 && !error && (
                   <div className="text-muted mt-2">No hay publicaciones todavía.</div>
                 )}
+                {!loading && posts.length > 0 && (
+                  <div className="text-muted mt-2">Publicaciones cargadas</div>
+                )}
                 {error && <div className="text-danger mt-2">Error: {error}</div>}
               </div>
-
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              <div ref={sentinelRef as any} style={{ height: 1 }} />
             </Container>
           </div>
         </div>
