@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Spinner, Button } from "react-bootstrap";
 import PostCard, { type PostProps } from "../components/Post";
+import { type Tag } from "../components/Tags/Tags";
 import api from "../api";
 import styles from "./Feed.module.css"
 import { TrendingCard } from "../components/TrendingCard/TrendingCard";
@@ -36,17 +37,20 @@ export default function Feed() {
   // Feed state: fetch global posts from backend GET /post and normalize to PostProps
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [loadingTags, setLoadingTags] = useState<boolean>();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let canceled = false;
-    const controller = new AbortController();
+    const controllerPost = new AbortController();
+
 
     const fetchPosts = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get<any[]>('/post', { signal: controller.signal });
+        const res = await api.get<any[]>('/post', { signal: controllerPost.signal });
         if (canceled) return;
         const apiPosts = Array.isArray(res.data) ? res.data : [];
         const normalized: PostProps[] = apiPosts.map((p: any) => ({
@@ -60,14 +64,14 @@ export default function Feed() {
             : [],
           comments: Array.isArray(p.comentarios)
             ? p.comentarios.map((c: any) => ({
-                id: String(c.id),
-                content: c.texto ?? c.content ?? '',
-                createdAt: c.createdAt,
-                author: {
-                  id: String(c.usuarioId ?? c.usuario?.id ?? ''),
-                  username: c.usuario?.username ?? '',
-                },
-              }))
+              id: String(c.id),
+              content: c.texto ?? c.content ?? '',
+              createdAt: c.createdAt,
+              author: {
+                id: String(c.usuarioId ?? c.usuario?.id ?? ''),
+                username: c.usuario?.username ?? '',
+              },
+            }))
             : [],
           imagenes: Array.isArray(p.imagenes)
             ? p.imagenes.map((img: any) => ({ url: img.url ?? img }))
@@ -93,7 +97,38 @@ export default function Feed() {
     fetchPosts();
     return () => {
       canceled = true;
-      controller.abort();
+      controllerPost.abort();
+    };
+  }, []);
+
+  useEffect(() => {
+    const controllerTag = new AbortController();
+    let canceledTag = false;
+
+    const fetchTag = async () => {
+      setError(null);
+      try {
+        const res = await api.get<any[]>('/tag', { signal: controllerTag.signal });
+        if (canceledTag) return;
+        const apiTags = Array.isArray(res.data) ? res.data : [];
+        const normalizedTags: Tag[] = apiTags.map((t: any) => ({
+          id: String(t.id),
+          nombre: String(t.nombre) || '',
+        }));
+        setTags(normalizedTags);
+      } catch (err: any) {
+        if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
+        console.warn('Error fetching tags', error);
+        setError(err?.message || 'Error cargando etiquetas');
+      } finally {
+        if (!canceledTag) setLoadingTags(false);
+      }
+    }
+
+    fetchTag();
+    return () => {
+      canceledTag = true;
+      controllerTag.abort();
     };
   }, []);
 
@@ -133,7 +168,7 @@ export default function Feed() {
             <Container className="py-4">
               <div className={styles.feedControl}>
                 <div className="titulo">
-                  <h2 className="mb-3" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"700", color:"#5fa92c"}}>Últimos posteos</h2>
+                  <h2 className="mb-3" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#5fa92c" }}>Últimos posteos</h2>
                 </div>
                 <Button variant="outline-success" onClick={() => handleLayOut()}>
                   {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
@@ -148,7 +183,7 @@ export default function Feed() {
                 ))}
               </Row>
 
-              <div className="text-center my-3" aria-live="polite" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600"}}>
+              <div className="text-center my-3" aria-live="polite" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600" }}>
                 {loading && (
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Cargando...</span>
@@ -170,20 +205,19 @@ export default function Feed() {
             <div className={styles.feedContainers} id="tendencias">
               <div className="titulo">
                 <TrendingUp className="trendingIcon" />
-                <h3 style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#3b82f6"}}>Tendencias</h3>
+                <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Tendencias</h3>
               </div>
-              {trendingTopics.map((item, index) => (
+              {tags.map((t, index) => (
                 <TrendingCard
                   key={index}
-                  topic={item.topic}
-                  posts={item.posts}
+                  nombre ={t.nombre}
                 />
               ))}
             </div>
             <div className={styles.feedContainers} id="sugerencias">
               <div className="titulo">
                 <User className="trendingIcon" />
-                <h3 style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#3b82f6"}}>Sugerencias</h3>
+                <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Sugerencias</h3>
               </div>
               {sugerenciasUsuarios.map((user, index) => (
                 <SuggestCard
