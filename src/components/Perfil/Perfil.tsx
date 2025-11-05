@@ -118,6 +118,7 @@ export default function Perfil({
               key={post.id}
               id={post.id}
               author={post.author.username}
+              authorId={post.author.id}
               avatarUrl={post.author.avatarUrl}
               content={post.content}
               date={new Date(post.createdAt).toLocaleString()}

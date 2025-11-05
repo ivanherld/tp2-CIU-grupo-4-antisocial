@@ -13,6 +13,10 @@ export interface AuthContextType {
     // centralized login helpers that perform HTTP, persist token and hydrate usuario
     loginWithCredentials: (username: string, password: string) => Promise<Usuario | null>;
     loginWithToken: (token: string) => Promise<Usuario | null>;
+    // follow helpers
+    follow?: (targetId: string) => Promise<any>;
+    unfollow?: (targetId: string) => Promise<any>;
+    isFollowing?: (targetId: string) => Promise<boolean>;
 }
 
 // create default no-op implementations for the context
@@ -25,4 +29,7 @@ export const AuthContext = createContext<AuthContextType>({
     logout: () => {},
     loginWithCredentials: async () => null,
     loginWithToken: async () => null,
+    follow: async () => null,
+    unfollow: async () => null,
+    isFollowing: async () => false,
 });

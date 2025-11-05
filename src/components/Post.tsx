@@ -10,6 +10,7 @@ export interface PostComment extends CommentProps {}
 export interface PostProps {
   id: number | string;
   author: string;
+  authorId?: string;
   avatarUrl?: string;
   date?: string; // display string
   content: string;
@@ -25,6 +26,7 @@ export interface PostProps {
 export default function Post({
   id,
   author,
+  authorId,
   avatarUrl,
   date,
   content,
@@ -56,6 +58,7 @@ export default function Post({
         <PostModal 
           id={id} 
           author={author} 
+          authorId={authorId}
           avatarUrl={avatarUrl} 
           content={content} 
           comments={comments}
