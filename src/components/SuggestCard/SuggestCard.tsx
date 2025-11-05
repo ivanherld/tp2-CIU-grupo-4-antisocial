@@ -1,4 +1,4 @@
-import styles from '../styles/css/SuggestCard.module.css';
+import styles from './SuggestCard.module.css';
 
 interface SuggestedUserProps {
   user: {
@@ -10,7 +10,7 @@ interface SuggestedUserProps {
 
 export function SuggestCard({ user }: SuggestedUserProps) {
   return (
-    <div className={styles.container}>
+    <div className={styles.containerSuggest}>
       <div className={styles.userInfo}>
         <img src={user.avatar} alt={user.name} className={styles.avatar} />
         <div className={styles.userDetails}>

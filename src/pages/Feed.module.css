@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    background-color: rgba(241, 241, 241, 0.761);
+    background-color: #f0f2f5;
     align-items: stretch; /* let children fill available width */
     width: 100%;
     box-sizing: border-box;

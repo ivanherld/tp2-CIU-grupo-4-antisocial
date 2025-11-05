@@ -13,15 +13,11 @@ export default function Comment({ author, date, text }: CommentProps) {
             <div className="media-body">
                 <div className="media-body-header d-flex align-items-center justify-content-between">
                     <div>
-                        <h6 className="comment-author mb-0">{author}</h6>
-                        {date && <small className="comment-date text-muted">{date}</small>}
-                    </div>
-                    <div>
-                        <a className="comment-reply me-2" href="#">Reply</a>
-                        <a className="comment-share" href="#">Share</a>
+                        <h6 className="comment-author mb-0" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{author}</h6>
+                        {date && <small className="comment-date text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
                     </div>
                 </div>
-                <div className="mt-2">{text}</div>
+                <div className="mt-2" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{text}</div>
             </div>
         </div>
     );

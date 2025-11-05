@@ -1,22 +1,29 @@
 import { Container } from "react-bootstrap";
-import Footer from "../components/Footer";
+
+
 
 export default function Terms() {
+
+  const estilos = {
+    fontFamily: "Open Sans Arial, Helvetica, sans-serif",
+    color: "#555",
+    fontSize: "1rem"
+  }
+
   return (
     <>
-      <Container style={{ maxWidth: 900, paddingTop: 24, paddingBottom: 48, paddingLeft: 16, paddingRight: 16 }}>
-        <h1 style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)" }}>Términos y condiciones</h1>
-        <p>
+      <Container className="py-5 py-md-4 py-lg-3 px-4 mt-4" style={{ maxWidth: 900, margin:"0 auto"}}>
+        <h1 className="mb-3" style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)", fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#3b82f6" }}>Términos y condiciones</h1>
+        <p className="mb-3" style={estilos}>
           Esta es una aplicación de ejemplo con fines educativos. No almacena datos reales
           ni ofrece garantías. El uso es bajo tu propia responsabilidad.
         </p>
-        <ul>
+        <ul className="ps-3"style={estilos}>
           <li>No se comparten datos con terceros.</li>
           <li>Puede contener errores o comportamientos incompletos.</li>
           <li>El diseño y funcionalidades pueden cambiar sin previo aviso.</li>
         </ul>
       </Container>
-      <Footer />
     </>
   );
 }

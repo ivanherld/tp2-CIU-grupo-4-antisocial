@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import Perfil from "../components/Perfil";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
+import Perfil from "../components/Perfil/Perfil";
 import styles from "./UserProfile.module.css";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, useParams, useLocation } from "react-router";
 import api from "../api";
 import axios from "axios";
+
 
 type User = {
   id: string;

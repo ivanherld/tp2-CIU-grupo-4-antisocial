@@ -1,21 +1,12 @@
 .mainContainer{
   display: flex;
-  flex-direction: row ;
-  padding: 10px;
-  border-bottom: 1px solid #ffffff;
+  align-items: center;
+  gap: 20px;
   /* background-color: red; */
 }
 
-#navTitle{
-  color: #333;
-  text-decoration: none;
-  font-size: 1.5rem;
+#navImg{
   padding-left: 10px;
-}
-
-#navTitle:hover {
-  color: #7ED321;
-  opacity: 0.95;
 }
 
 .navLinks{
@@ -24,20 +15,20 @@
   justify-content: center; /* centra los elementos del nav en el eje horizontal */
   align-items: center;
   flex: 1; /* permite que el nav ocupe el espacio intermedio */
+  font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
 .navButton{
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #d92626;
   text-decoration: none;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0;
   transition: color 0.15s ease, opacity 0.15s ease;
 }
 
 .navButton:hover {
-  color: #7ED321 !important;
+  color: #5fa92c !important;
   opacity: 0.95 !important;
 }
 
@@ -47,7 +38,7 @@
   align-items: center;
   justify-content: flex-end;
   width: 25%;
-  gap: 15px;
+  gap: 30px;
   padding-right: 10px;
   /* background-color: turquoise; */
 }
@@ -58,12 +49,12 @@
 }
 
 .iconContainer :hover {
-  color: #7ED321 !important;
+  color: #5fa92c !important;
   opacity: 0.95 !important;
   cursor: pointer;
 }
 
 .Navbar .Navbar.Brand :hover {
-  color: #7ED321;
+  color: #5fa92c;
   opacity: 0.95;
 } 

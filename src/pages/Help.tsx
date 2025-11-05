@@ -1,5 +1,4 @@
-import { Container, Form, Button } from "react-bootstrap";
-import Footer from "../components/Footer";
+import { Container, Form, Button, Alert } from "react-bootstrap";
 import { useState } from "react";
 
 export default function Help() {
@@ -15,13 +14,13 @@ export default function Help() {
 
   return (
     <>
-      <Container style={{ maxWidth: 900, paddingTop: 24, paddingBottom: 48, paddingLeft: 16, paddingRight: 16 }}>
-        <h1 style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)" }}>Ayuda</h1>
-        <p>¿Tenés dudas o sugerencias? Escribinos y te respondemos a la brevedad.</p>
+      <Container className="d-flex flex-column align-items-center py-5 py-md-4 py-lg-3 px-4 mt-4" style={{maxWidth: 900, margin: "0 auto"}}>
+        <h1 className="mb-3 text-center" style={{ fontSize: "clamp(1.75rem, 5vw, 2.5rem)", fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#3b82f6"}}>Ayuda</h1>
+        <p className="text-center mb-4" style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>¿Tenés dudas o sugerencias? Escribinos y te respondemos a la brevedad.</p>
 
         {!sent ? (
-          <Form onSubmit={handleSubmit} style={{ maxWidth: 560 }}>
-            <Form.Group className="mb-3">
+          <Form onSubmit={handleSubmit} className="w-100" style={{ maxWidth: 560, fontFamily:"Open Sans, Arial, Helvetica, sans-serif" }}>
+            <Form.Group className="mb-3" >
               <Form.Label>Tu email</Form.Label>
               <Form.Control
                 type="email"
@@ -42,15 +41,16 @@ export default function Help() {
                 onChange={(e) => setMessage(e.target.value)}
               />
             </Form.Group>
-            <Button type="submit">Enviar</Button>
+            <div className="d-grid gap-2 mb-2">
+              <Button type="submit" style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Enviar</Button>
+            </div>
           </Form>
         ) : (
-          <div className="alert alert-success" role="alert">
+          <Alert variant="success" className="text-center mt-3" style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>
             ¡Gracias! Tu mensaje fue enviado (demo). Te contactaremos por email.
-          </div>
+          </Alert>
         )}
       </Container>
-      <Footer />
     </>
   );
 }

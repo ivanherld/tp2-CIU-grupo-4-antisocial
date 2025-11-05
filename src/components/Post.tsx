@@ -1,43 +1,37 @@
-import Comment, { type CommentProps } from './Comment';
-import Accordion from 'react-bootstrap/Accordion';
-import { useAccordionButton } from 'react-bootstrap/AccordionButton';
+import { type CommentProps } from './Comment';
 import Card from 'react-bootstrap/Card';
+import PostModal from './PostModal/PostModal';
+import Tags from './Tags/Tags';
+import { useAuth } from '../context/AuthProvider';
 
 export interface PostComment extends CommentProps {}
 
-function CustomToggle({ children, eventKey }: { children: React.ReactNode; eventKey: string }) {
-  const decoratedOnClick = useAccordionButton(eventKey);
-
-  return (
-    <button type="button" className="btn btn-link p-0" onClick={decoratedOnClick}>
-      {children}
-    </button>
-  );
-}
 
 export interface PostProps {
-  id?: number | string;
+  id: number | string;
   author: string;
   avatarUrl?: string;
-  isFollowing?: boolean;
-  onFollow?: (author: string) => void;
   date?: string; // display string
   content: string;
+  tags?: {id: string; name: string}[];
   comments?: PostComment[];
 }
 
 export default function Post({
+  id,
   author,
   avatarUrl = '/assets/antisocialpng.png',
-  isFollowing = false,
-  onFollow,
   date,
   content,
+  tags = [],
   comments = [],
 }: PostProps) {
+  const {following, toggleFollow} = useAuth()
+  const isFollowing = !!following[author]
+
   const handleFollow = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!isFollowing && onFollow) onFollow(author);
+    toggleFollow(author)
   };
 
   return (
@@ -45,40 +39,31 @@ export default function Post({
       <div className="card-body d-flex flex-row align-items-center pb-3">
         <img src={avatarUrl} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: 48, height: 48 }} />
         <div className="d-flex flex-column ms-3 me-auto">
-          <span className="person small ml-2"><strong>{author}</strong></span>
-          {date && <span className="person-role small text-muted">{date}</span>}
+          <span className="person small ml-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}><strong>{author}</strong></span>
+          {date && <span className="person-role small text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</span>}
         </div>
 
         {/* Botón Seguir solo habilitado si no sigo al autor */}
-        <div>
-          {!isFollowing ? (
-            <button className="btn btn-light btn-sm" onClick={handleFollow}>Seguir</button>
-          ) : (
-            <button className="btn btn-outline-secondary btn-sm" disabled>Siguiendo</button>
-          )}
+        <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}> 
+          <button 
+            className={`btn btn-sm ${isFollowing ? `btn-outline-secondary`: `btn-light`}`}
+            onClick={handleFollow}>{isFollowing? "Siguiendo" : "Seguir"}</button>
         </div>
       </div>
 
       <div className="card-body pt-0">
-        <p className="card-text">{content}</p>
+        <p className="card-text" style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>{content}</p>
+        <Tags tags={tags}/>
+
+        <PostModal id={id} author={author} content={content} comments={comments} date={date} tags={tags}/>
       </div>
 
-      {/* Comentarios en acordeón dentro del footer de la card */}
       <div className="card-footer p-0">
-        <Accordion>
-          <Card className="border-0">
-            <Card.Header className="bg-transparent p-2">
-              <CustomToggle eventKey="0">Comentarios ({comments.length})</CustomToggle>
+        <Card className="border-0">
+            <Card.Header className="bg-transparent p-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", display: 'flex', justifyContent: 'flex-end'}}>
+              <span style={{color:"#3b82f6", fontWeight:"500"}}>Comentarios ({comments.length})</span>
             </Card.Header>
-            <Accordion.Collapse eventKey="0">
-              <Card.Body className="p-2">
-                {comments.map((c, idx) => (
-                  <Comment key={idx} author={c.author} date={c.date} text={c.text} />
-                ))}
-              </Card.Body>
-            </Accordion.Collapse>
-          </Card>
-        </Accordion>
+        </Card>
       </div>
     </div>
   );

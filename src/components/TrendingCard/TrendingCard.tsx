@@ -1,4 +1,4 @@
-import styles from '../styles/css/TrendingCard.module.css'
+import styles from './TrendingCard.module.css'
 
 interface TrendingCardProps {
   topic: string;
