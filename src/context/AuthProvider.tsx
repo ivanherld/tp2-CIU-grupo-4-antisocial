@@ -17,7 +17,7 @@ export default function AuthProvider({children}: AuthProviderProps) {
 
     const [usuario, setUsuario] = useState<Usuario | null>(null);
     const [cargando, setCargando] = useState(true);
-    const [following, setFollowing] = useState<Record<string, boolean>>({})
+    // const [following, setFollowing] = useState<Record<string, boolean>>({})
 
 
     //* Se supone que recupera el usuario guardado

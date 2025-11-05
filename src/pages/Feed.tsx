@@ -8,9 +8,9 @@ import { TrendingCard } from "../components/TrendingCard/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard/SuggestCard";
 import { CreatePost } from "../components/CreatePost/CreatePost";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
-import FeedNav from "../components/FeedNav";
+import FeedNav from "../components/FeedNav/FeedNav";
 import { useAuth } from "../context/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
 
 export default function Feed() {
   const { usuario, logout, cargando } = useAuth();
@@ -23,12 +23,14 @@ export default function Feed() {
   const apiBase = "https://jsonplaceholder.typicode.com/posts";
   const { posts, loading, error, hasMore, sentinelRef } = useInfinitePosts(apiBase, 10);
 
+  
   // Redirect to login if auth finished loading and there is no usuario
   useEffect(() => {
     if (!cargando && !usuario) {
       navigate('/login');
     }
   }, [cargando, usuario, navigate]);
+
 
   function handleLayOut() {
     if (lgSlides >= 2) {
@@ -68,16 +70,17 @@ export default function Feed() {
 
   return (
     <main>
+      <FeedNav />
       <div className={styles.contenedorPrincipal} id="filas">
-        <h1>Feed</h1>
-        {!cargando && usuario && (
+        {/* <h1>Feed</h1>
+        {usuario && (
           <Container>
             <h2>Bienvenido, {usuario.username}!</h2>
-            <Button variant="danger" onClick={() => { logout(); navigate('/'); }}>
+            <Button variant="danger" onClick={logout}>
               Cerrar sesión
             </Button>
           </Container>
-        )}
+        )} */}
         <div className={styles.contenedorSecundario} id={styles.columna1}>
           {usuario ? <CreatePost /> : null}
           <div className={styles.feedContainers}>
@@ -167,4 +170,3 @@ export default function Feed() {
     </main>
   );
 }
-

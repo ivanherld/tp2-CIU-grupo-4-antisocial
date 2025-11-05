@@ -4,7 +4,6 @@ import { Button, Modal } from "react-bootstrap"
 import CommentForm from "../CommentForm/CommentForm"
 import styles from "./PostModal.module.css"
 import Tags from "../Tags/Tags"
-import { useAuth } from "../../context/AuthProvider"
 
 export interface PostProps {
     id: number | string,
@@ -13,17 +12,24 @@ export interface PostProps {
     date?: string,
     tags?: {id: string, name: string}[]
     comments?: CommentProps[]
+    // follow control props (parent-driven)
+    isFollowing?: boolean
+    isProcessing?: boolean
+    onFollow?: (e?: React.MouseEvent) => void
 }
 
-export default function PostModal({id, author, content, date, tags = [], comments = []}: PostProps) {
+export default function PostModal({id, author, content, date, tags = [], comments = [], isFollowing = false, isProcessing = false, onFollow}: PostProps) {
     const [show, setShow] = useState(false)
     const [postComments, setPostComments] = useState<CommentProps[]>(comments)
 
-    const {following, toggleFollow} = useAuth()
-    const isFollowing = !!following[author]
+    // follow click delegated to parent via onFollow
+    const handleFollow = (e: React.MouseEvent) => {
+        e.preventDefault()
+        if (onFollow) onFollow(e)
+    }
 
 
-    const handleAddComment = (postId: string, text: string) => {
+    const handleAddComment = (_postId: string, text: string) => {
         //fetch para guardar el comentario
         const newComment: CommentProps = {
             author:"Yo", //segun el usuario
@@ -46,8 +52,8 @@ export default function PostModal({id, author, content, date, tags = [], comment
                     {date && <small className="text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
                 </div>
                 <div className="ms-3">
-                    <Button variant={isFollowing ? "outline-secondary" : "light"} size="sm" onClick={() => toggleFollow(author)}>
-                        {isFollowing? "Siguiendo" : "Seguir"}
+                    <Button variant={isFollowing ? "outline-secondary" : "primary"} size="sm" onClick={handleFollow} disabled={!!isProcessing}>
+                        {isProcessing ? "Procesando..." : (isFollowing ? "Siguiendo" : "Seguir")}
                     </Button>
                 </div>
             </Modal.Header>

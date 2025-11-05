@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, type ChangeEvent, type KeyboardEvent, type FormEvent } from "react";
+import { useContext, useState, type ChangeEvent, type KeyboardEvent, type FormEvent } from "react";
 import {
   Modal,
   Button,
@@ -10,31 +10,20 @@ import {
   Container,
 } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
+import api from "../api";
 
 
-
-interface CreatePostModalProps {
-  /** URL de la API que devuelve tags (array de strings o array de objetos con 'name') */
-  tagsApiUrl?: string;
-}
-
-interface PostData {
-  description: string;
-  tags: string[];
-  image?: string | null;
-}
-
-export default function CreatePostModal({ tagsApiUrl = '/api/tags' }: CreatePostModalProps){
+export default function CreatePostModal(){
   const { usuario } = useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [description, setDescription] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
-
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [tagsLoading, setTagsLoading] = useState(false);
-  const [tagsError, setTagsError] = useState<string | null>(null);
+  // For now backend expects image URLs; allow user to optionally provide an image URL.
+  const [imageUrlInput, setImageUrlInput] = useState<string>("");
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState<string | null>(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -47,6 +36,8 @@ export default function CreatePostModal({ tagsApiUrl = '/api/tags' }: CreatePost
     }
   };
 
+
+
   const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault();
@@ -58,110 +49,108 @@ export default function CreatePostModal({ tagsApiUrl = '/api/tags' }: CreatePost
     }
   };
 
-  const addSuggestedTag = (t: string) => {
-    if (!tags.includes(t)) setTags((s) => [...s, t]);
-  };
-
-  useEffect(() => {
-    const ac = new AbortController();
-    let mounted = true;
-    const fetchTags = async () => {
-      setTagsLoading(true);
-      setTagsError(null);
-      try {
-        const res = await fetch(tagsApiUrl, { signal: ac.signal });
-        if (!res.ok) {
-          // Si la ruta no existe o responde 404/500, no mostramos error técnico crudo,
-          // simplemente no hay sugerencias disponibles.
-          if (mounted) setAvailableTags([]);
-          return;
-        }
-
-        // Leemos como texto primero porque algunas rutas devuelven HTML (página 404)
-        const text = await res.text();
-        let data: any;
-        try {
-          data = JSON.parse(text);
-        } catch (parseErr) {
-          // No es JSON (probablemente HTML), tratamos como "no hay tags"
-          if (mounted) {
-            setAvailableTags([]);
-            setTagsError(null);
-          }
-          return;
-        }
-
-        const parsed: string[] = Array.isArray(data)
-          ? data.map((it: any) => (typeof it === 'string' ? it : it.name ?? String(it))).filter(Boolean)
-          : [];
-        if (mounted) setAvailableTags(parsed);
-      } catch (err: any) {
-        if (err.name === 'AbortError') return;
-        if (mounted) setTagsError(err.message || 'Error cargando tags');
-      } finally {
-        if (mounted) setTagsLoading(false);
-      }
-    };
-    fetchTags();
-    return () => { mounted = false; ac.abort(); };
-  }, [tagsApiUrl]);
-
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const postData: PostData = { description, tags, image };
-    console.log("Nuevo post:", postData);
-    alert("Post creado (ver consola)");
-    handleClose();
-  };
+    setPostError(null);
+    setPosting(true);
+    try {
+      // Decide route based on presence of imageUrlInput and tags
+      const hasImageUrl = imageUrlInput.trim() !== '';
+      const hasTags = tags.length > 0;
 
-  const estiloBoton = {
-    fontFamily:"Montserrat, Arial, Helvetica, sans-serif",
-    whiteSpace: "nowrap",
-    fontSize: "0.9rem",
-    padding: "0.4rem 0.8rem"
-  }
+      if (hasImageUrl && hasTags) {
+        // create-completo expects imagenes array and tags; backend expects 'texto' instead of 'description'
+        const payload = { texto: description, tags, imagenes: [imageUrlInput.trim()] };
+        console.log('POST /post/create-completo payload:', payload);
+        const res = await api.post('/post/create-completo', payload);
+        console.log('create-completo response', res.data);
+      } else if (hasImageUrl) {
+        const payload = { texto: description, imagenes: [imageUrlInput.trim()] };
+        console.log('POST /post/create-imagenes payload:', payload);
+        const res = await api.post('/post/create-imagenes', payload);
+        console.log('create-imagenes response', res.data);
+      } else if (hasTags) {
+        const payload = { texto: description, tags };
+        console.log('POST /post/create-tags payload:', payload);
+        const res = await api.post('/post/create-tags', payload);
+        console.log('create-tags response', res.data);
+      } else {
+        const payload = { texto: description };
+        console.log('POST /post payload:', payload);
+        const res = await api.post('/post', payload);
+        console.log('create post response', res.data);
+      }
+
+      // Success: reset form and close
+      setDescription('');
+      setTags([]);
+      setTagInput('');
+      setImage(null);
+      setImageUrlInput('');
+      alert('Post creado correctamente');
+      handleClose();
+    } catch (err: any) {
+      console.error(err);
+    console.error('Create post error', err);
+    const respData = err?.response?.data;
+    const message = respData?.message || respData || err?.message || 'Error creando el post';
+    // if it's an object, stringify to show details
+    setPostError(typeof message === 'string' ? message : JSON.stringify(message));
+    } finally {
+      setPosting(false);
+    }
+  };
 
   return (
     <>
       {/* Botón que abre el modal */}
       <Container className="d-flex justify-content-center my-3">
-      <Button variant="outline-success" onClick={handleShow} style={estiloBoton}>
+      <Button variant="primary" onClick={handleShow}>
         + Crear Post
       </Button>
       </Container>
       {/* Modal */}
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#5fa92c"}}>Nuevo Post</Modal.Title>
+          <Modal.Title>Nuevo Post</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             {/* Descripción */}
             <Form.Group className="mb-3" controlId="formDescription">
-              <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}><strong>{usuario?.username ?? "Usuario Anónimo"}</strong></Form.Label>
+              <Form.Label><strong>{usuario?.username ?? "Usuario Anónimo"}</strong></Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 placeholder="¿Qué hay de nuevo?"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
+              />
+            </Form.Group>
+
+            {/* Imagen URL (opcional) - backend espera URLs por ahora */}
+            <Form.Group className="mb-3" controlId="formImageUrl">
+              <Form.Label>URL de la imagen (opcional)</Form.Label>
+              <Form.Control
+                type="url"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                value={imageUrlInput}
+                onChange={(e) => setImageUrlInput(e.target.value)}
               />
             </Form.Group>
 
             {/* Imagen */}
             <Form.Group className="mb-3" controlId="formImage">
-              <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Imagen</Form.Label>
+              <Form.Label>Imagen</Form.Label>
               <Form.Control
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
               />
               {image && (
                 <div className="mt-3 text-center">
@@ -172,14 +161,13 @@ export default function CreatePostModal({ tagsApiUrl = '/api/tags' }: CreatePost
 
             {/* Tags */}
             <Form.Group className="mb-3" controlId="formTags">
-              <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Tags</Form.Label>
+              <Form.Label>Tags</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Escribí un tag y presioná Enter"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagKeyDown}
-                style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
               />
               <Row className="mt-2">
                 <Col>
@@ -197,39 +185,18 @@ export default function CreatePostModal({ tagsApiUrl = '/api/tags' }: CreatePost
                   ))}
                 </Col>
               </Row>
-
-              {/* Sugerencias de tags desde la API */}
-              <div className="mt-3" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>
-                <div className="mt-2">
-                  {tagsLoading && <span className="text-muted"> Cargando tags...</span>}
-                  {tagsError && <span className="text-danger"> {tagsError}</span>}
-                  {!tagsLoading && !tagsError && availableTags.length === 0 && (
-                    <span className="text-muted">No hay tags sugeridos</span>
-                  )}
-                  {!tagsLoading && !tagsError && availableTags.length > 0 && availableTags.slice(0, 12).map((t) => (
-                    <Badge
-                      key={t}
-                      bg={tags.includes(t) ? 'success' : 'light'}
-                      text={tags.includes(t) ? undefined : 'dark'}
-                      pill
-                      className="me-2 mb-2"
-                      style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)' }}
-                      onClick={() => addSuggestedTag(t)}
-                    >
-                      {t}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
             </Form.Group>
 
             {/* Botones */}
-            <div className="d-flex justify-content-end" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>
-              <Button variant="secondary" onClick={handleClose} className="me-2">
+            <div className="d-flex justify-content-end" style={{minWidth: 320}}>
+              <div className="me-2" style={{minWidth: 220}}>
+                {postError && <div className="text-danger mb-2">{postError}</div>}
+              </div>
+              <Button variant="secondary" onClick={handleClose} className="me-2" disabled={posting}>
                 Cancelar
               </Button>
-              <Button variant="primary" type="submit">
-                Publicar
+              <Button variant="primary" type="submit" disabled={posting}>
+                {posting ? 'Publicando...' : 'Publicar'}
               </Button>
             </div>
           </Form>

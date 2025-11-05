@@ -15,6 +15,10 @@ export interface PostProps {
   content: string;
   tags?: {id: string; name: string}[];
   comments?: PostComment[];
+  // follow props
+  isFollowing?: boolean;
+  isProcessing?: boolean;
+  onFollow?: () => void;
 }
 
 export default function Post({
@@ -25,13 +29,14 @@ export default function Post({
   content,
   tags = [],
   comments = [],
+  isFollowing = false,
+  isProcessing = false,
+  onFollow,
 }: PostProps) {
-  const {following, toggleFollow} = useAuth()
-  const isFollowing = !!following[author]
-
+  // props-driven follow handlers (parent decides how to perform follow/unfollow)
   const handleFollow = (e: React.MouseEvent) => {
     e.preventDefault();
-    toggleFollow(author)
+    if (onFollow) onFollow();
   };
 
   return (
@@ -43,11 +48,15 @@ export default function Post({
           {date && <span className="person-role small text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</span>}
         </div>
 
-        {/* Botón Seguir solo habilitado si no sigo al autor */}
+        {/* Botón Seguir controlado por props; el padre maneja la acción */}
         <div style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}> 
           <button 
-            className={`btn btn-sm ${isFollowing ? `btn-outline-secondary`: `btn-light`}`}
-            onClick={handleFollow}>{isFollowing? "Siguiendo" : "Seguir"}</button>
+            className={`btn btn-sm ${isFollowing ? `btn-outline-secondary`: `btn-primary`}`}
+            onClick={handleFollow}
+            disabled={!!isProcessing}
+          >
+            {isProcessing ? "Procesando..." : (isFollowing ? "Siguiendo" : "Seguir")}
+          </button>
         </div>
       </div>
 
