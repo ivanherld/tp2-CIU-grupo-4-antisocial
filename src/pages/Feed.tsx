@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Container, Row, Col, Spinner, Button } from "react-bootstrap";
 import PostCard, { type PostProps } from "../components/Post";
 import { type Tag } from "../components/Tags/Tags";
@@ -8,11 +8,12 @@ import { TrendingCard } from "../components/TrendingCard/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard/SuggestCard";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import { useAuth } from "../context/AuthProvider";
-import { useNavigate } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
+import { useNavigate, useSearchParams } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
 
 export default function Feed() {
   const { usuario, cargando } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [lgSlides, setSlides] = useState(3);
   useEffect(() => {
     document.title = "Feed - Unahur Anti-Social Net";
@@ -56,6 +57,7 @@ export default function Feed() {
         const normalized: PostProps[] = apiPosts.map((p: any) => ({
           id: p.id,
           author: p.usuario?.username ?? String(p.usuarioId ?? p.usuarioUsername ?? 'unknown'),
+          authorId: String(p.usuario?.id ?? p.usuarioId ?? ''),
           avatarUrl: '/antisocialpng.png',
           date: p.createdAt ?? undefined,
           content: p.texto ?? p.content ?? (p.title ? `${p.title}\n\n${p.body}` : ''),
@@ -132,6 +134,16 @@ export default function Feed() {
     };
   }, []);
 
+  // derive active tag from query string and compute filtered posts
+  const activeTagRaw = searchParams.get('tag') ?? '';
+  const activeTag = activeTagRaw.trim().replace(/^#/, '').toLowerCase();
+  const filteredPosts = useMemo(() => {
+    if (!activeTag) return posts;
+    return posts.filter((p) =>
+      Array.isArray(p.tags) && p.tags.some((t) => String(t.nombre ?? '').toLowerCase() === activeTag)
+    );
+  }, [posts, activeTag]);
+
   const trendingTopics = [
     { topic: "NaturalezaUrbana", posts: "12.5K" },
     { topic: "DesconectaParaConectar", posts: "8.9K" },
@@ -176,7 +188,7 @@ export default function Feed() {
               </div>
 
               <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">
-                {posts.map((p) => (
+                {filteredPosts.map((p) => (
                   <Col key={p.id}>
                     <PostCard {...p} />
                   </Col>
@@ -189,11 +201,11 @@ export default function Feed() {
                     <span className="visually-hidden">Cargando...</span>
                   </Spinner>
                 )}
-                {!loading && posts.length === 0 && !error && (
-                  <div className="text-muted mt-2">No hay publicaciones todavía.</div>
+                {!loading && filteredPosts.length === 0 && !error && (
+                  <div className="text-muted mt-2">{activeTag ? `No hay publicaciones con #${activeTagRaw}` : 'No hay publicaciones todavía.'}</div>
                 )}
-                {!loading && posts.length > 0 && (
-                  <div className="text-muted mt-2">Publicaciones cargadas</div>
+                {!loading && filteredPosts.length > 0 && (
+                  <div className="text-muted mt-2">{activeTag ? `Resultados para #${activeTagRaw}` : 'Publicaciones cargadas'}</div>
                 )}
                 {error && <div className="text-danger mt-2">Error: {error}</div>}
               </div>

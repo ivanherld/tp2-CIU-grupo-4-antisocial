@@ -9,7 +9,7 @@ export default function Tags({tags}: {tags:Tag[]}) {
   return (
     <div className={styles.tags}>
         {tags.map(t => (
-            <span key={t.id} className={styles.tag}>#{t.nombre}</span>
+            <span key={t.id} className={styles.tag} style={{fontFamily:"Open Sans, Arial, Helvetica, sans-serif"}}>#{t.nombre}</span>
         ))}
     </div>
   )
