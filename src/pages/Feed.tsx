@@ -19,7 +19,7 @@ type Usuario = {
 };
 
 export default function Feed() {
-  const { usuario, cargando } = useAuth();
+  const { usuario, cargando, isFollowing } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [lgSlides, setSlides] = useState(3);
@@ -58,6 +58,7 @@ export default function Feed() {
   const [followedOnly, setFollowedOnly] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [suggestedUsuarios, setSuggestedUsuarios] = useState<Usuario[]>([]);
   const [_loadingTags, setLoadingTags] = useState<boolean>();
   const [error, setError] = useState<string | null>(null);
 
@@ -185,7 +186,37 @@ export default function Feed() {
       canceled = true;
       controller.abort();
     };
-  }, [tags, error]);
+  }, []);
+
+  // derive suggested users by excluding those we already follow
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!usuarios || usuarios.length === 0) {
+        if (!cancelled) setSuggestedUsuarios([]);
+        return;
+      }
+      // build candidates excluding current user
+      const candidates = usuarios.filter(u => u.id !== String(usuario?.id));
+      try {
+        const checks = await Promise.all(candidates.map(async (u) => {
+          try {
+            // isFollowing returns true if we already follow this user
+            const res = await (typeof isFollowing === 'function' ? isFollowing(String(u.id)) : Promise.resolve(false));
+            return { u, following: !!res };
+          } catch (e) {
+            return { u, following: false };
+          }
+        }));
+        if (cancelled) return;
+        const notFollowed = checks.filter(ch => !ch.following).map(ch => ch.u);
+        setSuggestedUsuarios(notFollowed.slice(0, 3));
+      } catch (e) {
+        if (!cancelled) setSuggestedUsuarios([]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [usuarios, usuario?.id]);
 
   // derive active tag from query string and compute filtered posts
   const activeTagRaw = searchParams.get('tag') ?? '';
@@ -197,36 +228,7 @@ export default function Feed() {
     );
   }, [posts, activeTag]);
   
-  /* 
-  Mock data para tendencias y usuarios sugeridos 
-  const trendingTopics = [
-    { topic: "NaturalezaUrbana", posts: "12.5K" },
-    { topic: "DesconectaParaConectar", posts: "8.9K" },
-    { topic: "JardínComunitario", posts: "6.2K" },
-    { topic: "TecnologíaVerde", posts: "5.1K" },
-  ];
   
-  const sugerenciasUsuarios = [
-    {
-      name: "Juan López",
-      username: "@juanl",
-      avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
-    },
-    {
-      name: "Sofía García",
-      username: "@sofiag",
-      avatar:
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop",
-    },
-    {
-      name: "Diego Torres",
-      username: "@diegot",
-      avatar:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
-    },
-  ];
-  */
   const estiloBoton = {
     fontFamily:"Montserrat, Arial, Helvetica, sans-serif",
     whiteSpace: "nowrap",
@@ -308,18 +310,19 @@ export default function Feed() {
                 <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Sugerencias</h3>
               </div>
               {
-                usuarios
-                .filter(u => u.id !== String(usuario?.id))
-                .slice(0, 3)
-                .map((u, index) => (
+                suggestedUsuarios.map((u) => (
                 <SuggestCard
-                  key={index}
+                  key={u.id}
+                  id={u.id}
                   user = {{
                     name: u.username,
                     username: u.displayName,
                     avatar: u.avatarUrl,
-                  }
-                }
+                  }}
+                  onFollowed={(id) => {
+                    setUsuarios(prev => prev.filter(x => x.id !== String(id)));
+                    setSuggestedUsuarios(prev => prev.filter(x => x.id !== String(id)));
+                  }}
                 />
               ))}
             </div>
