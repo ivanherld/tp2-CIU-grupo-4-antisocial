@@ -7,6 +7,7 @@ import {
   Row,
   Col,
   Container,
+  Toast,
 } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api";
@@ -31,6 +32,10 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
+  // Toast state for nicer, non-blocking UI messages
+  const [toastShow, setToastShow] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState<"success" | "danger">("success");
 
   const handleClose = () => {setShow(false); if(onClose) onClose()};
   const handleShow = () => setShow(true);
@@ -139,21 +144,46 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
         console.log('create post response', res.data);
       }
 
-      // Success: reset form and close
-      setDescription('');
-      setTags([]);
-      setTagInput('');
-      setImageUrlInput('');
-      setImageUrls([]);
-      alert('Post creado correctamente');
-      handleClose();
+  // Success: reset form, show toast and close
+  setDescription("");
+  setTags([]);
+  setTagInput("");
+  setImageUrlInput("");
+  setImageUrls([]);
+  setPostError(null);
+  setToastVariant("success");
+  setToastMessage("Post creado correctamente");
+  setToastShow(true);
+  handleClose();
     } catch (err: any) {
-      console.error(err);
-    console.error('Create post error', err);
-    const respData = err?.response?.data;
-    const message = respData?.message || respData || err?.message || 'Error creando el post';
-    // if it's an object, stringify to show details
-    setPostError(typeof message === 'string' ? message : JSON.stringify(message));
+      console.error('Create post error', err);
+      const extractErrorMessage = (e: any) => {
+        // axios error with response
+        if (e?.response) {
+          const data = e.response.data;
+          // common shapes: string, { message }, { error }, { errors: [...] }
+          if (!data) return `Error ${e.response.status}: ${e.response.statusText || 'server error'}`;
+          if (typeof data === 'string') return data;
+          if (typeof data === 'object') {
+            if (data.message) return data.message;
+            if (data.error) return data.error;
+            if (Array.isArray(data.errors)) return data.errors.map((it: any) => (it.msg || it.message || String(it))).join('; ');
+            // sometimes the backend returns validation object { field: ['msg'] }
+            if (Object.keys(data).length > 0) return JSON.stringify(data);
+          }
+          return String(data);
+        }
+        // no response received
+        if (e?.request) return 'No response from server';
+        // fallback to error message
+        return e?.message ?? String(e);
+      };
+
+  const message = extractErrorMessage(err);
+  setPostError(message);
+  setToastVariant("danger");
+  setToastMessage(message);
+  setToastShow(true);
     } finally {
       setPosting(false);
     }
@@ -293,6 +323,29 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
           </Form>
         </Modal.Body>
       </Modal>
+        {/* Toast container (esquina superior derecha) */}
+        <div
+          aria-live="polite"
+          aria-atomic="true"
+          style={{ position: "fixed", top: 12, right: 12, zIndex: 1600 }}
+        >
+          <Toast
+            onClose={() => setToastShow(false)}
+            show={toastShow}
+            autohide
+            delay={3000}
+            bg={toastVariant}
+          >
+            <Toast.Header>
+              <strong className="me-auto">
+                {toastVariant === "success" ? "Éxito" : "Error"}
+              </strong>
+            </Toast.Header>
+            <Toast.Body className={toastVariant === "danger" ? "text-white" : undefined}>
+              {toastMessage}
+            </Toast.Body>
+          </Toast>
+        </div>
     </>
   );
 };
