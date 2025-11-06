@@ -4,7 +4,6 @@
   flex-wrap: wrap;
   align-items: flex-start;
   padding: 2rem;
-  /*background-color: rgba(241, 241, 241, 0.761);*/
   background-color: var(--bs-body-bg);
   gap: 1rem;
 }
@@ -15,10 +14,8 @@
   align-items: center;
 }
 
-/* Feed */
+
 .feedContainers {
-  /*border: 1px solid #ccccccd1;
-  background-color: white;*/
   border: 1px solid var(--bs-border-color);
   background-color: var(--bs-body-bg);
   border-radius: 8px;
@@ -36,7 +33,7 @@
   gap: 0.5rem;
 }
 
-/* Contenido adicional */
+
 .contenidoAdicional {
   width: 30vw;
 }
@@ -45,7 +42,7 @@
   width: 85%;
 }
 
-/* 🔹 MEDIA QUERIES */
+
 @media (max-width: 1040px) {
   .contenedorPrincipal {
     flex-direction: column;
@@ -65,9 +62,15 @@
   }
 }
 
-/* 🔹 OCULTAR BOTÓN EN CELULAR VERTICAL */
+
 @media (max-width: 600px) {
   .feedControl Button {
     display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .contenedorPrincipal {
+    padding: 0;
   }
 }
