@@ -253,7 +253,10 @@ export default function Feed() {
                 <TrendingUp className="trendingIcon" />
                 <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Tendencias</h3>
               </div>
-              {tags.map((t, index) => (
+              {
+                tags
+                .slice(0, 5)
+                .map((t, index) => (
                 <TrendingCard
                   key={index}
                   nombre ={t.nombre}
@@ -265,14 +268,19 @@ export default function Feed() {
                 <User className="trendingIcon" />
                 <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Sugerencias</h3>
               </div>
-              {usuarios.map((u, index) => (
+              {
+                usuarios
+                .filter(u => u.id !== String(usuario?.id))
+                .slice(0, 3)
+                .map((u, index) => (
                 <SuggestCard
                   key={index}
                   user = {{
                     name: u.username,
                     username: u.displayName,
                     avatar: u.avatarUrl,
-                  }}
+                  }
+                }
                 />
               ))}
             </div>
