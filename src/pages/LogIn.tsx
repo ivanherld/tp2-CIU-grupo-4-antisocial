@@ -4,6 +4,10 @@ import AuthCard from "../components/AuthCard/AuthCard";
 
 function LogIn() {
 
+  useEffect(() => {
+    document.documentElement.removeAttribute('data-bs-theme');
+  }, []);
+
   useEffect(()=>{
     document.title = 'Login - Unahur Anti-Social Net'
   }, []);  
