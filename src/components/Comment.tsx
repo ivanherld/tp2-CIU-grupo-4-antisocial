@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
+import { tiempoRelativo } from '../utils/timeUtils';
 
 
 export interface CommentProps {
@@ -23,7 +24,7 @@ export default function Comment({ author, date, text, avatarUrl }: CommentProps)
                     <Link to={profileLink} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <h6 className="comment-author mb-0" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{author}</h6>
                     </Link>
-                    {date && <small className="comment-date text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
+                    {date && <small className="comment-date text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{tiempoRelativo(date)}</small>}
                 </div>
             </div>
             <div className="mt-2" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{text}</div>

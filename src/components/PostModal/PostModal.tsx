@@ -8,6 +8,7 @@ import Tags from "../Tags/Tags"
 import { useAuth } from "../../context/AuthProvider"
 import Images from "../Images/Images"
 import { Link } from "react-router-dom"
+import { tiempoRelativo } from "../../utils/timeUtils"
 
 export interface PostProps {
     id: number | string,
@@ -202,7 +203,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                         )}
                     </div>
 
-                    {date && <small className="text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</small>}
+                    {date && <small className="text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{tiempoRelativo(date)}</small>}
                 </div>
             </div>
 

@@ -119,12 +119,12 @@ export default function Perfil({
               authorId={post.author.id}
               avatarUrl={post.author.avatarUrl}
               content={post.content}
-              date={new Date(post.createdAt).toLocaleString()}
+              date={post.createdAt}
               tags={post.tags}
               comments={post.comments?.map(c => ({
                 author: c.author.displayName ?? c.author.username,
                 text: c.content,
-                date: new Date(c.createdAt).toLocaleString()
+                date: c.createdAt
               }))}
               imagenes={post.imagenes}
               isFollowing={isFollowing}
