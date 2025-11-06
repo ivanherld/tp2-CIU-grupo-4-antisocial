@@ -339,6 +339,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
             autohide
             delay={3000}
             bg={toastVariant}
+            style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
           >
             <Toast.Header>
               <strong className="me-auto">
