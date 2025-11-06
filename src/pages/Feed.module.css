@@ -74,3 +74,17 @@
     padding: 0;
   }
 }
+
+/* Masonry layout styles used by react-masonry-css */
+.my-masonry-grid {
+  display: flex;
+  margin-left: -1rem; /* gutter offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 1rem; /* gutter */
+  background-clip: padding-box;
+}
+.my-masonry-grid_column > div {
+  margin-bottom: 1rem;
+}

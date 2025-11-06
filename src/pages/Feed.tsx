@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import { Container, Row, Col, Spinner, Button, ButtonGroup } from "react-bootstrap";
+import { Container, Spinner, Button, ButtonGroup } from "react-bootstrap";
+import Masonry from 'react-masonry-css';
 import PostCard, { type PostProps } from "../components/Post";
 import { type Tag } from "../components/Tags/Tags";
 import api from "../api";
@@ -254,13 +255,18 @@ export default function Feed() {
                 </ButtonGroup>
               </div>
 
-              <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">
+              {/* Masonry layout to avoid gaps between variable-height cards */}
+              <Masonry
+                breakpointCols={{ default: lgSlides, 900: Math.max(1, Math.min(2, lgSlides)), 576: 1 }}
+                className={styles["my-masonry-grid"]}
+                columnClassName={styles["my-masonry-grid_column"]}
+              >
                 {filteredPosts.map((p) => (
-                  <Col key={p.id}>
+                  <div key={p.id}>
                     <PostCard {...p} />
-                  </Col>
+                  </div>
                 ))}
-              </Row>
+              </Masonry>
 
               <div className="text-center my-3" aria-live="polite" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600" }}>
                 {loading && (
