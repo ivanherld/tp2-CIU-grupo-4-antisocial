@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Container, Row, Col, Spinner, Button } from "react-bootstrap";
+import { Container, Row, Col, Spinner, Button, ButtonGroup } from "react-bootstrap";
 import PostCard, { type PostProps } from "../components/Post";
 import { type Tag } from "../components/Tags/Tags";
 import api from "../api";
@@ -42,12 +42,22 @@ export default function Feed() {
     }
   }
 
+  // toggle showing only posts from followed users
+  function handleShow() {
+    if (!usuario) {
+      navigate('/login');
+      return;
+    }
+    setFollowedOnly(prev => !prev);
+  }
+
   // Feed state: fetch global posts from backend GET /post and normalize to PostProps
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [followedOnly, setFollowedOnly] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [loadingTags, setLoadingTags] = useState<boolean>();
+  const [_loadingTags, setLoadingTags] = useState<boolean>();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -59,7 +69,18 @@ export default function Feed() {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get<any[]>('/post', { signal: controllerPost.signal });
+        let res;
+        if (followedOnly) {
+          // require authenticated user for followed feed
+          if (!usuario?.id) {
+            // no user: clear posts and stop
+            if (!canceled) setPosts([]);
+            return;
+          }
+          res = await api.get<any[]>(`/post/user/${encodeURIComponent(String(usuario.id))}/feed`, { signal: controllerPost.signal });
+        } else {
+          res = await api.get<any[]>('/post', { signal: controllerPost.signal });
+        }
         if (canceled) return;
         const apiPosts = Array.isArray(res.data) ? res.data : [];
         const normalized: PostProps[] = apiPosts.map((p: any) => ({
@@ -109,7 +130,7 @@ export default function Feed() {
       canceled = true;
       controllerPost.abort();
     };
-  }, []);
+  }, [followedOnly, usuario?.id]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -205,6 +226,11 @@ export default function Feed() {
     },
   ];
   */
+  const estiloBoton = {
+    fontFamily:"Montserrat, Arial, Helvetica, sans-serif",
+    whiteSpace: "nowrap",
+    fontSize: "0.9rem",
+  }
   
   return (
     <main>
@@ -216,9 +242,16 @@ export default function Feed() {
                 <div className="titulo">
                   <h2 className="mb-3" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#5fa92c" }}>Últimos posteos</h2>
                 </div>
+                
+                  <ButtonGroup aria-label="feed-controls">
+                <Button variant={followedOnly ? "success" : "outline-success"} onClick={handleShow} style={estiloBoton}>
+                Mis Seguidos
+                </Button>
+                
                 <Button variant="outline-success" onClick={() => handleLayOut()}>
                   {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
                 </Button>
+                </ButtonGroup>
               </div>
 
               <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">
