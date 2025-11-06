@@ -125,23 +125,27 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
         
         const payload = { texto: description, tags: tags, imagenes: imageUrls.map((url) => ({url})) };
         console.log('POST /post/create-completo payload:', payload);
-        const res = await api.post('/post/create-completo', payload);
-        console.log('create-completo response', res.data);
+  const res = await api.post('/post/create-completo', payload);
+  console.log('create-completo response', res.data);
+  try { window.dispatchEvent(new Event('postCreated')); } catch (e) { /* noop */ }
       } else if (hasImageUrl) {
         const payload = { texto: description, imagenes: imageUrls.map((url) => ({url})) };
         console.log('POST /post/create-imagenes payload:', payload);
-        const res = await api.post('/post/create-imagenes', payload);
-        console.log('create-imagenes response', res.data);
+  const res = await api.post('/post/create-imagenes', payload);
+  console.log('create-imagenes response', res.data);
+  try { window.dispatchEvent(new Event('postCreated')); } catch (e) { /* noop */ }
       } else if (hasTags) {
         const payload = { texto: description, tags: tags };
         console.log('POST /post/create-tags payload:', payload);
-        const res = await api.post('/post/create-tags', payload);
-        console.log('create-tags response', res.data);
+  const res = await api.post('/post/create-tags', payload);
+  console.log('create-tags response', res.data);
+  try { window.dispatchEvent(new Event('postCreated')); } catch (e) { /* noop */ }
       } else {
         const payload = { texto: description };
         console.log('POST /post payload:', payload);
-        const res = await api.post('/post', payload);
-        console.log('create post response', res.data);
+  const res = await api.post('/post', payload);
+  console.log('create post response', res.data);
+  try { window.dispatchEvent(new Event('postCreated')); } catch (e) { /* noop */ }
       }
 
   

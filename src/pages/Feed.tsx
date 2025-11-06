@@ -54,6 +54,7 @@ export default function Feed() {
 
   
   const [posts, setPosts] = useState<PostProps[]>([]);
+  const [refreshKey, setRefreshKey] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [followedOnly, setFollowedOnly] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -132,7 +133,14 @@ export default function Feed() {
       canceled = true;
       controllerPost.abort();
     };
-  }, [followedOnly, usuario?.id]);
+  }, [followedOnly, usuario?.id, refreshKey]);
+
+  // Listen for postCreated events and trigger a refetch by bumping refreshKey
+  useEffect(() => {
+    const handler = () => setRefreshKey((k) => k + 1);
+    window.addEventListener('postCreated', handler);
+    return () => window.removeEventListener('postCreated', handler);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
