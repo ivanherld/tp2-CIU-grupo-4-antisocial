@@ -64,8 +64,13 @@
 
 
 @media (max-width: 600px) {
-  .feedControl Button {
-    display: none;
+  .btnSeguidos {
+    display: inline-flex !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .btnLayout {
+    display: none !important;
   }
 }
 

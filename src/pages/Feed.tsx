@@ -247,11 +247,11 @@ export default function Feed() {
                 </div>
                 
                   <ButtonGroup aria-label="feed-controls">
-                <Button variant={followedOnly ? "success" : "outline-success"} onClick={handleShow} style={estiloBoton}>
+                <Button className={styles.btnSeguidos} variant={followedOnly ? "success" : "outline-success"} onClick={handleShow} style={estiloBoton}>
                 Mis Seguidos
                 </Button>
-                
-                <Button variant="outline-success" onClick={() => handleLayOut()}>
+
+                <Button className={styles.btnLayout} variant="outline-success" onClick={() => handleLayOut()}>
                   {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
                 </Button>
                 </ButtonGroup>
