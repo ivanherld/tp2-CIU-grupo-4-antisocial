@@ -48,10 +48,10 @@ export default function Perfil({
   const postsCount = posts?.length ?? 0;
   return (
     <main className={`px-4 px-md-5 ${styles.profile}`}>
-      <header className={`mb-3 ${styles.header}`}>
+      <header className="d-flex align-items-start gap-3 mb-3">
         <Row className="align-items-center">
 
-          <Col xs="auto" className={`d-flex flex-column align-items-center align-items-md-start ${styles.avatarCol}`}>
+          <Col xs="auto" className={`d-flex flex-column align-items-start ${styles.avatarCol}`}>
             <img
               className={styles.avatar}
               src={user.avatarUrl ?? "/antisocialpng.png"}
@@ -65,23 +65,21 @@ export default function Perfil({
             </div>
           </Col>
         </Row>
+        <Row className="w-100 d-flex justify-content-between flex-nowrap text-center ">
+          <Col className={styles.countItem}>
+            <div className={styles.countNumber}>{postsCount}</div>
+            <div className={styles.countLabel}>publicaciones</div>
+          </Col>
+          <Col className={styles.countItem}>
+            <div className={styles.countNumber}>{counts?.followers ?? 0}</div>
+            <div className={styles.countLabel}>seguidores</div>
+          </Col>
+          <Col className={styles.countItem}>
+            <div className={styles.countNumber}>{counts?.following ?? 0}</div>
+            <div className={styles.countLabel}>siguiendo</div>
+          </Col>
 
-            <Row className="w-100 d-flex justify-content-between flex-nowrap text-center ">
-
-              <Col className={styles.countItem}>
-                <div className={styles.countNumber}>{postsCount}</div>
-                <div className={styles.countLabel}>publicaciones</div>
-              </Col>
-              <Col className={styles.countItem}>
-                <div className={styles.countNumber}>{counts?.followers ?? 0}</div>
-                <div className={styles.countLabel}>seguidores</div>
-              </Col>
-              <Col className={styles.countItem}>
-                <div className={styles.countNumber}>{counts?.following ?? 0}</div>
-                <div className={styles.countLabel}>siguiendo</div>
-              </Col>
-
-            </Row>
+        </Row>
       </header>
 
       <div className={styles.line}>

@@ -82,7 +82,14 @@ export default function Post({
               <strong>{author}</strong>
             </Link>
           </span>
-          {date && <span className="person-role small text-muted" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>{date}</span>}
+          {date && 
+            <span 
+            className="person-role small text-muted" 
+            style={{
+              fontFamily: "Open Sans, Arial, Helvetica, sans-serif",
+              wordBreak:"break-word",
+              whiteSpace:"normal",
+              overflowWrap:"anywhere"}}>{date}</span>}
         </div>
 
       </div>
