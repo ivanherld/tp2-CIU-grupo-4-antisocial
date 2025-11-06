@@ -13,7 +13,7 @@ import { AuthContext } from "../context/AuthContext";
 import api from "../api";
 
 interface CreatePostModalProps {
-  onClose?: () => void; // prop opcional para cerrar Offcanvas
+  onClose?: () => void;
 }
 
 export default function CreatePostModal({onClose}: CreatePostModalProps){
@@ -27,12 +27,12 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
   const [tagsLoading, setTagsLoading] = useState(false);
   const [tagsError, setTagsError] = useState<string | null>(null);
 
-  // For now backend expects image URLs; allow user to optionally provide an image URL.
+  
   const [imageUrlInput, setImageUrlInput] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState<string | null>(null);
-  // Toast state for nicer, non-blocking UI messages
+ 
   const [toastShow, setToastShow] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState<"success" | "danger">("success");
@@ -54,7 +54,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
           ? data
               .map((it: any) => {
                 if (typeof it === "string") return it;
-                // accept different shapes: { nombre }, { name }
+    
                 return it.nombre ?? it.name ?? String(it);
               })
               .filter(Boolean)
@@ -79,7 +79,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault();
       const newTagName = tagInput.trim();
-      // avoid duplicates by nombre
+      
       if (!tags.some((t) => t.nombre === newTagName)) {
         setTags([...tags, { nombre: newTagName }]);
       }
@@ -117,12 +117,12 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
     setPostError(null);
     setPosting(true);
     try {
-      // Decide route based on presence of imageUrlInput and tags
+      
       const hasImageUrl = imageUrls.length > 0;
       const hasTags = tags.length > 0;
 
       if (hasImageUrl && hasTags) {
-        // create-completo expects imagenes array and tags; backend expects 'texto' instead of 'description'
+        
         const payload = { texto: description, tags: tags, imagenes: imageUrls.map((url) => ({url})) };
         console.log('POST /post/create-completo payload:', payload);
         const res = await api.post('/post/create-completo', payload);
@@ -144,7 +144,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
         console.log('create post response', res.data);
       }
 
-  // Success: reset form, show toast and close
+  
   setDescription("");
   setTags([]);
   setTagInput("");
@@ -158,24 +158,24 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
     } catch (err: any) {
       console.error('Create post error', err);
       const extractErrorMessage = (e: any) => {
-        // axios error with response
+        
         if (e?.response) {
           const data = e.response.data;
-          // common shapes: string, { message }, { error }, { errors: [...] }
+          
           if (!data) return `Error ${e.response.status}: ${e.response.statusText || 'server error'}`;
           if (typeof data === 'string') return data;
           if (typeof data === 'object') {
             if (data.message) return data.message;
             if (data.error) return data.error;
             if (Array.isArray(data.errors)) return data.errors.map((it: any) => (it.msg || it.message || String(it))).join('; ');
-            // sometimes the backend returns validation object { field: ['msg'] }
+            
             if (Object.keys(data).length > 0) return JSON.stringify(data);
           }
           return String(data);
         }
-        // no response received
+        
         if (e?.request) return 'No response from server';
-        // fallback to error message
+        
         return e?.message ?? String(e);
       };
 
@@ -197,14 +197,14 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
 
   return (
     <>
-      {/* Botón que abre el modal */}
+      
       <Container className="d-flex justify-content-center my-3">
       <Button variant="outline-success" onClick={handleShow} style={estiloBoton}>
         + Crear Post
       </Button>
       </Container>
 
-      {/* Modal */}
+      
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight:"600", color:"#5fa92c"}}>Nuevo Post</Modal.Title>
@@ -212,7 +212,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
 
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            {/* Descripción */}
+            
             <Form.Group className="mb-3" controlId="formDescription">
               <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}><strong>{usuario?.username ?? "Usuario Anónimo"}</strong></Form.Label>
               <Form.Control
@@ -225,7 +225,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
               />
             </Form.Group>
 
-            {/* Imagen URL (opcional) - backend espera URLs por ahora */}
+            
             <Form.Group className="mb-3" controlId="formImageUrl">
               <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>URL de imágenes (opcional)</Form.Label>
               <Form.Control
@@ -254,7 +254,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
               </Row>
             </Form.Group>
 
-            {/* Tags */}
+            
             <Form.Group className="mb-3" controlId="formTags">
               <Form.Label style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>Tags</Form.Label>
               <Form.Control
@@ -282,7 +282,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
                 </Col>
               </Row>
             
-              {/* Sugerencias de tags desde la API */}
+              
                 <div className="mt-3" style={{fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}>
                   <div className="mt-2">
                     {tagsLoading && <span className="text-muted"> Cargando tags...</span>}
@@ -308,7 +308,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
             </Form.Group>
 
 
-            {/* Botones */}
+            
             <div className="d-flex justify-content-end" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", minWidth: 320}}>
               <div className="me-2" style={{minWidth: 220}}>
                 {postError && <div className="text-danger mb-2">{postError}</div>}
@@ -323,7 +323,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
           </Form>
         </Modal.Body>
       </Modal>
-        {/* Toast container (esquina superior derecha) */}
+        
         <div
           aria-live="polite"
           aria-atomic="true"

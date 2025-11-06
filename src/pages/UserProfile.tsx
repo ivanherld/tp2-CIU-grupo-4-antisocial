@@ -41,7 +41,7 @@ export default function UserProfile() {
 
   const initialFromLocation = location.state?.initialProfile;
 
-  // inicial: si no hay parámetro, usar el usuario autenticado; si hay parámetro, el initial viene del location o queda indefinido
+  
   const initialProfile: User | undefined =
     initialFromLocation ??
     (paramUsername ? undefined : (authUser as unknown as User) ?? undefined);
@@ -60,7 +60,7 @@ export default function UserProfile() {
   const [error, setError] = useState<string | null>(null);
   const [followError, setFollowError] = useState<string | null>(null);
 
-  // Simplificado: usar directamente las rutas confirmadas `/user/:id/...`.
+  
 
   const currentUsername = authUser?.username;
   const isOwn = !!(
@@ -72,7 +72,7 @@ export default function UserProfile() {
   useEffect(() => {
     let canceled = false;
 
-    // Helper: cargar posts del usuario por id usando la ruta /user/:id/posts y normalizar
+    
     const fetchPostsForUser = async (
       uid: string,
       signal?: AbortSignal
@@ -85,7 +85,7 @@ export default function UserProfile() {
         );
         if (canceled) return;
         const apiPosts = Array.isArray(postsRes.data) ? postsRes.data : [];
-        // Normalizar al shape usado por la UI
+        
         const normalized = apiPosts.map((p: any) => ({
           id: String(p.id),
           content: p.texto ?? "",
@@ -122,14 +122,14 @@ export default function UserProfile() {
       }
     };
 
-    // Si no hay nombre de usuario en la ruta -> mostrar el usuario autenticado (o redirigir si no está logueado)
+    
     if (!paramUsername) {
       if (!authUser) {
         navigate("/login");
         return;
       }
       setProfile(authUser as unknown as User);
-      // también cargar contadores para el propio perfil y sus posts
+      
       (async () => {
         try {
           const uid = String((authUser as any).id);
@@ -145,7 +145,7 @@ export default function UserProfile() {
             followers: fCountRes.data.count,
             following: sCountRes.data.count,
           });
-          // cargar posts del propio usuario
+          
           await fetchPostsForUser(uid);
         } catch (e) {
           console.warn("No se pudo cargar contadores del perfil propio", e);
@@ -155,13 +155,13 @@ export default function UserProfile() {
       return;
     }
 
-    // Si el parámetro coincide con el usuario autenticado, reutilizar el contexto
+    
     if (
       authUser &&
       authUser.username.toLowerCase() === paramUsername.toLowerCase()
     ) {
       setProfile(authUser as unknown as User);
-      // cargar contadores del propio perfil cuando se accede via username
+      
       (async () => {
         try {
           const uid = String((authUser as any).id);
@@ -185,7 +185,7 @@ export default function UserProfile() {
       return;
     }
 
-    // Si tenemos un perfil inicial en location y coincide con el parámetro, usarlo
+    
     if (
       initialFromLocation &&
       initialFromLocation.username.toLowerCase() === paramUsername.toLowerCase()
@@ -195,7 +195,7 @@ export default function UserProfile() {
       return;
     }
 
-    // De lo contrario, solicitar el perfil al servidor
+    
     const controller = new AbortController();
     setLoading(true);
     api
@@ -207,7 +207,7 @@ export default function UserProfile() {
         setProfile(res.data);
         setError(null);
         const userId = String(res.data.id);
-        // usar las rutas de la API que devuelven contadores por id
+        
         (async () => {
           try {
             const fRes = await api.get<{ count: number }>(
@@ -224,11 +224,11 @@ export default function UserProfile() {
               following: foRes.data.count,
             });
 
-            // determinar si authUser sigue a este perfil (usar helper del provider cuando esté disponible)
+            
             if (authUser && authUser.id != null) {
               try {
                 if (typeof authIsFollowing !== 'function') {
-                  // El proveedor debería exponer isFollowing; si no, marcar como no-follow y avisar
+                  
                   console.error('AuthProvider isMissing isFollowing helper');
                   if (!canceled) setIsFollowing(false);
                 } else {
@@ -246,7 +246,7 @@ export default function UserProfile() {
             console.warn("No se pudo cargar contadores", err);
           }
         })();
-            // cargar posts del perfil mostrado usando la ruta /user/:id/posts
+            
           (async () => {
             try {
               await fetchPostsForUser(userId, controller.signal);
@@ -278,12 +278,12 @@ export default function UserProfile() {
       return;
     }
 
-    // evitar seguirse a uno mismo
+    
     if (String((authUser as any).id) === String((profile as any).id)) return;
 
     setFollowProcessing(true);
     const prevFollowing = isFollowing;
-    setIsFollowing(!prevFollowing); // optimista
+    setIsFollowing(!prevFollowing); 
     try {
       if (!prevFollowing) {
         if (typeof follow !== 'function') throw new Error('AuthProvider.follow is not available');
@@ -293,7 +293,7 @@ export default function UserProfile() {
         await unfollow(String((profile as any).id));
       }
 
-      // refrescar contadores usando los endpoints del servidor (/user/:id/...)
+      
       const uid = String((profile as any).id);
       const fCountRes = await api.get<{ count: number }>(
         `/user/${encodeURIComponent(uid)}/seguidores/count`
@@ -306,7 +306,7 @@ export default function UserProfile() {
         following: sCountRes.data.count,
       });
 
-      // actualizar isFollowing comprobando la lista de seguidores (/user/:id/seguidores)
+      
       if (authUser && authUser.id != null) {
         const followersRes = await api.get<User[]>(
           `/user/${encodeURIComponent(uid)}/seguidores`
@@ -317,13 +317,13 @@ export default function UserProfile() {
         );
         setIsFollowing(nowFollowing);
 
-        // actualizar el perfil del usuario logueado (para que sus contadores/seguidos se actualicen)
+        
         try {
           const meRes = await api.get<User>(`/auth/me`);
           setUsuario(meRes.data as any);
           localStorage.setItem("usuario", JSON.stringify(meRes.data));
         } catch (e) {
-          // no bloquear la experiencia si falla la recarga del perfil local
+          
           console.warn(
             "No se pudo actualizar el perfil local después de follow/unfollow",
             e
@@ -337,10 +337,10 @@ export default function UserProfile() {
         return;
       }
       console.warn("Follow/unfollow error", err);
-      // revertir la actualización optimista
+      
       setIsFollowing(prevFollowing);
       setFollowError("No se pudo completar la acción. Intenta de nuevo.");
-      // borrar el mensaje de error de follow después de un breve retraso
+      
       setTimeout(() => setFollowError(null), 5000);
     } finally {
       setFollowProcessing(false);

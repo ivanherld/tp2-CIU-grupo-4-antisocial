@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthProvider";
 
 export interface CommentProps {
     author: string;
-    date?: string; // ISO or human string
+    date?: string; 
     text: string;
     avatarUrl?: string;
 }

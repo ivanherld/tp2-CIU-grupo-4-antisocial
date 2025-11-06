@@ -32,7 +32,6 @@ export default function FormLogin({ onLoginSuccess }: LoginProps) {
     setError('')
 
     try {
-      // Centralized login helper will persist token, set headers and hydrate usuario
       await loginWithCredentials(username, password)
       onLoginSuccess && onLoginSuccess()
       navigate('/feed')

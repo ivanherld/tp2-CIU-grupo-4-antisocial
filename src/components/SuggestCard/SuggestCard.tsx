@@ -23,7 +23,7 @@ export function SuggestCard({ id, user, onFollowed }: SuggestedUserProps) {
     try {
       if (typeof follow !== 'function') throw new Error('Follow helper not available');
       await follow(String(id));
-      // notify parent to remove suggestion
+      
       onFollowed?.(id);
     } catch (err) {
       console.warn('Follow failed', err);

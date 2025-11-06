@@ -2,13 +2,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import FeedNav from "./FeedNav/FeedNav";
 import { ScrollToTopButton } from "./ScrollTopButton";
+import { Spinner } from "react-bootstrap";
 
 
 
 export default function PrivateLayout() {
   const { usuario, cargando } = useAuth();
 
-  if (cargando) return <p>Cargando...</p>; // Le voy a poner un spinner de carga
+  if (cargando) return <Spinner animation="border" role="status" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600" }}><p className="visually-hidden">Cargando...</p></Spinner>; 
 
   if(!usuario) return <Navigate to="/login" replace />
 

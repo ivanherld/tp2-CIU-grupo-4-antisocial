@@ -9,7 +9,7 @@ import { TrendingCard } from "../components/TrendingCard/TrendingCard";
 import { SuggestCard } from "../components/SuggestCard/SuggestCard";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import { useAuth } from "../context/AuthProvider";
-import { useNavigate, useSearchParams } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 type Usuario = {
   id: string;
@@ -27,7 +27,7 @@ export default function Feed() {
     document.title = "Feed - Unahur Anti-Social Net";
   }, []);
 
-  // Redirect to login if auth finished loading and there is no usuario
+  
   useEffect(() => {
     if (!cargando && !usuario) {
       navigate('/login');
@@ -43,7 +43,7 @@ export default function Feed() {
     }
   }
 
-  // toggle showing only posts from followed users
+  
   function handleShow() {
     if (!usuario) {
       navigate('/login');
@@ -52,7 +52,7 @@ export default function Feed() {
     setFollowedOnly(prev => !prev);
   }
 
-  // Feed state: fetch global posts from backend GET /post and normalize to PostProps
+  
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [followedOnly, setFollowedOnly] = useState<boolean>(false);
@@ -73,9 +73,9 @@ export default function Feed() {
       try {
         let res;
         if (followedOnly) {
-          // require authenticated user for followed feed
+          
           if (!usuario?.id) {
-            // no user: clear posts and stop
+            
             if (!canceled) setPosts([]);
             return;
           }
@@ -110,7 +110,7 @@ export default function Feed() {
             ? p.imagenes.map((img: any) => ({ url: img.url ?? img }))
             : [],
         }));
-        // ordenar por fecha descendente si está disponible
+        
         normalized.sort((a, b) => {
           const da = a.date ?? '';
           const db = b.date ?? '';
@@ -188,7 +188,7 @@ export default function Feed() {
     };
   }, []);
 
-  // derive suggested users by excluding those we already follow
+  
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -196,12 +196,12 @@ export default function Feed() {
         if (!cancelled) setSuggestedUsuarios([]);
         return;
       }
-      // build candidates excluding current user
+      
       const candidates = usuarios.filter(u => u.id !== String(usuario?.id));
       try {
         const checks = await Promise.all(candidates.map(async (u) => {
           try {
-            // isFollowing returns true if we already follow this user
+            
             const res = await (typeof isFollowing === 'function' ? isFollowing(String(u.id)) : Promise.resolve(false));
             return { u, following: !!res };
           } catch (e) {
@@ -218,7 +218,7 @@ export default function Feed() {
     return () => { cancelled = true; };
   }, [usuarios, usuario?.id]);
 
-  // derive active tag from query string and compute filtered posts
+  
   const activeTagRaw = searchParams.get('tag') ?? '';
   const activeTag = activeTagRaw.trim().replace(/^#/, '').toLowerCase();
   const filteredPosts = useMemo(() => {
@@ -257,7 +257,7 @@ export default function Feed() {
                 </ButtonGroup>
               </div>
 
-              {/* Masonry layout to avoid gaps between variable-height cards */}
+              
               <Masonry
                 breakpointCols={{ default: lgSlides, 900: Math.max(1, Math.min(2, lgSlides)), 576: 1 }}
                 className={styles["my-masonry-grid"]}

@@ -5,7 +5,6 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
-// auth context not required here; using useAuth helper instead
 import { Container } from "react-bootstrap";
 import api from "../api";
 import { useAuth } from '../context/AuthProvider';
@@ -32,7 +31,7 @@ export default function FormRegister() {
     const form = e.currentTarget;
     setError("");
 
-    //*validación nativa de lform (Bootstrap)
+    
     if (form.checkValidity() === false) {
       e.stopPropagation();
       setValidated(true);
@@ -54,11 +53,9 @@ export default function FormRegister() {
 
     setIsSubmitting(true);
     try {
-      //*Registramos en el backend
       const newUser: NewUser = { username, email, password };
       await api.post("/auth/register", newUser);
 
-      //*Login inmediato usando el helper centralizado
       await loginWithCredentials(username, password);
       navigate("/feed");
     } catch (err: any) {
@@ -172,7 +169,6 @@ export default function FormRegister() {
             variant="primary"
             type="submit"
             disabled={isSubmitting}
-            style={estilo}
           >
             {isSubmitting ? "Registrando..." : "Registrar"}{" "}
           </Button>

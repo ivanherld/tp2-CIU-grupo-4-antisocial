@@ -19,7 +19,6 @@ export interface PostProps {
     tags?: {id: string, nombre: string}[]
     comments?: CommentProps[],
     imagenes?: {url: string}[];
-    // follow control props (parent-driven)
     isFollowing?: boolean
     isProcessing?: boolean
     onFollow?: (e?: React.MouseEvent) => void
@@ -42,12 +41,12 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
     const [localProcessing, setLocalProcessing] = useState<boolean>(!!isProcessing);
     const [followError, setFollowError] = useState<string | null>(null);
 
-    // when modal opens or authorId changes, ask provider if we're following this author
+    
     useEffect(() => {
         let cancelled = false;
         (async () => {
             if (!show) return;
-            if (!authorId) return; // cannot determine without id
+            if (!authorId) return; 
             if (typeof authIsFollowing !== 'function') return;
             try {
                 const res = await authIsFollowing(String(authorId));
@@ -59,7 +58,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
         return () => { cancelled = true; };
     }, [show, authorId, authIsFollowing]);
 
-    // follow click handled via provider when authorId is available, otherwise delegate to parent
+    
     const handleFollow = async (e: React.MouseEvent) => {
         e.preventDefault();
         if (!authorId) {
@@ -67,12 +66,12 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
             return;
         }
         if (!usuario) {
-            // user not authenticated; delegate to parent to handle (navigation to login) or no-op
+            
             if (onFollow) return onFollow();
             return;
         }
 
-        // optimistic update
+        
         const prev = localFollowing;
         setLocalFollowing(!prev);
         setLocalProcessing(true);
@@ -96,13 +95,13 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
     }
 
 
-    // Return a Promise so callers (CommentForm) can await and disable UI while posting
+    
     const handleAddComment = async (_postId: string, text: string): Promise<void> => {
         try {
             const payload = { postId: _postId, texto: text };
             const res = await api.post('/comment', payload);
             const created = res.data;
-            // normalizar respuesta a CommentProps
+            
             const appended: CommentProps = {
                 author: created?.usuario?.username ?? created?.username ?? usuario?.username ?? "Anónimo",
                 text: created?.texto ?? created?.text ?? text,
@@ -117,7 +116,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 return next;
             });
         } catch (err) {
-            // si falla la petición, añadir el comentario localmente para no bloquear UX
+            
             const newComment: CommentProps = {
                 author: usuario?.username || "Anónimo",
                 text,
@@ -131,11 +130,11 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 return next;
             });
             console.warn('Error creando comentario', err);
-            // keep UX fallback applied; do not rethrow so caller treats as success
+            
         }
     }
 
-    // fetch existing comments when modal opens
+    
     useEffect(() => {
         if (!show) return;
         let canceled = false;

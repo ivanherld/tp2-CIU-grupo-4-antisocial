@@ -2,7 +2,6 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  /* background-color: red; */
 }
 
 #navImg{
@@ -12,9 +11,9 @@
 .navLinks{
   display: flex;
   gap: 15px;
-  justify-content: center; /* centra los elementos del nav en el eje horizontal */
+  justify-content: center;
   align-items: center;
-  flex: 1; /* permite que el nav ocupe el espacio intermedio */
+  flex: 1; 
   font-family: "Montserrat", Arial, Helvetica, sans-serif;
 }
 
@@ -40,7 +39,6 @@
   width: 25%;
   gap: 30px;
   padding-right: 10px;
-  /* background-color: turquoise; */
 }
 
 .userIcon{

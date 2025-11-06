@@ -17,7 +17,6 @@ export function TrendingCard({ nombre }: TrendingCardProps) {
         <div className={styles.content}>
           <p className={styles.label}>Tendencia</p>
           <h3 className={styles.topic}>#{nombre}</h3>
-          {/* <p className={styles.posts}>{posts} publicaciones</p> */}
         </div>
       </div>
     </button>

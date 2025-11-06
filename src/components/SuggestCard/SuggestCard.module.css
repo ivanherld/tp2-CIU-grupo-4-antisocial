@@ -27,13 +27,13 @@
 }
 
 .name {
-  color: var(--bs-body-color); /*#333*/
+  color: var(--bs-body-color); 
   font-size: clamp(0.875rem, 2vw, 1rem);
   font-weight: 500;
 }
 
 .username {
-  color: var(--bs-secondary-color); /*#666*/
+  color: var(--bs-secondary-color); 
   font-size: clamp(0.75rem, 1.8vw, 0.875rem);
 }
 

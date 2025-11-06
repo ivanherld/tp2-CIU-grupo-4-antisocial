@@ -13,7 +13,7 @@ import Terms from './pages/Terms';
 import Help from './pages/Help';
 
 function App() {
-  //no se a quienes deberia envolver AuthProvider
+  
   return (
     <>
       <AuthProvider> 

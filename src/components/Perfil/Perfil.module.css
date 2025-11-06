@@ -86,7 +86,7 @@
   opacity: 0.95;
 }
 
-/* feed */
+
 .feed {
   margin-top: 18px;
   display: flex;
@@ -105,7 +105,7 @@
 }
 
 
-/* responsive: en pantallas pequeñas, stack vertical */
+
 @media (max-width: 900px) {
 
   .avatar {

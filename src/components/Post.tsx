@@ -17,12 +17,11 @@ export interface PostProps {
   author: string;
   authorId?: string;
   avatarUrl?: string;
-  date?: string; // display string
+  date?: string; 
   content: string;
   tags?: {id: string; nombre: string}[];
   comments?: PostComment[];
   imagenes?: {url: string}[];
-  // follow props
   isFollowing?: boolean;
   isProcessing?: boolean;
   onFollow?: () => void;
@@ -42,7 +41,7 @@ export default function Post({
   isProcessing = false,
   onFollow,
 }: PostProps) {
-  // props-driven follow handlers (parent decides how to perform follow/unfollow)
+  
   const { usuario } = useAuth();
   const currentUsername = usuario?.username;
   const profileLink = currentUsername && currentUsername.toLowerCase() === author.toLowerCase()
