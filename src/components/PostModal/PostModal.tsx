@@ -23,9 +23,10 @@ export interface PostProps {
     isFollowing?: boolean
     isProcessing?: boolean
     onFollow?: (e?: React.MouseEvent) => void
+    onCommentsCountUpdate?: (postId: string | number, count: number) => void
 }
 
-export default function PostModal({id, author, authorId, avatarUrl, content, date, tags = [], comments = [], imagenes = [], isFollowing = false, isProcessing = false, onFollow}: PostProps) {
+export default function PostModal({id, author, authorId, avatarUrl, content, date, tags = [], comments = [], imagenes = [], isFollowing = false, isProcessing = false, onFollow, onCommentsCountUpdate}: PostProps) {
     const [show, setShow] = useState(false)
     const [postComments, setPostComments] = useState<CommentProps[]>(comments)
     const [loadingComments, setLoadingComments] = useState<boolean>(false)
@@ -108,7 +109,13 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 date: created?.createdAt ?? created?.updatedAt ?? new Date().toISOString(),
                 avatarUrl: created?.usuario?.avatarUrl ?? undefined,
             };
-            setPostComments((prev) => [...prev, appended]);
+            setPostComments((prev) => {
+                const next = [...prev, appended];
+                if (typeof onCommentsCountUpdate === 'function') {
+                    try { onCommentsCountUpdate(id, next.length); } catch (e) { console.warn('onCommentsCountUpdate handler failed', e); }
+                }
+                return next;
+            });
         } catch (err) {
             // si falla la petición, añadir el comentario localmente para no bloquear UX
             const newComment: CommentProps = {
@@ -116,10 +123,15 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 text,
                 date: new Date().toISOString(),
             };
-            setPostComments((prev) => [...prev, newComment]);
+            setPostComments((prev) => {
+                const next = [...prev, newComment];
+                if (typeof onCommentsCountUpdate === 'function') {
+                    try { onCommentsCountUpdate(id, next.length); } catch (e) { console.warn('onCommentsCountUpdate handler failed', e); }
+                }
+                return next;
+            });
             console.warn('Error creando comentario', err);
-            // rethrow so caller can be aware if needed
-            // (but keep UX fallback already applied)
+            // keep UX fallback applied; do not rethrow so caller treats as success
         }
     }
 
@@ -142,6 +154,9 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                     avatarUrl: c.usuario?.avatarUrl ?? undefined,
                 }));
                 setPostComments(normalized);
+                if (typeof onCommentsCountUpdate === 'function') {
+                    try { onCommentsCountUpdate(id, normalized.length); } catch (e) { console.warn('onCommentsCountUpdate handler failed', e); }
+                }
             } catch (err: any) {
                 if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
                 console.warn('Error fetching comments', err);

@@ -105,6 +105,7 @@ export default function Post({
           isFollowing={isFollowing}
           isProcessing={isProcessing}
           onFollow={onFollow}
+          onCommentsCountUpdate={(_, count) => setCommentCount(count)}
           />
       </div>
 
