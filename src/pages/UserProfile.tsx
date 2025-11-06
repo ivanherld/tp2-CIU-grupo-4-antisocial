@@ -177,6 +177,7 @@ export default function UserProfile() {
             followers: fCountRes.data.count,
             following: sCountRes.data.count,
           });
+          await fetchPostsForUser(uid);
         } catch (e) {
           console.warn("No se pudo cargar contadores del perfil propio", e);
         }
@@ -279,7 +280,7 @@ export default function UserProfile() {
     }
 
     
-    if (String((authUser as any).id) === String((profile as any).id)) return;
+    
 
     setFollowProcessing(true);
     const prevFollowing = isFollowing;
