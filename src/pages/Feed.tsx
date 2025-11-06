@@ -10,6 +10,13 @@ import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";// import { useAuth } from "../context/AuthProvider";
 
+type Usuario = {
+  id: string;
+  username: string;
+  displayName?: string;
+  avatarUrl?: string;
+};
+
 export default function Feed() {
   const { usuario, cargando } = useAuth();
   const navigate = useNavigate();
@@ -39,6 +46,7 @@ export default function Feed() {
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loadingTags, setLoadingTags] = useState<boolean>();
   const [error, setError] = useState<string | null>(null);
 
@@ -104,14 +112,14 @@ export default function Feed() {
   }, []);
 
   useEffect(() => {
-    const controllerTag = new AbortController();
-    let canceledTag = false;
+    const controller = new AbortController();
+    let canceled = false;
 
     const fetchTag = async () => {
       setError(null);
       try {
-        const res = await api.get<any[]>('/tag', { signal: controllerTag.signal });
-        if (canceledTag) return;
+        const res = await api.get<any[]>('/tag', { signal: controller.signal });
+        if (canceled) return;
         const apiTags = Array.isArray(res.data) ? res.data : [];
         const normalizedTags: Tag[] = apiTags.map((t: any) => ({
           id: String(t.id),
@@ -123,16 +131,39 @@ export default function Feed() {
         console.warn('Error fetching tags', error);
         setError(err?.message || 'Error cargando etiquetas');
       } finally {
-        if (!canceledTag) setLoadingTags(false);
+        if (!canceled) setLoadingTags(false);
+      }
+    }
+
+    const fetchUsuarios = async () => {
+      setError(null);
+      try {
+        const res = await api.get<any[]>('/user', { signal: controller.signal });
+        if (canceled) return;
+        const apiUser = Array.isArray(res.data) ? res.data : [];
+        const normalizedUser: Usuario[] = apiUser.map((u: any) => ({
+          id: String(u.id),
+          username: u.username ?? "noUserName",
+          displayName: u.displayName ?? "noDisplayName",
+          avatarUrl: u.avatarUrl ?? "/antisocialpng.png",
+        }));
+        setUsuarios(normalizedUser);
+      } catch (err: any) {
+        if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
+        console.warn('Error fetching tags', error);
+        setError(err?.message || 'Error cargando etiquetas');
+      } finally {
+        if (!canceled) setLoadingTags(false);
       }
     }
 
     fetchTag();
+    fetchUsuarios();
     return () => {
-      canceledTag = true;
-      controllerTag.abort();
+      canceled = true;
+      controller.abort();
     };
-  }, []);
+  }, [tags, error]);
 
   // derive active tag from query string and compute filtered posts
   const activeTagRaw = searchParams.get('tag') ?? '';
@@ -143,35 +174,38 @@ export default function Feed() {
       Array.isArray(p.tags) && p.tags.some((t) => String(t.nombre ?? '').toLowerCase() === activeTag)
     );
   }, [posts, activeTag]);
-
+  
+  /* 
+  Mock data para tendencias y usuarios sugeridos 
   const trendingTopics = [
     { topic: "NaturalezaUrbana", posts: "12.5K" },
     { topic: "DesconectaParaConectar", posts: "8.9K" },
     { topic: "JardínComunitario", posts: "6.2K" },
     { topic: "TecnologíaVerde", posts: "5.1K" },
   ];
-
+  
   const sugerenciasUsuarios = [
     {
       name: "Juan López",
       username: "@juanl",
       avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
     },
     {
       name: "Sofía García",
       username: "@sofiag",
       avatar:
-        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop",
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop",
     },
     {
       name: "Diego Torres",
       username: "@diegot",
       avatar:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
     },
   ];
-
+  */
+  
   return (
     <main>
       <div className={styles.contenedorPrincipal} id="filas">
@@ -231,10 +265,14 @@ export default function Feed() {
                 <User className="trendingIcon" />
                 <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Sugerencias</h3>
               </div>
-              {sugerenciasUsuarios.map((user, index) => (
+              {usuarios.map((u, index) => (
                 <SuggestCard
                   key={index}
-                  user={user}
+                  user = {{
+                    name: u.username,
+                    username: u.displayName,
+                    avatar: u.avatarUrl,
+                  }}
                 />
               ))}
             </div>
