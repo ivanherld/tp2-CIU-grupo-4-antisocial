@@ -243,7 +243,7 @@ export default function Feed() {
                   <h2 className="mb-3" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#5fa92c" }}>Últimos posteos</h2>
                 </div>
                 
-                  
+                  <ButtonGroup aria-label="feed-controls">
                 <Button variant={followedOnly ? "success" : "outline-success"} onClick={handleShow} style={estiloBoton}>
                 Mis Seguidos
                 </Button>
@@ -251,7 +251,7 @@ export default function Feed() {
                 <Button variant="outline-success" onClick={() => handleLayOut()}>
                   {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
                 </Button>
-                
+                </ButtonGroup>
               </div>
 
               <Row xs={1} md={lgSlides} lg={lgSlides} className="g-3">
