@@ -10,6 +10,7 @@ import { SuggestCard } from "../components/SuggestCard/SuggestCard";
 import { TrendingUp, User, LayoutList, LayoutGrid } from 'lucide-react';
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 type Usuario = {
   id: string;
@@ -27,7 +28,7 @@ export default function Feed() {
     document.title = "Feed - Unahur Anti-Social Net";
   }, []);
 
-  
+
   useEffect(() => {
     if (!cargando && !usuario) {
       navigate('/login');
@@ -43,7 +44,7 @@ export default function Feed() {
     }
   }
 
-  
+
   function handleShow() {
     if (!usuario) {
       navigate('/login');
@@ -52,7 +53,7 @@ export default function Feed() {
     setFollowedOnly(prev => !prev);
   }
 
-  
+
   const [posts, setPosts] = useState<PostProps[]>([]);
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -74,9 +75,9 @@ export default function Feed() {
       try {
         let res;
         if (followedOnly) {
-          
+
           if (!usuario?.id) {
-            
+
             if (!canceled) setPosts([]);
             return;
           }
@@ -111,7 +112,7 @@ export default function Feed() {
             ? p.imagenes.map((img: any) => ({ url: img.url ?? img }))
             : [],
         }));
-        
+
         normalized.sort((a, b) => {
           const da = a.date ?? '';
           const db = b.date ?? '';
@@ -135,7 +136,7 @@ export default function Feed() {
     };
   }, [followedOnly, usuario?.id, refreshKey]);
 
-  
+
   useEffect(() => {
     const handler = () => setRefreshKey((k) => k + 1);
     window.addEventListener('postCreated', handler);
@@ -196,7 +197,7 @@ export default function Feed() {
     };
   }, []);
 
-  
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -204,12 +205,12 @@ export default function Feed() {
         if (!cancelled) setSuggestedUsuarios([]);
         return;
       }
-      
+
       const candidates = usuarios.filter(u => u.id !== String(usuario?.id));
       try {
         const checks = await Promise.all(candidates.map(async (u) => {
           try {
-            
+
             const res = await (typeof isFollowing === 'function' ? isFollowing(String(u.id)) : Promise.resolve(false));
             return { u, following: !!res };
           } catch (e) {
@@ -218,7 +219,7 @@ export default function Feed() {
         }));
         if (cancelled) return;
         const notFollowed = checks.filter(ch => !ch.following).map(ch => ch.u);
-        setSuggestedUsuarios(notFollowed.slice(0, 3));
+        setSuggestedUsuarios(notFollowed.slice(0, cantUsuarios));
       } catch (e) {
         if (!cancelled) setSuggestedUsuarios([]);
       }
@@ -226,7 +227,7 @@ export default function Feed() {
     return () => { cancelled = true; };
   }, [usuarios, usuario?.id]);
 
-  
+
   const activeTagRaw = searchParams.get('tag') ?? '';
   const activeTag = activeTagRaw.trim().replace(/^#/, '').toLowerCase();
   const filteredPosts = useMemo(() => {
@@ -235,14 +236,18 @@ export default function Feed() {
       Array.isArray(p.tags) && p.tags.some((t) => String(t.nombre ?? '').toLowerCase() === activeTag)
     );
   }, [posts, activeTag]);
-  
-  
+
+
   const estiloBoton = {
-    fontFamily:"Montserrat, Arial, Helvetica, sans-serif",
+    fontFamily: "Montserrat, Arial, Helvetica, sans-serif",
     whiteSpace: "nowrap",
     fontSize: "0.9rem",
   }
-  
+
+  const isMobile = useIsMobile();
+  const cantTags = isMobile ? 3 : 6;
+  const cantUsuarios = isMobile ? 3 : 5;
+
   return (
     <main>
       <div className={styles.contenedorPrincipal} id="filas">
@@ -253,19 +258,19 @@ export default function Feed() {
                 <div className="titulo">
                   <h2 className="mb-3" style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "700", color: "#5fa92c" }}>Últimos posteos</h2>
                 </div>
-                
-                  <ButtonGroup aria-label="feed-controls">
-                <Button className={styles.btnSeguidos} variant={followedOnly ? "success" : "outline-success"} onClick={handleShow} style={estiloBoton}>
-                Mis Seguidos
-                </Button>
 
-                <Button className={styles.btnLayout} variant="outline-success" onClick={() => handleLayOut()}>
-                  {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
-                </Button>
+                <ButtonGroup aria-label="feed-controls">
+                  <Button className={styles.btnSeguidos} variant={followedOnly ? "success" : "outline-success"} onClick={handleShow} style={estiloBoton}>
+                    Mis Seguidos
+                  </Button>
+
+                  <Button className={styles.btnLayout} variant="outline-success" onClick={() => handleLayOut()}>
+                    {lgSlides === 3 ? <LayoutList /> : <LayoutGrid />}
+                  </Button>
                 </ButtonGroup>
               </div>
 
-              
+
               <Masonry
                 breakpointCols={{ default: lgSlides, 900: Math.max(1, Math.min(2, lgSlides)), 576: 1 }}
                 className={styles["my-masonry-grid"]}
@@ -298,41 +303,45 @@ export default function Feed() {
         <div className={styles.contenedorSecundario} id={styles.columna2}>
           <aside className={styles.contenidoAdicional}>
             <div className={styles.feedContainers} id="tendencias">
-              <div className="titulo">
+              <div className={styles.titulo}>
                 <TrendingUp className="trendingIcon" />
                 <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Tendencias</h3>
               </div>
-              {
-                tags
-                .slice(0, 5)
-                .map((t, index) => (
-                <TrendingCard
-                  key={index}
-                  nombre ={t.nombre}
-                />
-              ))}
+              <div className={styles.cards}>
+                {
+                  tags
+                    .slice(0, cantTags)
+                    .map((t, index) => (
+                      <TrendingCard
+                        key={index}
+                        nombre={t.nombre}
+                      />
+                    ))}
+              </div>
             </div>
-            <div className={styles.feedContainers} id="sugerencias">
-              <div className="titulo">
+            <div className={styles.feedContainers} id={styles.usuariosSugeridos}>
+              <div className={styles.titulo}>
                 <User className="trendingIcon" />
                 <h3 style={{ fontFamily: "Montserrat, Arial, Helvetica, sans-serif", fontWeight: "600", color: "#3b82f6" }}>Sugerencias</h3>
               </div>
-              {
-                suggestedUsuarios.map((u) => (
-                <SuggestCard
-                  key={u.id}
-                  id={u.id}
-                  user = {{
-                    name: u.username,
-                    username: u.displayName,
-                    avatar: u.avatarUrl,
-                  }}
-                  onFollowed={(id) => {
-                    setUsuarios(prev => prev.filter(x => x.id !== String(id)));
-                    setSuggestedUsuarios(prev => prev.filter(x => x.id !== String(id)));
-                  }}
-                />
-              ))}
+              <div className={styles.cards}>
+                {
+                  suggestedUsuarios.slice(0, cantUsuarios).map((u) => (
+                    <SuggestCard
+                      key={u.id}
+                      id={u.id}
+                      user={{
+                        name: u.username,
+                        username: u.displayName,
+                        avatar: u.avatarUrl,
+                      }}
+                      onFollowed={(id) => {
+                        setUsuarios(prev => prev.filter(x => x.id !== String(id)));
+                        setSuggestedUsuarios(prev => prev.filter(x => x.id !== String(id)));
+                      }}
+                    />
+                  ))}
+              </div>
             </div>
           </aside>
         </div>

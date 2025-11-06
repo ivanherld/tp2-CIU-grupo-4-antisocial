@@ -38,18 +38,39 @@
   width: 30vw;
 }
 
+.contenidoAdicional .titulo{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
 .contenidoAdicional div {
   width: 85%;
 }
 
+.cards{
+  width: 100%;
+}
 
-@media (max-width: 1040px) {
+@media (max-width: 1400px) {
   .contenedorPrincipal {
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
     padding: 1rem;
   }
-
+  .contenedorSecundario {
+    width: 100%;
+    margin: 5px;
+    margin-right: 3px;
+  }
+  .contenidoAdicional{
+    width: 100%;
+    margin: 5px;
+  }
+  .contenidoAdicional .feedContainers{
+    width: 100%;
+    margin: 5px;
+  }
+  
   .feedContainers,
   .contenidoAdicional {
     width: 100%;
@@ -60,16 +81,35 @@
     width: auto;
     justify-content: flex-end;
   }
+
 }
 
 
 @media (max-width: 600px) {
+  .contenedorPrincipal{
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+  }
+  .contenedorSecundario {
+    width: 100%;
+    margin: 5px;
+  }
+  .contenidoAdicional{
+    width: 100%;
+    margin: 5px;
+  }
+
   .btnSeguidos {
     display: inline-flex !important;
     margin-bottom: 0.5rem;
   }
 
   .btnLayout {
+    display: none !important;
+  }
+
+  #usuariosSugeridos {
     display: none !important;
   }
 }
