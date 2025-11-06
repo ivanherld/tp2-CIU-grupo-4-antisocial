@@ -2,6 +2,9 @@ import { type CommentProps } from './Comment';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
+import { useEffect, useState } from 'react';
+import api from '../api';
+import axios from 'axios';
 import PostModal from './PostModal/PostModal';
 import Tags from './Tags/Tags';
 import Images from './Images/Images';
@@ -45,9 +48,32 @@ export default function Post({
   const profileLink = currentUsername && currentUsername.toLowerCase() === author.toLowerCase()
     ? '/profile/me'
     : `/users/${encodeURIComponent(author)}`;
+  
+
+  const [commentCount, setCommentCount] = useState<number>(comments?.length ?? 0);
+
+  useEffect(() => {
+    let canceled = false;
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await api.get<any[]>(`/post/${encodeURIComponent(String(id))}/comments`, { signal: controller.signal });
+        if (canceled) return;
+        const arr = Array.isArray(res.data) ? res.data : [];
+        setCommentCount(arr.length);
+      } catch (e) {
+        if (axios.isAxiosError(e) && e.code === 'ERR_CANCELED') return;
+        console.warn('Error fetching comments for post', e);
+      }
+    })();
+    return () => {
+      canceled = true;
+      controller.abort();
+    };
+  }, [id]);
 
   return (
-    <div className="card card-testimonial bg-light ">
+    <div className="card card-testimonial"> 
       <div className="card-body d-flex flex-row align-items-center pb-3">
         <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 48 }} />
         <div className="d-flex flex-column ms-3 me-auto">
@@ -85,10 +111,11 @@ export default function Post({
       <div className="card-footer p-0">
         <Card className="border-0">
             <Card.Header className="bg-transparent p-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif", display: 'flex', justifyContent: 'flex-end'}}>
-              <span style={{color:"#3b82f6", fontWeight:"500"}}>Comentarios ({comments.length})</span>
+              <span style={{color:"#3b82f6", fontWeight:"500"}}>Comentarios ({commentCount})</span>
             </Card.Header>
         </Card>
       </div>
     </div>
   );
 }
+

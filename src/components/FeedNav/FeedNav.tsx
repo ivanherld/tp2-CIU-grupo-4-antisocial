@@ -2,11 +2,11 @@ import {Button, Container, Form, InputGroup, Offcanvas} from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { NavLink, useNavigate } from 'react-router-dom';
-import {Search, House, User, X, LogOut } from 'lucide-react'
+import {Search, House, User, X, LogOut, Moon, Sun } from 'lucide-react'
 import styles from './FeedNav.module.css';
 import CreatePostModal from '../CreatePostModal';
 import logo from "../../assets/antisocialpng.png"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthProvider';
 
 
@@ -15,6 +15,17 @@ function FeedNav() {
   const [query, setQuery] = useState("")
   const navigate = useNavigate()
   const {logout} = useAuth()
+
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    const saved = localStorage.getItem("theme");
+    return saved === "dark" ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-bs-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   const [offcanvasOpen, setOffcanvasOpen] = useState(false)
 
   function scrollToTop() {
@@ -34,6 +45,10 @@ function FeedNav() {
     logout()
     navigate("/")
     setOffcanvasOpen(false)
+  }
+
+  function toggleTheme() {
+    setTheme(prev => prev === "dark" ? "light" : "dark");
   }
 
   function handleNavClick(callback?: ()=>void) {
@@ -92,6 +107,10 @@ function FeedNav() {
                   </Button>
                 </InputGroup>
               )}
+              <Nav.Link className={styles.navButton} onClick={toggleTheme}>
+                {theme === "dark" ? <Sun /> : <Moon />}
+                {theme === "dark" ? "Modo claro" : "Modo oscuro"}
+              </Nav.Link>
               <Nav.Link className={styles.navButton} onClick={handleLogout}>
                 <LogOut />
                 Cerrar sesión</Nav.Link>
