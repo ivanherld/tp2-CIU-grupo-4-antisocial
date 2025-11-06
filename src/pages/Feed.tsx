@@ -135,7 +135,7 @@ export default function Feed() {
     };
   }, [followedOnly, usuario?.id, refreshKey]);
 
-  // Listen for postCreated events and trigger a refetch by bumping refreshKey
+  
   useEffect(() => {
     const handler = () => setRefreshKey((k) => k + 1);
     window.addEventListener('postCreated', handler);
