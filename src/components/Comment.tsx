@@ -16,7 +16,7 @@ export default function Comment({ author, date, text, avatarUrl }: CommentProps)
         : `/users/${encodeURIComponent(author)}`;
     
     return (
-        <div className="comment mb-3 p-2 bg-white rounded shadow-sm">
+        <div className="comment mb-3 p-2 rounded shadow-sm">
             <div className="d-flex align-items-center mb-2">
                 <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar me-2 rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 40 }}/>
                 <div className="d-flex flex-column">

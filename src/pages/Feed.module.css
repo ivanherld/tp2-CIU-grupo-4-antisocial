@@ -4,7 +4,8 @@
   flex-wrap: wrap;
   align-items: flex-start;
   padding: 2rem;
-  background-color: rgba(241, 241, 241, 0.761);
+  /*background-color: rgba(241, 241, 241, 0.761);*/
+  background-color: var(--bs-body-bg);
   gap: 1rem;
 }
 
@@ -16,8 +17,10 @@
 
 /* Feed */
 .feedContainers {
-  border: 1px solid #ccccccd1;
-  background-color: white;
+  /*border: 1px solid #ccccccd1;
+  background-color: white;*/
+  border: 1px solid var(--bs-border-color);
+  background-color: var(--bs-body-bg);
   border-radius: 8px;
   width: 60vw;
   padding: 1rem;

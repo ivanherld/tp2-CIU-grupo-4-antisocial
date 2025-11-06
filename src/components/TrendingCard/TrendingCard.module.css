@@ -10,7 +10,7 @@
 }
 
 .trendingCard:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: var(--bs-secondary-bg); /* rgba(0, 0, 0, 0.03) */
 }
 
 .container {
@@ -24,13 +24,13 @@
 }
 
 .label {
-  color: #666;
+  color: var(--bs-secondary-color); /* #666 */
   font-size: clamp(0.75rem, 2vw, 0.875rem);
   font-family: "Open Sans", Arial, Helvetica, sans-serif;
 }
 
 .topic {
-  color: #333;
+  color: var(--bs-body-color); /* #333 */
   font-size: clamp(1rem, 2.5vw, 1.125rem);
   font-weight: 600;
   transition: color 0.2s ease;
@@ -42,7 +42,7 @@
 }
 
 .posts {
-  color: #666;
+  color: var(--bs-secondary-color); /* #666 */
   font-size: clamp(0.75rem, 2vw, 0.875rem);
   margin-top: 0.25rem;
   font-family: "Open Sans", Arial, Helvetica, sans-serif;

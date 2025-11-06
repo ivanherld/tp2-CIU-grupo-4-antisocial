@@ -45,9 +45,9 @@ export default function Post({
   const profileLink = currentUsername && currentUsername.toLowerCase() === author.toLowerCase()
     ? '/profile/me'
     : `/users/${encodeURIComponent(author)}`;
-
+  // bg-light
   return (
-    <div className="card card-testimonial bg-light ">
+    <div className="card card-testimonial"> 
       <div className="card-body d-flex flex-row align-items-center pb-3">
         <img src={avatarUrl || "/antisocialpng.png"} className="img-avatar rounded-circle" alt={`${author} avatar`} style={{ width: "auto", height: 48 }} />
         <div className="d-flex flex-column ms-3 me-auto">

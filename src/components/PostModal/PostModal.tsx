@@ -163,7 +163,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
         </Button>
         
         <Modal show={show} onHide={() => setShow(false)} size="lg">
-            <Modal.Header closeButton className="bg-light">
+            <Modal.Header closeButton>
             <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                     <img
@@ -194,7 +194,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
 
             
             </Modal.Header>
-            <Modal.Body className="bg-light">
+            <Modal.Body>
                 <div style={{paddingBottom: "5px", borderBottom: "1px solid #cbd5e1", marginBottom: "10px"}}>
                     <p className={styles.contenidoPost}>{content}</p>
                     <Images imagenes={imagenes}/>
@@ -212,7 +212,7 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                 <div className={styles.line}/>
                 <CommentForm postId={id.toString()} onAddComment={handleAddComment}/>
             </Modal.Body>
-            <Modal.Footer className="bg-light">
+            <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShow(false)} style={{fontFamily:"Montserrat, Arial, Helvetica, sans-serif"}}>
                     Cerrar
                 </Button>
