@@ -49,6 +49,7 @@ function FeedNav() {
 
   function toggleTheme() {
     setTheme(prev => prev === "dark" ? "light" : "dark");
+    setOffcanvasOpen(false)
   }
 
   function handleNavClick(callback?: ()=>void) {

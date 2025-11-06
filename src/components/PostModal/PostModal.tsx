@@ -216,9 +216,9 @@ export default function PostModal({id, author, authorId, avatarUrl, content, dat
                     <Tags tags={tags}/>
                 </div>
                 {loadingComments ? (
-                    <div className="text-muted">Cargando comentarios...</div>
+                    <div className="text-muted" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>Cargando comentarios...</div>
                 ) : commentsError ? (
-                    <div className="text-danger">{commentsError}</div>
+                    <div className="text-danger" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>{commentsError}</div>
                 ) : postComments.length === 0 ? (
                     <p className="text-muted text-center mb-2" style={{fontFamily: "Montserrat, Arial, Helvetica, sans-serif"}}>No hay comentarios</p>
                 ) : (

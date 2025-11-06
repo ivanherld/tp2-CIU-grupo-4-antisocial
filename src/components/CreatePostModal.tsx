@@ -244,7 +244,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
                       bg="info"
                       pill
                       className="me-2 mb-2"
-                      style={{cursor: "pointer"}}
+                      style={{cursor: "pointer", fontFamily: "Open Sans, Arial, Helvetica, sans-serif"}}
                       onClick={() => removeImageUrl(url)}
                     >
                       {url.length > 25 ? url.slice(0, 25) + "..." : url} ✕
@@ -297,7 +297,7 @@ export default function CreatePostModal({onClose}: CreatePostModalProps){
                         text={tags.some(tag => tag.nombre === t) ? undefined : 'dark'}
                         pill
                         className="me-2 mb-2"
-                        style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)', fontFamily:"Montserrat, Arial, Helvetica, sans-serif" }}
+                        style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.08)'}}
                         onClick={() => addSuggestedTag(t)}
                       >
                         {t}
